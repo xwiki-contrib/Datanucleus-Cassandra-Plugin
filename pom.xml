@@ -235,7 +235,6 @@
 						<groupId>org.datanucleus</groupId>
 						<artifactId>datanucleus-enhancer</artifactId>
 						<version>${datanucleus.plugin.version}</version>
-						<scope>provided</scope>
 					</dependency>
 					<dependency>
 						<groupId>org.datanucleus</groupId>
