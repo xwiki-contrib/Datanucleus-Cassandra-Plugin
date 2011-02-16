@@ -224,8 +224,9 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 						fieldMetaData.getType(), column);
 				try {
 
-					Object object = context.findObject(identity, false, false,
-							fieldMetaData.getTypeName());
+					Object object = context.findObject(identity, false, true,
+
+					fieldMetaData.getTypeName());
 
 					return objectProvider.wrapSCOField(fieldNumber, object,
 							false, false, true);
@@ -258,18 +259,18 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 
 					// get our list of Strings
 
-					ReadCollection columnFetcher = new ReadCollection(
+					ReadCollection columnFetcher = new ReadCollection(selector, 
 							byteContext, columnFamily, rowKey, columnName,
 							context, elementClass);
 
 					// TODO use context.getFetchPlan().getFetchSize()
-					columnFetcher.fetchColumns(100, null, selector);
+					columnFetcher.fetchColumns(100, null);
 
 					for (Object key : columnFetcher) {
 
 						try {
 							Object element = context.findObject(key, false,
-									false, fieldMetaData.getTypeName());
+									true, fieldMetaData.getTypeName());
 
 							coll.add(element);
 						} catch (NucleusObjectNotFoundException nonfe) {
@@ -277,8 +278,8 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 							// is over tombstone time
 						}
 					}
-					
-					if(coll.size() == 0){
+
+					if (coll.size() == 0) {
 						return null;
 					}
 
@@ -327,10 +328,10 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 					}
 
 					// TODO use context.getFetchPlan().getFetchSize()
-					ReadMap mapReader = new ReadMap(byteContext, columnFamily,
+					ReadMap mapReader = new ReadMap(selector, byteContext, columnFamily,
 							rowKey, columnName, storedKeyClass,
 							storedValueClass);
-					mapReader.fetchColumns(100, null, selector);
+					mapReader.fetchColumns(100, null);
 
 					for (CassEntry entry : mapReader) {
 
@@ -341,7 +342,8 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 
 								key = context.findObject(
 										context.newObjectId(keyClass,
-												entry.getKey()), false, false,
+												entry.getKey()), false, true,
+
 										fieldMetaData.getTypeName());
 							} else {
 								key = entry.getKey();
@@ -352,7 +354,8 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 							if (pcValue) {
 								value = context.findObject(
 										context.newObjectId(valueClass,
-												entry.getValue()), false, false,
+												entry.getValue()), false, true,
+
 										fieldMetaData.getTypeName());
 							} else {
 								value = entry.getValue();
@@ -366,21 +369,20 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 						}
 
 					}
-					
-					if(map.size() == 0){
+
+					if (map.size() == 0) {
 						return null;
 					}
-					
 
 					return objectProvider.wrapSCOField(fieldNumber, map, false,
 							false, true);
 
 				} else if (fieldMetaData.getType().isArray()) {
 
-					ReadMap mapReader = new ReadMap(byteContext, columnFamily,
+					ReadMap mapReader = new ReadMap(selector, byteContext, columnFamily,
 							rowKey, columnName, Integer.class,
 							byteContext.getKeyClass(context, metaData));
-					mapReader.fetchColumns(100, null, selector);
+					mapReader.fetchColumns(100, null);
 
 					int columns = mapReader.getColumnCount();
 
@@ -398,8 +400,7 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 						Object id = context.newObjectId(elementClass,
 								entry.getValue());
 
-						Object element = context.findObject(id, false, false,
-								fieldMetaData.getTypeName());
+						Object element = context.findObject(id, false, true, fieldMetaData.getTypeName());
 
 						Array.set(array, (Integer) entry.getKey(), element);
 					}

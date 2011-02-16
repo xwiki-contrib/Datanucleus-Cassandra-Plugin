@@ -27,7 +27,6 @@ import org.apache.cassandra.thrift.ColumnParent;
 import org.apache.cassandra.thrift.ColumnPath;
 import org.apache.cassandra.thrift.SlicePredicate;
 import org.datanucleus.ClassLoaderResolver;
-import org.datanucleus.api.ApiAdapter;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.AbstractMemberMetaData;
@@ -38,7 +37,6 @@ import org.datanucleus.metadata.InheritanceMetaData;
 import org.datanucleus.metadata.InheritanceStrategy;
 import org.datanucleus.metadata.MetaDataManager;
 import org.datanucleus.store.ExecutionContext;
-import org.datanucleus.store.mapped.exceptions.DatastoreFieldDefinitionException;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Selector;
 
@@ -314,8 +312,8 @@ public class MetaDataUtils {
 	}
 
 	/**
-	 * Get all descriminators as strings for this class and all possible
-	 * subclasses. Will return at a minimum the descriminator for the passed
+	 * Get all discriminators as strings for this class and all possible
+	 * subclasses. Will return at a minimum the discriminator for the passed
 	 * class
 	 * 
 	 * @param className
@@ -361,6 +359,8 @@ public class MetaDataUtils {
 
 		return descriminators;
 	}
+	
+
 
 	/**
 	 * Create a slice predicate with all mapped fetch column lists

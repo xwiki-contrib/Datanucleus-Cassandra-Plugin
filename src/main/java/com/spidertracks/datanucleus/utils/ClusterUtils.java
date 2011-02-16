@@ -45,13 +45,9 @@ public class ClusterUtils {
 
 		for (Node node : nodes) {
 	
-			Cluster  firstNodeOnly = new Cluster(node.getAddress(), node.getConfig(), false);
-			KeyspaceManager manager = new KeyspaceManager(firstNodeOnly);
-			try {
-				manager.getKeyspaceNames();
-			} catch (Exception e) {
-				logger.error("Unable to connect to node", e);
-				// swallow and try the next one
+			Cluster  firstNodeOnly = getClusterForNode(node);
+			
+			if(firstNodeOnly == null){
 				continue;
 			}
 			
@@ -59,5 +55,24 @@ public class ClusterUtils {
 		}
 
 		throw new NucleusDataStoreException("Could not connect to any node to perform migrations %s");
+	}
+	
+	/**
+	 * Get a cluster with only the given node
+	 * @param node
+	 * @return
+	 */
+	public static Cluster getClusterForNode(Node node){
+		Cluster  firstNodeOnly = new Cluster(node.getAddress(), node.getConfig(), false);
+		KeyspaceManager manager = new KeyspaceManager(firstNodeOnly);
+		try {
+			manager.getKeyspaceNames();
+		} catch (Exception e) {
+			logger.error("Unable to connect to node", e);
+			// swallow and try the next one
+			return null;
+		}
+		
+		return firstNodeOnly;
 	}
 }

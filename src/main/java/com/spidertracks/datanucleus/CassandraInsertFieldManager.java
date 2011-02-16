@@ -36,6 +36,7 @@ import org.datanucleus.store.ObjectProvider;
 import org.datanucleus.store.fieldmanager.AbstractFieldManager;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Mutator;
+import org.scale7.cassandra.pelops.Selector;
 
 import com.spidertracks.datanucleus.collection.WriteCollection;
 import com.spidertracks.datanucleus.collection.WriteMap;
@@ -48,6 +49,7 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
 public class CassandraInsertFieldManager extends AbstractFieldManager {
 
 	private ExecutionContext context;
+	private Selector selector;
 	private Mutator mutator;
 	private AbstractClassMetaData metaData;
 	private ObjectProvider objectProvider;
@@ -59,10 +61,11 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 	 * @param columns
 	 * @param metaData
 	 */
-	public CassandraInsertFieldManager(Mutator mutator, ObjectProvider op,
-			String columnFamily, Bytes key) {
+	public CassandraInsertFieldManager(Selector selector, Mutator mutator,
+			ObjectProvider op, String columnFamily, Bytes key) {
 		super();
 
+		this.selector = selector;
 		this.mutator = mutator;
 		this.objectProvider = op;
 		this.metaData = op.getClassMetaData();
@@ -183,19 +186,6 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 
 			Bytes columnName = getColumnName(metaData, fieldNumber);
 
-			// delete operation
-			if (value == null) {
-				// TODO TN we need a way to update secondary indexing if this
-				// field was deleted.
-				// how can we get the previous value? Only loading the current
-				// value
-				// then removing will work
-				this.mutator.deleteColumn(columnFamily, key, columnName);
-
-				return;
-
-			}
-
 			ClassLoaderResolver clr = context.getClassLoaderResolver();
 			AbstractMemberMetaData fieldMetaData = metaData
 					.getMetaDataForManagedMemberAtAbsolutePosition(fieldNumber);
@@ -215,6 +205,12 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 					throw new NucleusDataStoreException(
 							"Embedded objects are unsupported.  Mark the object as persistent and use a serializable class instead");
 
+				}
+
+				// delete operation
+				if (value == null) {
+					this.mutator.deleteColumn(columnFamily, key, columnName);
+					return;
 				}
 
 				Object persisted = context.persistObjectInternal(value,
@@ -239,11 +235,17 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 
 				if (fieldMetaData.hasCollection()) {
 
+					WriteCollection collectionWriter = new WriteCollection(
+							selector, byteContext, columnFamily, key,
+							columnName);
+
+					if (value == null) {
+						collectionWriter.removeAllColumns(mutator);
+						return;
+					}
+
 					Object persisted = null;
 					Object objectPk = null;
-
-					WriteCollection collectionWriter = new WriteCollection(
-							byteContext, columnFamily, key, columnName);
 
 					for (Object element : (Collection<?>) value) {
 						// persist the object
@@ -256,12 +258,23 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 						collectionWriter.writeRelationship(mutator, objectPk);
 					}
 
+					// TODO remove this when SCO is working
+					collectionWriter.removeRemaining(mutator);
+
+					objectProvider.wrapSCOField(fieldNumber, value, true, true,
+							true);
+
 					return;
 
 				} else if (fieldMetaData.hasMap()) {
 
-					WriteMap mapWriter = new WriteMap(byteContext,
+					WriteMap mapWriter = new WriteMap(selector, byteContext,
 							columnFamily, key, columnName);
+
+					if (value == null) {
+						mapWriter.removeAllColumns(mutator);
+						return;
+					}
 
 					ApiAdapter adapter = context.getApiAdapter();
 
@@ -313,7 +326,13 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 						mapWriter.writeRelationship(mutator, serializedKey,
 								serializedValue);
 
+						// TODO remove this when SCO is working
+						mapWriter.removeRemaining(mutator);
+
 					}
+
+					objectProvider.wrapSCOField(fieldNumber, value, true, true,
+							true);
 
 					return;
 
@@ -322,8 +341,13 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 					Object persisted = null;
 					Object objectPk = null;
 
-					WriteMap mapWriter = new WriteMap(byteContext,
+					WriteMap mapWriter = new WriteMap(selector, byteContext,
 							columnFamily, key, columnName);
+
+					if (value == null) {
+						mapWriter.removeAllColumns(mutator);
+						return;
+					}
 
 					for (int i = 0; i < Array.getLength(value); i++) {
 
@@ -337,8 +361,19 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 
 						mapWriter.writeRelationship(mutator, i, objectPk);
 					}
+
+					// TODO remove this when SCO is working
+					mapWriter.removeRemaining(mutator);
 				}
 
+				objectProvider.wrapSCOField(fieldNumber, value, true, true,
+						true);
+
+				return;
+			}
+
+			if (value == null) {
+				this.mutator.deleteColumn(columnFamily, key, columnName);
 				return;
 			}
 
@@ -356,6 +391,12 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 	public void storeStringField(int fieldNumber, String value) {
 		try {
 
+			if (value == null) {
+				mutator.deleteColumn(columnFamily, key,
+						getColumnName(metaData, fieldNumber));
+				return;
+			}
+
 			mutator.writeColumn(columnFamily, key, mutator.newColumn(
 					getColumnName(metaData, fieldNumber),
 					byteContext.getBytes(value)));
@@ -364,5 +405,4 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 			throw new NucleusDataStoreException(e.getMessage(), e);
 		}
 	}
-
 }

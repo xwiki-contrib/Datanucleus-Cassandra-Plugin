@@ -113,7 +113,7 @@ public class BatchMutationManager {
 
 		if (operations == null) {
 			operations = new ExecutionContextMutate(context,
-					Pelops.createMutator(manager.getPoolName()));
+					Pelops.createMutator(manager.getPoolName(), System.nanoTime()/1000));
 			contextMutations.put(context, operations);
 		}
 
@@ -131,7 +131,7 @@ public class BatchMutationManager {
 
 		if (operations == null) {
 			operations = new ExecutionContextDelete(context, Pelops
-					.createRowDeletor(manager.getPoolName()));
+					.createRowDeletor(manager.getPoolName(), System.nanoTime()/1000));
 			contextDeletions.put(context, operations);
 		}
 

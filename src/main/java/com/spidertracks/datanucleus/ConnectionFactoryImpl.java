@@ -174,7 +174,7 @@ public class ConnectionFactoryImpl extends AbstractConnectionFactory {
 		if (createColumnFamilies) {
 			manager.getMetaDataManager().registerListener(
 					new ColumnFamilyCreator(manager, cluster, keyspace,
-							createColumns));
+							createColumnFamilies, createColumns));
 		}
 	}
 

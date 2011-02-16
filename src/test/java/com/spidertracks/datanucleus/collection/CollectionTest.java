@@ -38,6 +38,8 @@ import com.eaio.uuid.UUID;
 import com.spidertracks.datanucleus.CassandraTest;
 import com.spidertracks.datanucleus.collection.model.Card;
 import com.spidertracks.datanucleus.collection.model.Pack;
+import com.spidertracks.datanucleus.collection.model.User;
+import com.spidertracks.datanucleus.collection.model.Vehicle;
 
 /**
  * @author Todd Nine
@@ -315,6 +317,107 @@ public class CollectionTest extends CassandraTest {
 		assertTrue(deleted);
 
 		deleted = false;
+	}
+	
+
+	@Test
+	public void testRemoveCollectionEntry() throws Exception {
+
+		User user = new User();
+		user.setName("test");
+		
+		Vehicle car = new Vehicle();
+		car.setName("car");
+		
+		user.addVehicle(car);
+		
+		Vehicle truck = new Vehicle();
+		truck.setName("truck");
+		
+		user.addVehicle(truck);
+		
+		
+		
+		pmf.getPersistenceManager().makePersistent(user);
+
+		PersistenceManager pm = pmf.getPersistenceManager();
+
+		User saved = pm.getObjectById(User.class, user.getId());
+
+		assertEquals(user, saved);
+
+		assertNotNull(saved.getVehicles());
+
+		assertTrue(saved.getVehicles().contains(car));
+
+		assertTrue(saved.getVehicles().contains(truck));
+
+		
+		
+		
+		
+		int carIndex = saved.getVehicles().indexOf(car);
+	
+		Vehicle savedCar = saved.getVehicles().get(carIndex);
+
+		assertEquals(user, savedCar.getUser());
+
+		Vehicle savedTruck = saved.getVehicles().get(
+				saved.getVehicles().indexOf(truck));
+
+		assertEquals(user, savedTruck.getUser());
+
+		
+		
+		UUID userId = user.getId();
+		UUID carId = car.getId();
+		UUID truckId = truck.getId();
+
+		// now perform a delete and ensure that everything is deleted
+		
+		saved.getVehicles().remove(carIndex);
+		
+		pm.makePersistent(saved);
+
+		boolean deleted = false;
+
+		try {
+			pmf.getPersistenceManager().getObjectById(User.class, userId);
+		} catch (JDODataStoreException n) {
+			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+		}
+
+		assertFalse(deleted);
+
+		deleted = false;
+
+		// now check the cards are gone as well
+		try {
+			pmf.getPersistenceManager().getObjectById(Vehicle.class, carId);
+		} catch (JDODataStoreException n) {
+			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+		}
+
+		assertFalse(deleted);
+
+		deleted = false;
+		try {
+			pmf.getPersistenceManager().getObjectById(Vehicle.class, truckId);
+
+		} catch (JDODataStoreException n) {
+			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+		}
+
+		assertFalse(deleted);
+		
+		pm = pmf.getPersistenceManager();
+		saved = pm.getObjectById(User.class, user.getId());
+		
+		assertEquals(-1, saved.getVehicles().indexOf(car));
+		assertEquals(0, saved.getVehicles().indexOf(truck));
+		
+		
+
 	}
 
 }

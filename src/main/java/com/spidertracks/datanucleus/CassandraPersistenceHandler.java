@@ -206,10 +206,6 @@ public class CassandraPersistenceHandler extends AbstractPersistenceHandler {
 			// exception b/c the object doesn't exist
 			pksearched(metaData, fieldNumbers);
 
-			// do nothing if we didn't fail the check above. Since cassandra has
-			// no concept of transactions the DN transaction is attempting
-			// to load and flush rows that no longer exist.
-			return;
 
 		}
 
@@ -272,13 +268,15 @@ public class CassandraPersistenceHandler extends AbstractPersistenceHandler {
 
 		// signal a write is about to start
 		Mutator mutator = this.batchManager.beginWrite(ec).getMutator();
+		Selector selector = Pelops.createSelector(manager.getPoolName());
+
 
 		Bytes key = byteContext.getRowKey(op);
 		String columnFamily = getColumnFamily(metaData);
 
 		// Write our all our primary object data
 		CassandraInsertFieldManager manager = new CassandraInsertFieldManager(
-				mutator, op, columnFamily, key);
+				selector, mutator, op, columnFamily, key);
 
 		op.provideFields(metaData.getAllMemberPositions(), manager);
 

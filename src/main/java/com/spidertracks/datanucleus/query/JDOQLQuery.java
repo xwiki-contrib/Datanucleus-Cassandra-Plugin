@@ -173,8 +173,7 @@ public class JDOQLQuery extends AbstractJDOQLQuery {
 		// indexes
 		if (filter != null) {
 
-			CassandraQueryExpressionEvaluator evaluator = new CassandraQueryExpressionEvaluator(
-					ec, parameters, clr, candidateClass, range);
+			CassandraQueryExpressionEvaluator evaluator = new CassandraQueryExpressionEvaluator(acmd, range, byteContext, parameters);
 
 			Operand opTree = (Operand) filter.evaluate(evaluator);
 

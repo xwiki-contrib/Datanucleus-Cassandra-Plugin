@@ -30,7 +30,21 @@ import org.apache.cassandra.thrift.ConsistencyLevel;
 public class Consistency {
 
 	private static final ThreadLocal<ConsistencyLevel> level = new ThreadLocal<ConsistencyLevel>();
+	
+	private static ConsistencyLevel defaultLevel;
 
+	
+	{
+		defaultLevel = ConsistencyLevel.ONE;
+	}
+	
+	/**
+	 * Set the default level if it hasn't been set
+	 * @param c
+	 */
+	public static void setDefault(ConsistencyLevel c){
+		defaultLevel = c;
+	}
 	/**
 	 * Set the consistency level for this thread
 	 * 
@@ -56,7 +70,7 @@ public class Consistency {
 		ConsistencyLevel l = level.get();
 
 		if (l == null) {
-			return ConsistencyLevel.ONE;
+			return defaultLevel;
 		}
 
 		return l;

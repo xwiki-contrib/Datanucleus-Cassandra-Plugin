@@ -17,8 +17,16 @@ Contributors :
  ***********************************************************************/
 package com.spidertracks.datanucleus.collection;
 
-import org.scale7.cassandra.pelops.Bytes;
+import java.nio.ByteBuffer;
+import java.util.List;
 
+import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.SlicePredicate;
+import org.apache.cassandra.thrift.SliceRange;
+import org.scale7.cassandra.pelops.Bytes;
+import org.scale7.cassandra.pelops.Selector;
+
+import com.spidertracks.datanucleus.client.Consistency;
 import com.spidertracks.datanucleus.convert.ByteConverterContext;
 
 /**
@@ -30,11 +38,10 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
  * @author Todd Nine
  * 
  */
-public class ExternalEntity{
+public class ExternalEntity {
 
-	
 	protected static final byte DELIM_MIN = 0;
-	protected static final  byte DELIM_MAX = 1;
+	protected static final byte DELIM_MAX = 1;
 
 	protected ByteConverterContext context;
 
@@ -44,21 +51,22 @@ public class ExternalEntity{
 
 	protected Bytes rowKey;
 
-
-	public ExternalEntity() {
-
-	}
+	protected Selector selector;
 
 	/**
 	 * 
-	 * @param context The Byte converter context
-	 * @param ownerColumnFamily The owning column family
-	 * @param rowKey The row key
-	 * @param ownerColumn The bytes of the column
+	 * @param context
+	 *            The Byte converter context
+	 * @param ownerColumnFamily
+	 *            The owning column family
+	 * @param rowKey
+	 *            The row key
+	 * @param ownerColumn
+	 *            The bytes of the column
 	 */
-	public ExternalEntity(ByteConverterContext context,
+	public ExternalEntity(Selector selector, ByteConverterContext context,
 			String ownerColumnFamily, Bytes rowKey, Bytes ownerColumn) {
-		super();
+		this.selector = selector;
 		this.context = context;
 		this.ownerColumnFamily = ownerColumnFamily;
 		this.ownerColumn = ownerColumn;
@@ -66,10 +74,5 @@ public class ExternalEntity{
 	}
 
 	
-
-
-	
-	
-
 
 }

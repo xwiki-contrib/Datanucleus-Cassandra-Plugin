@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import org.apache.cassandra.thrift.Column;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Mutator;
+import org.scale7.cassandra.pelops.Selector;
 
 import com.spidertracks.datanucleus.convert.ByteConverterContext;
 
@@ -30,15 +31,15 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
  * @author Todd Nine
  *
  */
-public class WriteCollection extends ExternalEntity {
+public class WriteCollection extends ExternalEntityWriter {
 
 
 	private static final Bytes PLACEHOLDER = new Bytes(new byte[] { 0 });
 
 
-	public WriteCollection(ByteConverterContext context,
+	public WriteCollection(Selector selector, ByteConverterContext context,
 			String ownerColumnFamily, Bytes rowKey, Bytes ownerColumn) {
-		super(context, ownerColumnFamily, rowKey, ownerColumn);
+		super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
 	}
 
 
@@ -57,6 +58,8 @@ public class WriteCollection extends ExternalEntity {
 		buffer.limit(buffer.position());
 
 		buffer.reset();
+		
+		super.addStoredColumn(buffer);
 
 		Column keyColumn = mutator.newColumn(Bytes.fromByteBuffer(buffer),
 				PLACEHOLDER);

@@ -25,7 +25,6 @@ import java.util.Stack;
 
 import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.IndexOperator;
-import org.datanucleus.ClassLoaderResolver;
 import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.query.QueryUtils;
@@ -34,18 +33,17 @@ import org.datanucleus.query.expression.Expression;
 import org.datanucleus.query.expression.Literal;
 import org.datanucleus.query.expression.ParameterExpression;
 import org.datanucleus.query.expression.PrimaryExpression;
-import org.datanucleus.store.ExecutionContext;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Selector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.spidertracks.datanucleus.convert.ByteConverterContext;
 import com.spidertracks.datanucleus.query.runtime.AndOperand;
 import com.spidertracks.datanucleus.query.runtime.CompressableOperand;
 import com.spidertracks.datanucleus.query.runtime.EqualityOperand;
 import com.spidertracks.datanucleus.query.runtime.Operand;
 import com.spidertracks.datanucleus.query.runtime.OrOperand;
-import com.spidertracks.datanucleus.utils.ByteConverter;
 
 /**
  * Class that will recursively query and merge results from our tree as we're
@@ -70,9 +68,10 @@ public class CassandraQueryExpressionEvaluator extends
 	/** Map of input parameter values, keyed by their name. */
 	private Map<String, Object> parameterValues;
 
-	private ExecutionContext ec;
 	
 	private int maxSize;
+	
+	private ByteConverterContext byteConverter;
 	
 
 	/**
@@ -91,15 +90,13 @@ public class CassandraQueryExpressionEvaluator extends
 	 * @param candidateAlias
 	 *            Alias for the candidate class. With JDOQL this is "this".
 	 */
-	public CassandraQueryExpressionEvaluator(ExecutionContext ec,
-			Map<String, Object> params, ClassLoaderResolver clr,
-			Class<?> destinationClass, int maxSize) {
-		this.ec = ec;
-		metaData = ec.getMetaDataManager().getMetaDataForClass(destinationClass, clr);
+	public CassandraQueryExpressionEvaluator(AbstractClassMetaData metaData, int maxSize, ByteConverterContext byteConverter, Map<String, Object> params) {
+		this.metaData = metaData;
 		this.parameterValues = (params != null ? params
 				: new HashMap<String, Object>());
 		
 		this.maxSize = maxSize;
+		this.byteConverter = byteConverter;
 
 	}
 
@@ -289,8 +286,7 @@ public class CassandraQueryExpressionEvaluator extends
 		Object value = QueryUtils.getValueForParameterExpression(
 				parameterValues, expr);
 
-		Bytes byteVal = ByteConverter.convertToStorageType(value,
-				ec.getTypeManager());
+		Bytes byteVal = byteConverter.getBytes(value);
 
 		IndexParam param = indexKeys.peek();
 
@@ -338,8 +334,7 @@ public class CassandraQueryExpressionEvaluator extends
 
 		Object value = expr.getLiteral();
 
-		Bytes byteVal = ByteConverter.convertToStorageType(value,
-				ec.getTypeManager());
+		Bytes byteVal =  byteConverter.getBytes(value);
 
 		IndexParam param = indexKeys.peek();
 

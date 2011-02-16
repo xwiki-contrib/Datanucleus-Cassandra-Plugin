@@ -50,9 +50,9 @@ public class ReadCollection extends ExternalEntity implements
 	
 	private ExecutionContext ec;
 
-	public ReadCollection(ByteConverterContext context,
+	public ReadCollection(Selector selector, ByteConverterContext context,
 			String ownerColumnFamily, Bytes rowKey, Bytes ownerColumn, ExecutionContext ec, Class<?> targetClass) {
-		super(context, ownerColumnFamily, rowKey, ownerColumn);
+		super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
 		this.ec = ec;
 		this.targetClass = targetClass;
 	}
@@ -67,7 +67,7 @@ public class ReadCollection extends ExternalEntity implements
 	 * @param startKey
 	 * @return
 	 */
-	public void fetchColumns(int count, Bytes startKey, Selector selector) {
+	public void fetchColumns(int count, Bytes startKey) {
 
 		SliceRange range = new SliceRange();
 
@@ -137,17 +137,6 @@ public class ReadCollection extends ExternalEntity implements
 
 	@Override
 	public void remove() {
-
-		if (index == -1) {
-			throw new IllegalStateException("next has not been called");
-		}
-
-		if (!hasNext()) {
-			throw new IllegalStateException("No keys are left to parse");
-		}
-
-		columns.remove(index);
-		// decrement our index so we read the next element when next is called
-		index--;
+		throw new UnsupportedOperationException("remove isn't supported");
 	}
 }

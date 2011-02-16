@@ -57,6 +57,7 @@ public class CassandraStoreManager extends AbstractStoreManager {
 	private static final String CREATE_SCHEMA = "datanucleus.autoCreateSchema";
 	private static final String SERIALIZER = "com.spidertracks.cassandra.serializer";
 	private static final String BYTEMAPPER = "com.spidertracks.cassandra.bytemapper";
+	private static final String CHECKSLEEPTIME = "com.spidertracks.cassandra.checksleep";
 	
 	
 	private boolean autoCreateSchema = false;
@@ -65,6 +66,7 @@ public class CassandraStoreManager extends AbstractStoreManager {
 
 	private int poolTimeBetweenEvictionRunsMillis;
 	private int poolMinEvictableIdleTimeMillis;
+	private long checkSleepTime;
 
 	private ConnectionFactoryImpl connectionFactory;
 
@@ -108,6 +110,10 @@ public class CassandraStoreManager extends AbstractStoreManager {
 		
 		autoCreateSchema = conf
 				.getBooleanProperty(CREATE_SCHEMA);
+		
+		checkSleepTime = conf.getLongProperty(CHECKSLEEPTIME);
+		
+		
 
 		if (autoCreateSchema) {
 			autoCreateTables = true;
@@ -213,6 +219,15 @@ public class CassandraStoreManager extends AbstractStoreManager {
 	public String getPoolName() {
 		return connectionFactory.getPoolName();
 	}
+
+	/**
+	 * @return the pauseOnCreateTime
+	 */
+	public long getCheckSleepTime() {
+		return checkSleepTime;
+	}
+
+
 
 	/**
 	 * DO NOT CALL OUTSIDE OF FRAMEWORK. This is a callback for the connection
