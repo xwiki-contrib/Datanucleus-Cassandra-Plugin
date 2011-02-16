@@ -22,6 +22,7 @@ import java.nio.ByteBuffer;
 import org.apache.cassandra.thrift.Column;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Mutator;
+import org.scale7.cassandra.pelops.Selector;
 
 import com.spidertracks.datanucleus.convert.ByteConverterContext;
 
@@ -30,14 +31,15 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
  * @author Todd Nine
  *
  */
-public class WriteMap extends ExternalEntity {
+public class WriteMap extends ExternalEntityWriter {
 
 
-	public WriteMap(ByteConverterContext context,
+	public WriteMap(Selector selector,ByteConverterContext context,
 			String ownerColumnFamily, Bytes rowKey, Bytes ownerColumn) {
-		super(context, ownerColumnFamily, rowKey, ownerColumn);
+		super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
 	}
 
+	
 
 	/**
 	 * Write the relationship column
@@ -53,6 +55,8 @@ public class WriteMap extends ExternalEntity {
 		buffer = context.getRowKeyForId(key, buffer);
 		buffer.limit(buffer.position());
 		buffer.reset();
+		
+		super.addStoredColumn(buffer);
 		
 		ByteBuffer value = context.getRowKeyForId(entityKey, null);
 		value.reset();

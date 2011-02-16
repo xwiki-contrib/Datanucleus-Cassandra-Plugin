@@ -259,12 +259,12 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 
 					// get our list of Strings
 
-					ReadCollection columnFetcher = new ReadCollection(
+					ReadCollection columnFetcher = new ReadCollection(selector, 
 							byteContext, columnFamily, rowKey, columnName,
 							context, elementClass);
 
 					// TODO use context.getFetchPlan().getFetchSize()
-					columnFetcher.fetchColumns(100, null, selector);
+					columnFetcher.fetchColumns(100, null);
 
 					for (Object key : columnFetcher) {
 
@@ -328,10 +328,10 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 					}
 
 					// TODO use context.getFetchPlan().getFetchSize()
-					ReadMap mapReader = new ReadMap(byteContext, columnFamily,
+					ReadMap mapReader = new ReadMap(selector, byteContext, columnFamily,
 							rowKey, columnName, storedKeyClass,
 							storedValueClass);
-					mapReader.fetchColumns(100, null, selector);
+					mapReader.fetchColumns(100, null);
 
 					for (CassEntry entry : mapReader) {
 
@@ -379,10 +379,10 @@ public class CassandraFetchFieldManager extends AbstractFieldManager {
 
 				} else if (fieldMetaData.getType().isArray()) {
 
-					ReadMap mapReader = new ReadMap(byteContext, columnFamily,
+					ReadMap mapReader = new ReadMap(selector, byteContext, columnFamily,
 							rowKey, columnName, Integer.class,
 							byteContext.getKeyClass(context, metaData));
-					mapReader.fetchColumns(100, null, selector);
+					mapReader.fetchColumns(100, null);
 
 					int columns = mapReader.getColumnCount();
 

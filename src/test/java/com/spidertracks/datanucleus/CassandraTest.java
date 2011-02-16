@@ -20,8 +20,11 @@ package com.spidertracks.datanucleus;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 
+import org.apache.cassandra.thrift.ConsistencyLevel;
 import org.junit.BeforeClass;
 import org.scale7.cassandra.pelops.support.EmbeddedCassandraServer;
+
+import com.spidertracks.datanucleus.client.Consistency;
 
 /**
  * @author Todd Nine
@@ -48,6 +51,7 @@ public abstract class CassandraTest {
 	public static void setup() throws Exception {
 		Server.INSTANCE.start();
 		pmf = Server.INSTANCE.getFactory();
+		Consistency.setDefault(ConsistencyLevel.ONE);
 	}
 
 	private enum Server {
