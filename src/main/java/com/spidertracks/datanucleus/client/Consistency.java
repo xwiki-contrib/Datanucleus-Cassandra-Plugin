@@ -34,7 +34,7 @@ public class Consistency {
 	private static ConsistencyLevel defaultLevel;
 
 	
-	{
+	static {
 		defaultLevel = ConsistencyLevel.ONE;
 	}
 	
@@ -55,10 +55,10 @@ public class Consistency {
 	}
 
 	/**
-	 * Convenience wrapper for set(ConsistencyLevel.ONE)
+	 * Convenience wrapper for set(null)
 	 */
 	public static void remove() {
-		set(ConsistencyLevel.ONE);
+		set(null);
 	}
 
 	/**
