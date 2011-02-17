@@ -291,8 +291,7 @@ public class CassandraPersistenceHandler extends AbstractPersistenceHandler {
 
 			Bytes valueBytes = Bytes.fromUTF8(value);
 			
-			mutator.writeColumn(columnFamily, key,
-					mutator.newColumn(colName, valueBytes));
+			mutator.writeColumn(columnFamily, key, mutator.newColumn(colName, valueBytes));
 		}
 
 		try {
