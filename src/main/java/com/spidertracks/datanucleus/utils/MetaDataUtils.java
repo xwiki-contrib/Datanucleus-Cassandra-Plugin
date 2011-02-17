@@ -350,8 +350,10 @@ public class MetaDataUtils {
 				metaData = mdm.getMetaDataForClass(subclassName, clr);
 
 				discriminator = metaData.getDiscriminatorMetaData();
+				
+				Bytes discriminatorBytes = Bytes.fromUTF8(discriminator.getValue());
 
-				descriminators.add(Bytes.fromUTF8(discriminator.getValue()));
+				descriminators.add(discriminatorBytes);
 			}
 		}
 
