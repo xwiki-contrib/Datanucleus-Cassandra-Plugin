@@ -163,6 +163,14 @@
 			<version>${pelops.version}</version>
 			<type>test-jar</type>
 		</dependency>
+		
+		<dependency>
+			<groupId>mx4j</groupId>
+			<artifactId>mx4j-tools</artifactId>
+			<version>3.0.1</version>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<scm>

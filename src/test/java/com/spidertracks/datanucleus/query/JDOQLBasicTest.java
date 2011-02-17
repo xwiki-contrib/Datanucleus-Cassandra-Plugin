@@ -759,7 +759,7 @@ public class JDOQLBasicTest extends CassandraTest {
 
 	/**
 	 * Tests that when a field is common on 2 subclasses, the correct subclass
-	 * is returned
+	 * is returned.  TODO this is failing.  It seems that cassandra is only returning 1 row for all secondary indexes
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
@@ -796,6 +796,7 @@ public class JDOQLBasicTest extends CassandraTest {
 		trans.commit();
 		pm.close();
 
+		
 		pm = pmf.getPersistenceManager();
 
 		Query query = pm.newQuery(ChildTwo.class);
