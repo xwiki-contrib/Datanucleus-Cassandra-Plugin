@@ -36,7 +36,7 @@ import com.spidertracks.datanucleus.model.BaseEntity;
  */
 @PersistenceCapable(table="InheritanceParent")
 @Inheritance(strategy=InheritanceStrategy.NEW_TABLE)
-@Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="Parent")
+@Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="RecursiveParent")
 public abstract class Parent extends BaseEntity {
 
 	@Persistent

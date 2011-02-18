@@ -17,7 +17,8 @@ Contributors :
  ***********************************************************************/
 package com.spidertracks.datanucleus.query;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.apache.cassandra.thrift.IndexType;
 import org.apache.cassandra.thrift.KsDef;
 import org.apache.commons.codec.binary.Hex;
 import org.datanucleus.exceptions.NucleusDataStoreException;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Cluster;
@@ -51,11 +53,13 @@ import com.spidertracks.datanucleus.utils.ClusterUtils;
  * @author Todd Nine
  * 
  */
+@Ignore
 public class PelopsIndexingTest extends CassandraTest {
 
 	private static final String POOL = "Pool";
 	
-
+	private static final String KEYSPACE = "PelopsKeyspace";
+	
 	private static final String CF = "testingcf";
 
 	private static final String COL1 = "col1";

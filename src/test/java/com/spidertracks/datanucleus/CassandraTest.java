@@ -27,6 +27,7 @@ import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ConsistencyLevel;
 import org.apache.cassandra.thrift.KeyRange;
 import org.apache.cassandra.thrift.SlicePredicate;
+import org.apache.commons.codec.binary.Hex;
 import org.junit.BeforeClass;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Pelops;
@@ -126,5 +127,40 @@ public abstract class CassandraTest {
 
 		} while (results.size() == maxSize);
 
+	}
+	
+	/**
+	 * Print all rows as hex in the cf name
+	 * @param cfName
+	 */
+	protected void printAllRows(String cfName){
+		Selector selector = Pelops.createSelector("TestPool");
+
+		SlicePredicate predicate = Selector.newColumnsPredicateAll(false);
+
+	
+		Bytes lastKey = Bytes.fromByteArray(new byte[] {});
+
+		Map<Bytes, List<Column>> rawResults = null;
+
+		do {
+
+			KeyRange range = new KeyRange();
+			range.setStart_key(lastKey.toByteArray());
+			range.setEnd_key(new byte[] {});
+			range.setCount(1000);
+
+			rawResults = selector.getColumnsFromRows("InheritanceParent", range, predicate,
+					ConsistencyLevel.QUORUM);
+
+			for (Bytes key : rawResults.keySet()) {
+				System.out.println(String.format("Row: %s", new String(Hex.encodeHex(key.toByteArray()))));
+				
+				for(Column col: rawResults.get(key)){
+					System.out.println(String.format("\tColumn: %s ; Value: %s", new String(Hex.encodeHex(col.getName())),  new String(Hex.encodeHex(col.getValue()))));
+				}
+			}
+
+		} while (rawResults.size() == 1000);
 	}
 }

@@ -72,7 +72,7 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 	public void addExpression(IndexExpression expression) {
 		clause.addToExpressions(expression);
 		
-		System.out.println(String.format("Adding clause for name: %s value: %s", new String(Hex.encodeHex(expression.getColumn_name())), new String(Hex.encodeHex(expression.getValue()))));
+//		System.out.println(String.format("Adding clause for name: %s value: %s", new String(Hex.encodeHex(expression.getColumn_name())), new String(Hex.encodeHex(expression.getValue()))));
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 	public void addAll(List<IndexExpression> expressions) {
 		for (IndexExpression expr : expressions) {
 			clause.addToExpressions(expr);
-			System.out.println(String.format("Adding clause for name: %s value: %s", new String(Hex.encodeHex(expr.getColumn_name())), new String(Hex.encodeHex(expr.getValue()))));
+//			System.out.println(String.format("Adding clause for name: %s value: %s", new String(Hex.encodeHex(expr.getColumn_name())), new String(Hex.encodeHex(expr.getValue()))));
 		
 		}
 	}

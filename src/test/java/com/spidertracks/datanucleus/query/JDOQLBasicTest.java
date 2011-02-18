@@ -19,7 +19,6 @@ Contributors :
 package com.spidertracks.datanucleus.query;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -27,26 +26,17 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.jdo.JDODataStoreException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
-import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ConsistencyLevel;
-import org.apache.cassandra.thrift.KeyRange;
-import org.apache.cassandra.thrift.SlicePredicate;
-import org.apache.commons.codec.binary.Hex;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.scale7.cassandra.pelops.Bytes;
-import org.scale7.cassandra.pelops.Pelops;
-import org.scale7.cassandra.pelops.RowDeletor;
-import org.scale7.cassandra.pelops.Selector;
 
 import com.spidertracks.datanucleus.CassandraTest;
 import com.spidertracks.datanucleus.basic.inheritance.casefour.Search;
@@ -77,7 +67,7 @@ public class JDOQLBasicTest extends CassandraTest {
 	private Person p4;
 	private Person p5;
 
-//	@Before
+	@Before
 	public void setUp() throws Exception {
 		
 	
@@ -178,7 +168,7 @@ public class JDOQLBasicTest extends CassandraTest {
 
 	}
 
-//	@After
+	@After
 	public void tearDown() throws Exception {
 		Transaction tx = setupPm.currentTransaction();
 		tx.begin();
@@ -788,27 +778,33 @@ public class JDOQLBasicTest extends CassandraTest {
 
 		Child childOne = new Child();
 		childOne.setParentField("test");
-		// childOne.setParentField("parent1");
 
 		ChildTwo childTwo = new ChildTwo();
-		childOne.setParentField("test");
-		// childOne.setParentField("parent1");
+		childTwo.setParentField("test");
 
 		GrandChildTwoOne gcTwoOne = new GrandChildTwoOne();
 		gcTwoOne.setParentField("test");
-		// gcTwoOne.setParentField("parent2");
-		// gcTwoOne.setGrandChildOneField("gc21");
 
 		GrandChildTwoTwo gcTwoTwo = new GrandChildTwoTwo();
 		gcTwoTwo.setParentField("test");
-		// gcTwoOne.setParentField("parent2");
-		// gcTwoOne.setGrandChildOneField("gc22");
 
 		pm.makePersistent(childOne);
+		
+		printAllRows("RecursiveParent");
+		
 		pm.makePersistent(childTwo);
+		
+		printAllRows("RecursiveParent");
+		
 		pm.makePersistent(gcTwoOne);
+		
+		printAllRows("RecursiveParent");
+		
 		pm.makePersistent(gcTwoTwo);
 
+		printAllRows("RecursiveParent");
+		
+		
 		trans.commit();
 		pm.close();
 
@@ -818,34 +814,7 @@ public class JDOQLBasicTest extends CassandraTest {
 		//verify the data in storage.
 		
 
-		Selector selector = Pelops.createSelector("TestPool");
-
-		SlicePredicate predicate = Selector.newColumnsPredicateAll(false);
-
 	
-		Bytes lastKey = Bytes.fromByteArray(new byte[] {});
-
-		Map<Bytes, List<Column>> rawResults = null;
-
-		do {
-
-			KeyRange range = new KeyRange();
-			range.setStart_key(lastKey.toByteArray());
-			range.setEnd_key(new byte[] {});
-			range.setCount(1000);
-
-			rawResults = selector.getColumnsFromRows("InheritanceParent", range, predicate,
-					ConsistencyLevel.QUORUM);
-
-			for (Bytes key : rawResults.keySet()) {
-				System.out.println(String.format("Row: %s", new String(Hex.encodeHex(key.toByteArray()))));
-				
-				for(Column col: rawResults.get(key)){
-					System.out.println(String.format("\tColumn: %s ; Value: %s", new String(Hex.encodeHex(col.getName())),  new String(Hex.encodeHex(col.getValue()))));
-				}
-			}
-
-		} while (rawResults.size() == 1000);
 		
 
 		Query query = pm.newQuery(ChildTwo.class);
