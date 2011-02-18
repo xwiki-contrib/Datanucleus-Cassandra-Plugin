@@ -68,6 +68,8 @@ public class JDOQLBasicTest extends CassandraTest {
 
 	@Before
 	public void setUp() throws Exception {
+		
+		deleteAllRows("PrimitiveObject");
 
 		setupPm = pmf.getPersistenceManager();
 
