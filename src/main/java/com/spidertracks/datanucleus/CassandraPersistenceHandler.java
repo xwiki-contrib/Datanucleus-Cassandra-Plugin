@@ -289,7 +289,9 @@ public class CassandraPersistenceHandler extends AbstractPersistenceHandler {
 
 			String value = discriminator.getValue();
 			
-			mutator.writeColumn(columnFamily, key, mutator.newColumn(colName, value));
+			Bytes byteValue = byteContext.getBytes(value);
+			
+			mutator.writeColumn(columnFamily, key, mutator.newColumn(colName, byteValue));
 		}
 
 		try {

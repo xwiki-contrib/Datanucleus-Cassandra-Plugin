@@ -19,6 +19,7 @@ package com.spidertracks.datanucleus.basic.inheritance.recursive;
 
 import javax.jdo.annotations.Discriminator;
 import javax.jdo.annotations.DiscriminatorStrategy;
+import javax.jdo.annotations.Index;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -39,6 +40,7 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 public abstract class Parent extends BaseEntity {
 
 	@Persistent
+	@Index
 	private String parentField;
 
 	/**

@@ -181,7 +181,7 @@ public class JDOQLQuery extends AbstractJDOQLQuery {
 			if (acmd.hasDiscriminatorStrategy()) {
 				List<Bytes> descriminatorValues = MetaDataUtils
 						.getDescriminatorValues(acmd.getFullClassName(), clr,
-								ec);
+								ec, byteContext);
 
 				opTree = opTree.optimizeDescriminator(descriminiatorCol,
 						descriminatorValues);
@@ -246,8 +246,8 @@ public class JDOQLQuery extends AbstractJDOQLQuery {
 
 			if (descriminatorColumn != null) {
 
-				String descriminatorValue = idBytes.getColumnValue(
-						descriminatorColumn).toUTF8();
+				String descriminatorValue = byteConverter.getString(idBytes.getColumnValue(
+						descriminatorColumn));
 
 				String className = org.datanucleus.metadata.MetaDataUtils
 						.getClassNameFromDiscriminatorValue(descriminatorValue,

@@ -19,7 +19,6 @@ package com.spidertracks.datanucleus.basic.inheritance.recursive;
 
 import javax.jdo.annotations.Discriminator;
 import javax.jdo.annotations.DiscriminatorStrategy;
-import javax.jdo.annotations.Index;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -37,20 +36,19 @@ import javax.jdo.annotations.Persistent;
 public class Child extends Parent {
 
 	@Persistent
-	@Index(name="ChildOne")
-	private String childField;
+	private String childOneField;
 
 	/**
 	 * @return the childField
 	 */
-	public String getChildField() {
-		return childField;
+	public String getChildOneField() {
+		return childOneField;
 	}
 
 	/**
 	 * @param childField the childField to set
 	 */
-	public void setChildField(String childField) {
-		this.childField = childField;
+	public void setChildOneField(String childField) {
+		this.childOneField = childField;
 	}
 }

@@ -7,7 +7,7 @@
 	<properties>
 		<datanucleus.version>2.1.1</datanucleus.version>
 		<datanucleus.plugin.version>2.1.0-release</datanucleus.plugin.version>
-		<cassandra.version>0.7.1</cassandra.version>
+		<cassandra.version>0.7.2</cassandra.version>
 		<pelops.version>1.0-RC2-0.7.0-st-SNAPSHOT</pelops.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<st.deploy.dir>file://${basedir}/../m2repo</st.deploy.dir>

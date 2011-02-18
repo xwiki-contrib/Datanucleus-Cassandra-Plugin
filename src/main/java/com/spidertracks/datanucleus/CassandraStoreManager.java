@@ -344,7 +344,7 @@ public class CassandraStoreManager extends AbstractStoreManager {
 
 		}
 
-		String descriminatorValue = Bytes.toUTF8(columns.get(0).getValue());
+		String descriminatorValue = byteConverterContext.getString(Bytes.fromByteArray(columns.get(0).getValue()));
 
 		String className = org.datanucleus.metadata.MetaDataUtils
 				.getClassNameFromDiscriminatorValue(descriminatorValue,

@@ -37,7 +37,7 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 public abstract class Search extends BaseEntity {
  
 	@Persistent
-	@Index(name="Search_SearchField")
+	@Index(name="SearchField")
 	private String searchField;
 
 	/**

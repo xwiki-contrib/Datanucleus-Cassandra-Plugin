@@ -40,6 +40,8 @@ import org.datanucleus.store.ExecutionContext;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Selector;
 
+import com.spidertracks.datanucleus.convert.ByteConverterContext;
+
 /**
  * Utility class to convert instance data to Cassandra columns and data types
  * 
@@ -322,7 +324,7 @@ public class MetaDataUtils {
 	 * @return
 	 */
 	public static List<Bytes> getDescriminatorValues(String className,
-			ClassLoaderResolver clr, ExecutionContext ec) {
+			ClassLoaderResolver clr, ExecutionContext ec, ByteConverterContext converter) {
 
 		List<Bytes> descriminators = classToSubclasses.get(className);
 
@@ -340,7 +342,9 @@ public class MetaDataUtils {
 		DiscriminatorMetaData discriminator = metaData
 				.getDiscriminatorMetaData();
 
-		descriminators.add(Bytes.fromUTF8(discriminator.getValue()));
+		Bytes value = converter.getBytes(discriminator.getValue());
+		
+		descriminators.add(value);
 
 		String[] subClasses = mdm.getSubclassesForClass(className, true);
 
@@ -349,11 +353,10 @@ public class MetaDataUtils {
 			for (String subclassName : subClasses) {
 				metaData = mdm.getMetaDataForClass(subclassName, clr);
 
-				discriminator = metaData.getDiscriminatorMetaData();
 				
-				Bytes discriminatorBytes = Bytes.fromUTF8(discriminator.getValue());
+				value = converter.getBytes(metaData.getDiscriminatorMetaData().getValue());
 
-				descriminators.add(discriminatorBytes);
+				descriminators.add(value);
 			}
 		}
 

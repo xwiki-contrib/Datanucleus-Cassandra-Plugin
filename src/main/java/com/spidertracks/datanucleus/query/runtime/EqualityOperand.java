@@ -35,8 +35,6 @@ import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Pelops;
 import org.scale7.cassandra.pelops.Selector;
 
-import com.spidertracks.datanucleus.client.Consistency;
-
 /**
  * @author Todd Nine
  * 
@@ -144,7 +142,7 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 
 			leaf.setColumn_name(descriminatorColumnValue.getBytes());
 
-			leaf.setValue(possibleValues.get(0).toByteArray());
+			leaf.setValue(possibleValues.get(0).getBytes());
 
 			leaf.setOp(IndexOperator.EQ);
 			

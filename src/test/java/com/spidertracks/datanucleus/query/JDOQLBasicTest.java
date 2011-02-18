@@ -27,16 +27,26 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.JDODataStoreException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
+import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.ConsistencyLevel;
+import org.apache.cassandra.thrift.KeyRange;
+import org.apache.cassandra.thrift.SlicePredicate;
+import org.apache.commons.codec.binary.Hex;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.scale7.cassandra.pelops.Bytes;
+import org.scale7.cassandra.pelops.Pelops;
+import org.scale7.cassandra.pelops.RowDeletor;
+import org.scale7.cassandra.pelops.Selector;
 
 import com.spidertracks.datanucleus.CassandraTest;
 import com.spidertracks.datanucleus.basic.inheritance.casefour.Search;
@@ -50,6 +60,7 @@ import com.spidertracks.datanucleus.basic.inheritance.recursive.GrandChildTwoTwo
 import com.spidertracks.datanucleus.basic.model.InvitationToken;
 import com.spidertracks.datanucleus.basic.model.Person;
 import com.spidertracks.datanucleus.basic.model.PrimitiveObject;
+import com.spidertracks.datanucleus.client.Consistency;
 
 public class JDOQLBasicTest extends CassandraTest {
 
@@ -66,11 +77,10 @@ public class JDOQLBasicTest extends CassandraTest {
 	private Person p4;
 	private Person p5;
 
-	@Before
+//	@Before
 	public void setUp() throws Exception {
 		
-		deleteAllRows("PrimitiveObject");
-
+	
 		setupPm = pmf.getPersistenceManager();
 
 		Transaction tx = setupPm.currentTransaction();
@@ -168,7 +178,7 @@ public class JDOQLBasicTest extends CassandraTest {
 
 	}
 
-	@After
+//	@After
 	public void tearDown() throws Exception {
 		Transaction tx = setupPm.currentTransaction();
 		tx.begin();
@@ -680,7 +690,6 @@ public class JDOQLBasicTest extends CassandraTest {
 	@Test
 	public void testSharedFieldSubclass() {
 		
-		deleteAllRows("Search");
 		
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction trans = pm.currentTransaction();
@@ -771,27 +780,27 @@ public class JDOQLBasicTest extends CassandraTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testMultipleChildren() throws InterruptedException {
-		deleteAllRows("InheritanceParent");
+		Consistency.setDefault(ConsistencyLevel.QUORUM);
 		
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction trans = pm.currentTransaction();
 		trans.begin();
 
 		Child childOne = new Child();
-		childOne.setChildField("child1");
+		childOne.setParentField("test");
 		// childOne.setParentField("parent1");
 
 		ChildTwo childTwo = new ChildTwo();
-		childOne.setChildField("child2");
+		childOne.setParentField("test");
 		// childOne.setParentField("parent1");
 
 		GrandChildTwoOne gcTwoOne = new GrandChildTwoOne();
-		gcTwoOne.setChildField("child2");
+		gcTwoOne.setParentField("test");
 		// gcTwoOne.setParentField("parent2");
 		// gcTwoOne.setGrandChildOneField("gc21");
 
 		GrandChildTwoTwo gcTwoTwo = new GrandChildTwoTwo();
-		gcTwoOne.setChildField("child2");
+		gcTwoTwo.setParentField("test");
 		// gcTwoOne.setParentField("parent2");
 		// gcTwoOne.setGrandChildOneField("gc22");
 
@@ -804,21 +813,55 @@ public class JDOQLBasicTest extends CassandraTest {
 		pm.close();
 
 		pm = pmf.getPersistenceManager();
+		
+		
+		//verify the data in storage.
+		
+
+		Selector selector = Pelops.createSelector("TestPool");
+
+		SlicePredicate predicate = Selector.newColumnsPredicateAll(false);
+
+	
+		Bytes lastKey = Bytes.fromByteArray(new byte[] {});
+
+		Map<Bytes, List<Column>> rawResults = null;
+
+		do {
+
+			KeyRange range = new KeyRange();
+			range.setStart_key(lastKey.toByteArray());
+			range.setEnd_key(new byte[] {});
+			range.setCount(1000);
+
+			rawResults = selector.getColumnsFromRows("InheritanceParent", range, predicate,
+					ConsistencyLevel.QUORUM);
+
+			for (Bytes key : rawResults.keySet()) {
+				System.out.println(String.format("Row: %s", new String(Hex.encodeHex(key.toByteArray()))));
+				
+				for(Column col: rawResults.get(key)){
+					System.out.println(String.format("\tColumn: %s ; Value: %s", new String(Hex.encodeHex(col.getName())),  new String(Hex.encodeHex(col.getValue()))));
+				}
+			}
+
+		} while (rawResults.size() == 1000);
+		
 
 		Query query = pm.newQuery(ChildTwo.class);
-		query.setFilter("childField == :searchVal");
+		query.setFilter("parentField == :searchVal");
 		query.setIgnoreCache(true);
 
 		// now query on the subclass
-		List<ChildTwo> resultsOne = (List<ChildTwo>) query.execute("child2");
+		List<ChildTwo> results = (List<ChildTwo>) query.execute("test");
 		
 //		Thread.sleep(100000 * 100000);
 
-		assertEquals(3, resultsOne.size());
+		assertEquals(3, results.size());
 
-		assertTrue(resultsOne.contains(childTwo));
-		assertTrue(resultsOne.contains(gcTwoOne));
-		assertTrue(resultsOne.contains(gcTwoTwo));
+		assertTrue(results.contains(childTwo));
+		assertTrue(results.contains(gcTwoOne));
+		assertTrue(results.contains(gcTwoTwo));
 
 	
 
