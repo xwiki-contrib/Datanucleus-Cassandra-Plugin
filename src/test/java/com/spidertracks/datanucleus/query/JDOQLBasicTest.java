@@ -69,119 +69,119 @@ public class JDOQLBasicTest extends CassandraTest {
 	@Before
 	public void setUp() throws Exception {
 
-//		setupPm = pmf.getPersistenceManager();
-//
-//		Transaction tx = setupPm.currentTransaction();
-//		tx.begin();
-//
-//		object1 = new PrimitiveObject();
-//		object1.setTestByte((byte) 0xf1);
-//		object1.setTestBool(true);
-//		object1.setTestChar('1');
-//		object1.setTestDouble(100.10);
-//		object1.setTestFloat((float) 100.10);
-//		object1.setTestInt(10);
-//		object1.setTestLong(100);
-//		object1.setTestShort((short) 1);
-//		object1.setTestString("one");
-//
-//		setupPm.makePersistent(object1);
-//
-//		object2 = new PrimitiveObject();
-//		object2.setTestByte((byte) 0xf1);
-//		object2.setTestBool(true);
-//		object2.setTestChar('2');
-//		object2.setTestDouble(200.20);
-//		object2.setTestFloat((float) 200.20);
-//		object2.setTestInt(20);
-//		object2.setTestLong(200);
-//		object2.setTestShort((short) 2);
-//		object2.setTestString("two");
-//
-//		setupPm.makePersistent(object2);
-//
-//		object3 = new PrimitiveObject();
-//		object3.setTestByte((byte) 0xf1);
-//		object3.setTestBool(true);
-//		object3.setTestChar('3');
-//		object3.setTestDouble(300.30);
-//		object3.setTestFloat((float) 300.30);
-//		object3.setTestInt(30);
-//		object3.setTestLong(300);
-//		object3.setTestShort((short) 3);
-//		object3.setTestString("three");
-//
-//		setupPm.makePersistent(object3);
-//
-//		Calendar cal = Calendar.getInstance();
-//		cal.add(Calendar.DATE, -20);
-//
-//		p1 = new Person();
-//		p1.setEmail("p1@test.com");
-//		p1.setFirstName("firstName1");
-//		p1.setLastName("lastName1");
-//		p1.setLastLogin(cal.getTime());
-//
-//		cal.add(Calendar.DATE, 2);
-//
-//		p2 = new Person();
-//		p2.setEmail("p2@test.com");
-//		p2.setFirstName("firstName1");
-//		p2.setLastName("secondName1");
-//		p2.setLastLogin(cal.getTime());
-//
-//		cal.add(Calendar.DATE, 2);
-//
-//		p3 = new Person();
-//		p3.setEmail("p3@test.com");
-//		p3.setFirstName("firstName1");
-//		p3.setLastName("secondName2");
-//		p3.setLastLogin(cal.getTime());
-//
-//		cal.add(Calendar.DATE, 2);
-//
-//		p4 = new Person();
-//		p4.setEmail("p4@test.com");
-//		p4.setFirstName("firstName2");
-//		p4.setLastName("secondName2");
-//		p4.setLastLogin(cal.getTime());
-//
-//		cal.add(Calendar.DATE, 2);
-//
-//		p5 = new Person();
-//		p5.setEmail("p5@test.com");
-//		p5.setFirstName("firstName3");
-//		p5.setLastName("secondName3");
-//		p5.setLastLogin(cal.getTime());
-//
-//		// now persist everything
-//
-//		setupPm.makePersistent(p1);
-//		setupPm.makePersistent(p2);
-//		setupPm.makePersistent(p3);
-//		setupPm.makePersistent(p4);
-//		setupPm.makePersistent(p5);
-//
-//		tx.commit();
+		setupPm = pmf.getPersistenceManager();
+
+		Transaction tx = setupPm.currentTransaction();
+		tx.begin();
+
+		object1 = new PrimitiveObject();
+		object1.setTestByte((byte) 0xf1);
+		object1.setTestBool(true);
+		object1.setTestChar('1');
+		object1.setTestDouble(100.10);
+		object1.setTestFloat((float) 100.10);
+		object1.setTestInt(10);
+		object1.setTestLong(100);
+		object1.setTestShort((short) 1);
+		object1.setTestString("one");
+
+		setupPm.makePersistent(object1);
+
+		object2 = new PrimitiveObject();
+		object2.setTestByte((byte) 0xf1);
+		object2.setTestBool(true);
+		object2.setTestChar('2');
+		object2.setTestDouble(200.20);
+		object2.setTestFloat((float) 200.20);
+		object2.setTestInt(20);
+		object2.setTestLong(200);
+		object2.setTestShort((short) 2);
+		object2.setTestString("two");
+
+		setupPm.makePersistent(object2);
+
+		object3 = new PrimitiveObject();
+		object3.setTestByte((byte) 0xf1);
+		object3.setTestBool(true);
+		object3.setTestChar('3');
+		object3.setTestDouble(300.30);
+		object3.setTestFloat((float) 300.30);
+		object3.setTestInt(30);
+		object3.setTestLong(300);
+		object3.setTestShort((short) 3);
+		object3.setTestString("three");
+
+		setupPm.makePersistent(object3);
+
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -20);
+
+		p1 = new Person();
+		p1.setEmail("p1@test.com");
+		p1.setFirstName("firstName1");
+		p1.setLastName("lastName1");
+		p1.setLastLogin(cal.getTime());
+
+		cal.add(Calendar.DATE, 2);
+
+		p2 = new Person();
+		p2.setEmail("p2@test.com");
+		p2.setFirstName("firstName1");
+		p2.setLastName("secondName1");
+		p2.setLastLogin(cal.getTime());
+
+		cal.add(Calendar.DATE, 2);
+
+		p3 = new Person();
+		p3.setEmail("p3@test.com");
+		p3.setFirstName("firstName1");
+		p3.setLastName("secondName2");
+		p3.setLastLogin(cal.getTime());
+
+		cal.add(Calendar.DATE, 2);
+
+		p4 = new Person();
+		p4.setEmail("p4@test.com");
+		p4.setFirstName("firstName2");
+		p4.setLastName("secondName2");
+		p4.setLastLogin(cal.getTime());
+
+		cal.add(Calendar.DATE, 2);
+
+		p5 = new Person();
+		p5.setEmail("p5@test.com");
+		p5.setFirstName("firstName3");
+		p5.setLastName("secondName3");
+		p5.setLastLogin(cal.getTime());
+
+		// now persist everything
+
+		setupPm.makePersistent(p1);
+		setupPm.makePersistent(p2);
+		setupPm.makePersistent(p3);
+		setupPm.makePersistent(p4);
+		setupPm.makePersistent(p5);
+
+		tx.commit();
 
 	}
 
 	@After
 	public void tearDown() throws Exception {
-//		Transaction tx = setupPm.currentTransaction();
-//		tx.begin();
-//
-//		setupPm.deletePersistent(object1);
-//		setupPm.deletePersistent(object2);
-//		setupPm.deletePersistent(object3);
-//
-//		setupPm.deletePersistent(p1);
-//		setupPm.deletePersistent(p2);
-//		setupPm.deletePersistent(p3);
-//		setupPm.deletePersistent(p4);
-//		setupPm.deletePersistent(p5);
-//
-//		tx.commit();
+		Transaction tx = setupPm.currentTransaction();
+		tx.begin();
+
+		setupPm.deletePersistent(object1);
+		setupPm.deletePersistent(object2);
+		setupPm.deletePersistent(object3);
+
+		setupPm.deletePersistent(p1);
+		setupPm.deletePersistent(p2);
+		setupPm.deletePersistent(p3);
+		setupPm.deletePersistent(p4);
+		setupPm.deletePersistent(p5);
+
+		tx.commit();
 
 	}
 
@@ -365,7 +365,7 @@ public class JDOQLBasicTest extends CassandraTest {
 
 		List<InvitationToken> results = (List<InvitationToken>) pm.newQuery(
 				InvitationToken.class).execute();
-		
+
 		assertTrue(results.contains(token));
 
 	}
@@ -677,6 +677,9 @@ public class JDOQLBasicTest extends CassandraTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testSharedFieldSubclass() {
+		
+		deleteAllRows("Search");
+		
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction trans = pm.currentTransaction();
 		trans.begin();
@@ -755,39 +758,41 @@ public class JDOQLBasicTest extends CassandraTest {
 		assertTrue(results.contains(three));
 
 	}
-	
 
 	/**
 	 * Tests that when a field is common on 2 subclasses, the correct subclass
-	 * is returned.  TODO this is failing.  It seems that cassandra is only returning 1 row for all secondary indexes
+	 * is returned. TODO this is failing. It seems that cassandra is only
+	 * returning 1 row for all secondary indexes
+	 * 
+	 * @throws InterruptedException
 	 */
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testMultipleChildren() {
+	public void testMultipleChildren() throws InterruptedException {
+		deleteAllRows("InheritanceParent");
+		
 		PersistenceManager pm = pmf.getPersistenceManager();
 		Transaction trans = pm.currentTransaction();
 		trans.begin();
 
 		Child childOne = new Child();
 		childOne.setChildField("child1");
-		childOne.setParentField("parent1");
-		
+		// childOne.setParentField("parent1");
 
 		ChildTwo childTwo = new ChildTwo();
 		childOne.setChildField("child2");
-		childOne.setParentField("parent1");
+		// childOne.setParentField("parent1");
 
 		GrandChildTwoOne gcTwoOne = new GrandChildTwoOne();
 		gcTwoOne.setChildField("child2");
-		gcTwoOne.setParentField("parent2");
-		gcTwoOne.setGrandChildOneField("gc21");
-		
+		// gcTwoOne.setParentField("parent2");
+		// gcTwoOne.setGrandChildOneField("gc21");
+
 		GrandChildTwoTwo gcTwoTwo = new GrandChildTwoTwo();
 		gcTwoOne.setChildField("child2");
-		gcTwoOne.setParentField("parent2");
-		gcTwoOne.setGrandChildOneField("gc22");
-		
-		
+		// gcTwoOne.setParentField("parent2");
+		// gcTwoOne.setGrandChildOneField("gc22");
+
 		pm.makePersistent(childOne);
 		pm.makePersistent(childTwo);
 		pm.makePersistent(gcTwoOne);
@@ -796,7 +801,6 @@ public class JDOQLBasicTest extends CassandraTest {
 		trans.commit();
 		pm.close();
 
-		
 		pm = pmf.getPersistenceManager();
 
 		Query query = pm.newQuery(ChildTwo.class);
@@ -805,6 +809,8 @@ public class JDOQLBasicTest extends CassandraTest {
 
 		// now query on the subclass
 		List<ChildTwo> resultsOne = (List<ChildTwo>) query.execute("child2");
+		
+//		Thread.sleep(100000 * 100000);
 
 		assertEquals(3, resultsOne.size());
 
@@ -812,7 +818,7 @@ public class JDOQLBasicTest extends CassandraTest {
 		assertTrue(resultsOne.contains(gcTwoOne));
 		assertTrue(resultsOne.contains(gcTwoTwo));
 
-		
+	
 
 	}
 

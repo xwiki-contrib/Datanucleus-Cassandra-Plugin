@@ -33,7 +33,7 @@ import com.spidertracks.datanucleus.model.BaseEntity;
  * @author Todd Nine
  *
  */
-@PersistenceCapable(table="Parent")
+@PersistenceCapable(table="InheritanceParent")
 @Inheritance(strategy=InheritanceStrategy.NEW_TABLE)
 @Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="Parent")
 public abstract class Parent extends BaseEntity {

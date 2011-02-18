@@ -32,6 +32,7 @@ import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.IndexOperator;
 import org.apache.cassandra.thrift.IndexType;
 import org.apache.cassandra.thrift.KsDef;
+import org.apache.commons.codec.binary.Hex;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.junit.Test;
 import org.scale7.cassandra.pelops.Bytes;
@@ -54,7 +55,6 @@ public class PelopsIndexingTest extends CassandraTest {
 
 	private static final String POOL = "Pool";
 	
-	private static final String KEYSPACE = "testKeyspace";
 
 	private static final String CF = "testingcf";
 
@@ -67,7 +67,7 @@ public class PelopsIndexingTest extends CassandraTest {
 	private static final String COL2_INDEX = COL2 + "_index";
 	
 	@Test
-	public void IndexCreationAndQuery() throws Exception {
+	public void indexCreationAndQuery() throws Exception {
 		Cluster cluster = new Cluster("localhost", 19160);
 
 		KeyspaceManager keyspaceManager = new KeyspaceManager(
@@ -235,12 +235,32 @@ public class PelopsIndexingTest extends CassandraTest {
 		
 		assertEquals(col2Row2, Bytes.fromByteArray(cols.get(0).getValue())) ;
 	
-	
-		
-		
-		
 		
 		
 
 	}
+	
+	
+	@Test
+	public void getAll() throws Exception {
+		Cluster cluster = new Cluster("localhost", 9160);
+		
+		Pelops.addPool(POOL, cluster, KEYSPACE);
+		
+		Selector selector = Pelops.createSelector(POOL);
+		
+		Map<Bytes, List<Column>> values = selector.getColumnsFromRows("Parent", Selector.newKeyRange(Bytes.EMPTY, Bytes.EMPTY, 100), Selector.newColumnsPredicateAll(false), ConsistencyLevel.QUORUM);
+		
+		
+		for(Bytes key: values.keySet()){
+			System.out.println(String.format("Key: %s", new String(Hex.encodeHex(key.toByteArray()))));
+			
+			
+			for(Column col: values.get(key)){
+				System.out.println(String.format("\t name: %s value: %s", new String(Hex.encodeHex(col.getName())), new String(Hex.encodeHex(col.getValue()))));
+			}
+			
+		}
+	}
+
 }

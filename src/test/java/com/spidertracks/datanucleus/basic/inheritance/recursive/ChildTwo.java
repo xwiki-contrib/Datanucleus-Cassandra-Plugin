@@ -37,7 +37,7 @@ import javax.jdo.annotations.Persistent;
 public class ChildTwo extends Parent {
 
 	@Persistent
-	@Index(name="ChildTwo_ChildIndex")
+	@Index(name="ChildTwo")
 	private String childField;
 
 	/**

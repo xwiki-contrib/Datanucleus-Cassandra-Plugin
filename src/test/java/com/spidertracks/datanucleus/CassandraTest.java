@@ -17,10 +17,21 @@ Contributors :
  ***********************************************************************/
 package com.spidertracks.datanucleus;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 
+import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.ConsistencyLevel;
+import org.apache.cassandra.thrift.KeyRange;
+import org.apache.cassandra.thrift.SlicePredicate;
 import org.junit.BeforeClass;
+import org.scale7.cassandra.pelops.Bytes;
+import org.scale7.cassandra.pelops.Pelops;
+import org.scale7.cassandra.pelops.RowDeletor;
+import org.scale7.cassandra.pelops.Selector;
 import org.scale7.cassandra.pelops.support.EmbeddedCassandraServer;
 
 /**
@@ -36,7 +47,7 @@ public abstract class CassandraTest {
 	public static String BASE_DIRECTORY = "target/cassandra";
 
 	public static final String KEYSPACE = "TestingKeyspace";
-	
+
 	protected static PersistenceManagerFactory pmf;
 
 	/**
@@ -76,5 +87,44 @@ public abstract class CassandraTest {
 		public PersistenceManagerFactory getFactory() {
 			return pmf;
 		}
+	}
+
+	/**
+	 * Delete all rows in the CF
+	 * 
+	 * @param cfName
+	 */
+	protected void deleteAllRows(String cfName) {
+
+		int maxSize = 100;
+
+		Selector selector = Pelops.createSelector("TestPool");
+
+		SlicePredicate predicate = Selector.newColumnsPredicateAll(false);
+
+		RowDeletor deletor = Pelops.createRowDeletor("TestPool",
+				System.nanoTime() / 1000);
+
+		Bytes lastKey = Bytes.fromByteArray(new byte[] {});
+
+		Map<Bytes, List<Column>> results = null;
+
+		do {
+
+			KeyRange range = new KeyRange();
+			range.setStart_key(lastKey.toByteArray());
+			range.setEnd_key(new byte[] {});
+			range.setCount(maxSize);
+
+			results = selector.getColumnsFromRows(cfName, range, predicate,
+					ConsistencyLevel.QUORUM);
+
+			for (Bytes key : results.keySet()) {
+				deletor.deleteRow(cfName, key, ConsistencyLevel.QUORUM);
+				lastKey = key;
+			}
+
+		} while (results.size() == maxSize);
+
 	}
 }

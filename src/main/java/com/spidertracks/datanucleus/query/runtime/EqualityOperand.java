@@ -17,6 +17,7 @@ Contributors :
  ***********************************************************************/
 package com.spidertracks.datanucleus.query.runtime;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +25,11 @@ import java.util.Map.Entry;
 import java.util.Stack;
 
 import org.apache.cassandra.thrift.Column;
+import org.apache.cassandra.thrift.ConsistencyLevel;
 import org.apache.cassandra.thrift.IndexClause;
 import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.IndexOperator;
+import org.apache.commons.codec.binary.Hex;
 import org.datanucleus.exceptions.NucleusException;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Pelops;
@@ -46,6 +49,7 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 		clause = new IndexClause();
 		clause.setStart_key(new byte[] {});
 		clause.setCount(count);
+		clause.setExpressions(new ArrayList<IndexExpression>());//TODO Remove
 		candidateKeys = new LinkedHashSet<Columns>();
 	}
 
@@ -69,6 +73,8 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 	 */
 	public void addExpression(IndexExpression expression) {
 		clause.addToExpressions(expression);
+		
+		System.out.println(String.format("Adding clause for name: %s value: %s", new String(Hex.encodeHex(expression.getColumn_name())), new String(Hex.encodeHex(expression.getValue()))));
 	}
 
 	/**
@@ -79,6 +85,8 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 	public void addAll(List<IndexExpression> expressions) {
 		for (IndexExpression expr : expressions) {
 			clause.addToExpressions(expr);
+			System.out.println(String.format("Adding clause for name: %s value: %s", new String(Hex.encodeHex(expr.getColumn_name())), new String(Hex.encodeHex(expr.getValue()))));
+		
 		}
 	}
 
@@ -94,7 +102,7 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 			Map<Bytes, List<Column>> results = Pelops.createSelector(poolName)
 					.getIndexedColumns(cfName, clause,
 							Selector.newColumnsPredicate(columns),
-							Consistency.get());
+							ConsistencyLevel.QUORUM);
 			Columns cols;
 
 			for (Entry<Bytes, List<Column>> entry : results.entrySet()) {

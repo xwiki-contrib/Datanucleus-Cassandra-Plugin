@@ -26,6 +26,7 @@ import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 import javax.jdo.Transaction;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import com.spidertracks.datanucleus.CassandraTest;
@@ -49,6 +50,9 @@ import com.spidertracks.datanucleus.basic.inheritance.casetwo.GrandChildTwoTwo;
  */
 public class InheritanceTest extends CassandraTest {
 
+	
+	
+	
 	/**
 	 * Test retrieval works with subclass and superclass mix
 	 * 
@@ -187,6 +191,8 @@ public class InheritanceTest extends CassandraTest {
 	@Test
 	public void testQueryChildReturnsSuperQuery() throws Exception {
 
+		super.deleteAllRows("ParentThree");
+		
 		GrandChildThreeOne first = new GrandChildThreeOne();
 		first.setChildField("cf-gc1");
 		first.setGrandChildOneField("gcf-gc1");

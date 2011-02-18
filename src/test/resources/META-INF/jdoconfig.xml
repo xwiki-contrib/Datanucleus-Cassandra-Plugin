@@ -8,7 +8,7 @@
 		<property name="javax.jdo.PersistenceManagerFactoryClass"
 			value="org.datanucleus.jdo.JDOPersistenceManagerFactory" />
 		<property name="javax.jdo.option.ConnectionURL"
-			value="cassandra:TestPool:true:false:10000:TestingKeyspace:19160:127.0.0.1" />
+			value="cassandra:TestPool:true:false:10000:TestingKeyspace:9160:127.0.0.1" />
 		<property name="javax.jdo.option.Optimistic" value="false" />
 
 		<!-- auto creates keyspace and CF. Not recommended for production environments 
