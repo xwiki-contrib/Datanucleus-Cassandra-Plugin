@@ -34,6 +34,8 @@ import org.datanucleus.exceptions.NucleusException;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Pelops;
 import org.scale7.cassandra.pelops.Selector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Todd Nine
@@ -41,6 +43,8 @@ import org.scale7.cassandra.pelops.Selector;
  */
 public class EqualityOperand extends Operand implements CompressableOperand {
 
+	private static final Logger logger = LoggerFactory.getLogger(EqualityOperand.class);
+	
 	private IndexClause clause;
 
 	public EqualityOperand(int count) {
@@ -72,7 +76,9 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 	public void addExpression(IndexExpression expression) {
 		clause.addToExpressions(expression);
 		
-//		System.out.println(String.format("Adding clause for name: %s value: %s", new String(Hex.encodeHex(expression.getColumn_name())), new String(Hex.encodeHex(expression.getValue()))));
+		if(logger.isDebugEnabled()){
+			logger.debug("Adding clause for name: {} value: {}", new String(Hex.encodeHex(expression.getColumn_name())), new String(Hex.encodeHex(expression.getValue())));
+		}
 	}
 
 	/**
@@ -83,7 +89,10 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 	public void addAll(List<IndexExpression> expressions) {
 		for (IndexExpression expr : expressions) {
 			clause.addToExpressions(expr);
-//			System.out.println(String.format("Adding clause for name: %s value: %s", new String(Hex.encodeHex(expr.getColumn_name())), new String(Hex.encodeHex(expr.getValue()))));
+			
+			if(logger.isDebugEnabled()){
+				logger.debug("Adding clause for name: {} value: {}", new String(Hex.encodeHex(expr.getColumn_name())), new String(Hex.encodeHex(expr.getValue())));
+			}
 		
 		}
 	}

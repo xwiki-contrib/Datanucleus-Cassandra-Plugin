@@ -120,6 +120,26 @@ Storing the subclass in its own table requires O(n+1) reads where n is the numbe
 1. Recursively read all CFs in the inheritance structure until we find a result O(n)
 2. Read the columns and populate the object O(1) 
 
+KNOWN ISSUE!!
+Querying requires a full inheritance tree at execution time.  This class is used to determine subclasses.
+
+http://www.datanucleus.org/javadocs/core/latest/org/datanucleus/metadata/MetaDataManager.html#getSubclassesForClass(java.lang.String, boolean)
+
+This class is only aware of PC objects that have been loaded at runtime.  For instance, if you have the following class structure.
+
+-> = extends
+A
+B -> A
+C -> A
+
+And you query on class A, no subclasses will be returned.  As a work around, in your DAO, simply instantiate all possible sub classes.  This will resolve the issue.  I'm working with DN to resolve this issue. 
+
+public MyDao(){
+	new A();
+	new B();
+	new C();
+}
+
 
 Byte Mapping
 -----------
@@ -172,9 +192,8 @@ This will be the format that will ultimately be used for paging proxies.
 Roadmap
 -------
 
-1. Upgrade when latest Datanucleus 2.2 after this release
-2. Upgrade as Pelops client improves
-3. Make paging/iteration possible on large associative sets.  The storage changes to support large sets is complete, however the paging size is not.
+1. Upgrade as Pelops client improves
+2. Make paging/iteration possible on large associative sets.  The storage changes to support large sets is complete, however the paging size is not.
 
 Special Thanks
 --------------

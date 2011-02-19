@@ -214,7 +214,7 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 				}
 
 				Object persisted = context.persistObjectInternal(value,
-						objectProvider, fieldNumber, StateManager.PC);
+						objectProvider, fieldNumber, 0);
 
 				Serializable objectPk = (Serializable) context.getApiAdapter()
 						.getIdForObject(persisted);
@@ -250,7 +250,7 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 					for (Object element : (Collection<?>) value) {
 						// persist the object
 						persisted = context.persistObjectInternal(element,
-								objectProvider, fieldNumber, StateManager.PC);
+								objectProvider, fieldNumber, 0);
 
 						objectPk = context.getApiAdapter().getIdForObject(
 								persisted);
@@ -301,7 +301,7 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 
 							persisted = context.persistObjectInternal(mapKey,
 									objectProvider, fieldNumber,
-									StateManager.PC);
+									0);
 
 							serializedKey = context.getApiAdapter()
 									.getIdForObject(persisted);
@@ -314,7 +314,7 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 
 							persisted = context.persistObjectInternal(mapValue,
 									objectProvider, fieldNumber,
-									StateManager.PC);
+									0);
 
 							serializedValue = context.getApiAdapter()
 									.getIdForObject(persisted);
@@ -354,7 +354,7 @@ public class CassandraInsertFieldManager extends AbstractFieldManager {
 						// persist the object
 						persisted = context.persistObjectInternal(
 								Array.get(value, i), objectProvider,
-								fieldNumber, StateManager.PC);
+								fieldNumber, 0);
 
 						objectPk = context.getApiAdapter().getIdForObject(
 								persisted);
