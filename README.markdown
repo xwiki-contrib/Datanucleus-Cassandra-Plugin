@@ -1,7 +1,7 @@
 Cassandra Datanucleus Plugin
 ============================
 
-NOTE:  This plugin is now deprecated.  It has significant limitations in indexing, data migration, and transactions that cannot be addressed without a significant rewrite.  The requests for a JPA implementation were significantly higher than requests for this plugin.  As a result, a new version utilizing JPA has been created here.
+NOTE:  This plugin is now deprecated.  It has limitations in indexing, data migration, and transactions that cannot be addressed without a significant rewrite.  The requests for a JPA implementation were significantly higher than requests for this plugin.  As a result, a new version utilizing JPA has been created here.
 
 https://github.com/riptano/hector-jpa
 
