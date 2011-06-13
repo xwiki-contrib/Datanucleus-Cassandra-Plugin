@@ -440,10 +440,23 @@ public class ByteConverterContext {
 	 */
 	private ByteConverter determineConverter(Class<?> clazz) {
 
+		// 1. If there is a converter for the specific class then use it.
 		ByteConverter converter = converters.get(clazz);
 
 		if (converter != null) {
 			return converter;
+		}
+
+		// 2. If the class is an array then look inside of it and try using the inner class.
+		if (clazz.isArray()) {
+			final ByteConverter innerConverter =
+				this.determineConverter(clazz.getComponentType());
+			// It makes no sense to store an array of opaque objects so if the converter
+			// is the serializerConverter then we won't bother looking in the array.
+			if (innerConverter == this.serializerConverter) {
+				return this.serializerConverter;
+			}
+			return new ArrayConverter(innerConverter, clazz.getComponentType());
 		}
 
 		if (ByteAware.class.isAssignableFrom(clazz)) {
