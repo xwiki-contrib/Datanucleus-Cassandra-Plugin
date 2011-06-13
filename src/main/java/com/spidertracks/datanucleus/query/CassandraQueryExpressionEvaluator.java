@@ -19,7 +19,9 @@ package com.spidertracks.datanucleus.query;
 
 import static com.spidertracks.datanucleus.utils.MetaDataUtils.getColumnName;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
@@ -29,6 +31,7 @@ import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.query.QueryUtils;
 import org.datanucleus.query.evaluator.AbstractExpressionEvaluator;
+import org.datanucleus.query.expression.DyadicExpression;
 import org.datanucleus.query.expression.Expression;
 import org.datanucleus.query.expression.Literal;
 import org.datanucleus.query.expression.ParameterExpression;
@@ -62,17 +65,18 @@ public class CassandraQueryExpressionEvaluator extends
 
 	private Stack<IndexParam> indexKeys = new Stack<IndexParam>();
 	private Stack<Operand> operationStack = new Stack<Operand>();
+	private List<String> primaryExpressions = new ArrayList<String>();
 
 	private AbstractClassMetaData metaData;
 
 	/** Map of input parameter values, keyed by their name. */
 	private Map<String, Object> parameterValues;
 
-	
+
 	private int maxSize;
-	
+
 	private ByteConverterContext byteConverter;
-	
+
 
 	/**
 	 * Constructor for an in-memory evaluator.
@@ -343,7 +347,33 @@ public class CassandraQueryExpressionEvaluator extends
 		return param;
 	}
 
+	/**
+	 * get the primary expressions of the given expression.
+	 * @param expr expression to be evaluated
+	 * @return returns a list of the primary expressions
+	 */
+	public List<String> getPrimaryExpressions(Expression expr) {
+		setPrimaryExpressionList(expr);
 
+		return primaryExpressions;
+	}
+
+	/**
+	 * process the given expression and populates the list with primary 
+	 * expressions.
+	 * @param expr
+	 */
+	private void setPrimaryExpressionList(Expression expr) {
+		if (expr instanceof DyadicExpression) {
+			setPrimaryExpressionList(expr.getLeft());
+			setPrimaryExpressionList(expr.getRight());
+		} else if(expr instanceof PrimaryExpression) {
+			primaryExpressions.add(((PrimaryExpression) expr).getId());
+		} else {
+			return;
+		}
+
+	}
 
 	/**
 	 * Get the index value off the stack. Will only pop if the stack sizes are
