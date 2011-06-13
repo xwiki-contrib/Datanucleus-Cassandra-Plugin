@@ -11,7 +11,8 @@
 		<cassandra.version>0.7.2</cassandra.version>
 		<pelops.version>1.0-RC1-0.7.0-SNAPSHOT</pelops.version>
 		<slf4j.version>1.6.1</slf4j.version>
-		<st.deploy.dir>file://${basedir}/../m2repo</st.deploy.dir>
+<st.deploy.dir>file://${basedir}/../m2repo</st.deploy.dir>
+		<xwiki.commons.version>3.2-SNAPSHOT</xwiki.commons.version>
 	</properties>
 	<repositories>
 
@@ -51,6 +52,15 @@
 			<id>maven.scale7.org</id>
 			<name>Scale7 Maven Repo</name>
 			<url>https://github.com/s7/mvnrepo/raw/master</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+
+		<repository>
+			<id>xwiki-snapshots</id>
+			<name>XWiki Snapshots Repository</name>
+			<url>http://maven.xwiki.org/snapshots</url>
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
@@ -275,6 +285,86 @@
 				<configuration>
 					<argLine>-Xms256m -Xmx512m -ea</argLine>
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>org.xwiki.commons</groupId>
+						<artifactId>xwiki-commons-tool-verification-resources</artifactId>
+						<version>${xwiki.commons.version}</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+						<configLocation>https://raw.github.com/xwiki/xwiki-commons/master/xwiki-commons-tools/xwiki-commons-tool-validation-resources/src/main/resources/checkstyle.xml</configLocation>
+						<consoleOutput>true</consoleOutput>
+						<excludes>
+							**/com/spidertracks/datanucleus/collection/WriteCollection.java,
+							**/com/spidertracks/datanucleus/collection/WriteMap.java,
+							**/com/spidertracks/datanucleus/collection/ReadCollection.java,
+							**/com/spidertracks/datanucleus/collection/ExternalEntity.java,
+							**/com/spidertracks/datanucleus/collection/ReadMap.java,
+							**/com/spidertracks/datanucleus/collection/ExternalEntityWriter.java,
+							**/com/spidertracks/datanucleus/collection/CassEntry.java,
+							**/com/spidertracks/datanucleus/mutate/ExecutionContextOp.java,
+							**/com/spidertracks/datanucleus/mutate/BatchMutationManager.java,
+							**/com/spidertracks/datanucleus/mutate/ExecutionContextMutate.java,
+							**/com/spidertracks/datanucleus/mutate/ExecutionContextDelete.java,
+							**/com/spidertracks/datanucleus/CassandraInsertFieldManager.java,
+							**/com/spidertracks/datanucleus/client/Consistency.java,
+							**/com/spidertracks/datanucleus/utils/MetaDataUtils.java,
+							**/com/spidertracks/datanucleus/utils/ByteConverter.java,
+							**/com/spidertracks/datanucleus/utils/ClusterUtils.java,
+							**/com/spidertracks/datanucleus/convert/LongConverter.java,
+							**/com/spidertracks/datanucleus/convert/ObjectLongWrapperConverter.java,
+							**/com/spidertracks/datanucleus/convert/CharacterConverter.java,
+							**/com/spidertracks/datanucleus/convert/ByteConverterContext.java,
+							**/com/spidertracks/datanucleus/convert/ByteArrayConverter.java,
+							**/com/spidertracks/datanucleus/convert/DoubleConverter.java,
+							**/com/spidertracks/datanucleus/convert/BooleanConverter.java,
+							**/com/spidertracks/datanucleus/convert/ConverterUtils.java,
+							**/com/spidertracks/datanucleus/convert/SerializerWrapperConverter.java,
+							**/com/spidertracks/datanucleus/convert/ByteAwareConverter.java,
+							**/com/spidertracks/datanucleus/convert/IntegerConverter.java,
+							**/com/spidertracks/datanucleus/convert/ByteConverter.java,
+							**/com/spidertracks/datanucleus/convert/StringConverter.java,
+							**/com/spidertracks/datanucleus/convert/ObjectStringWrapperConverter.java,
+							**/com/spidertracks/datanucleus/convert/LexicalUUIDConverter.java,
+							**/com/spidertracks/datanucleus/convert/FloatConverter.java,
+							**/com/spidertracks/datanucleus/convert/TimeUUIDConverter.java,
+							**/com/spidertracks/datanucleus/convert/ShortConverter.java,
+							**/com/spidertracks/datanucleus/identity/UUIDConverter.java,
+							**/com/spidertracks/datanucleus/identity/CassandraUUIDGenerator.java,
+							**/com/spidertracks/datanucleus/identity/ByteAware.java,
+							**/com/spidertracks/datanucleus/identity/DateConverter.java,
+							**/com/spidertracks/datanucleus/query/CassandraQueryExpressionEvaluator.java,
+							**/com/spidertracks/datanucleus/query/runtime/OrOperand.java,
+							**/com/spidertracks/datanucleus/query/runtime/EqualityOperand.java,
+							**/com/spidertracks/datanucleus/query/runtime/Operand.java,
+							**/com/spidertracks/datanucleus/query/runtime/AndOperand.java,
+							**/com/spidertracks/datanucleus/query/runtime/CompressableOperand.java,
+							**/com/spidertracks/datanucleus/query/runtime/Columns.java,
+							**/com/spidertracks/datanucleus/query/JDOQLQuery.java,
+							**/com/spidertracks/datanucleus/serialization/Serializer.java,
+							**/com/spidertracks/datanucleus/serialization/JavaSerializer.java,
+							**/com/spidertracks/datanucleus/serialization/ByteSizeEstimator.java,
+							**/com/spidertracks/datanucleus/serialization/XStreamSerializer.java,
+							**/com/spidertracks/datanucleus/ConnectionFactoryImpl.java,
+							**/com/spidertracks/datanucleus/CassandraStoreManager.java,
+							**/com/spidertracks/datanucleus/CassandraFetchFieldManager.java,
+							**/com/spidertracks/datanucleus/ColumnFamilyCreator.java,
+							**/com/spidertracks/datanucleus/CassandraPersistenceHandler.java
+						</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+						 <goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 		</plugins>
