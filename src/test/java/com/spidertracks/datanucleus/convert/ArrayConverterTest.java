@@ -43,7 +43,7 @@ public class ArrayConverterTest
         final byte[] stored = {
             (byte)5, (byte)'H', (byte)'e', (byte)'l', (byte)'l', (byte)'o',
             (byte)6, (byte)'W', (byte)'o', (byte)'r', (byte)'l', (byte)'d', (byte)'!',
-            (byte)2, (byte)':', (byte)')', (byte)0, (byte)0xFE
+            (byte)2, (byte)':', (byte)')', (byte)0, (byte)0
         };
 
         final String[] expected = {"Hello", "World!", ":)", "", null};
@@ -59,9 +59,7 @@ public class ArrayConverterTest
         Assert.assertEquals("World!", returned[1]);
         Assert.assertEquals(":)", returned[2]);
 
-        // This does not work because StringConverter confuses null with ""
-        //Assert.assertEquals("", returned[3]);
-
+        Assert.assertNull(returned[3]);
         Assert.assertNull(returned[4]);
     }
 
