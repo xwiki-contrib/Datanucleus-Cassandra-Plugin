@@ -54,10 +54,9 @@ public class StringConverter implements ByteConverter {
 			return buffer;
 		}
 
-		ByteBuffer returned = check(buffer, ((String) value).length());
-
-		return returned.put(((String) value).getBytes(ENCODING));
-
+		byte[] bytes = ((String) value).getBytes(ENCODING);
+		ByteBuffer returned = check(buffer, bytes.length);
+		return returned.put(bytes);
 	}
 
 }
