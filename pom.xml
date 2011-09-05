@@ -77,8 +77,6 @@
 			<version>2.3-ec</version>
 		</dependency>
 
-
-
 		<dependency>
 			<groupId>org.datanucleus</groupId>
 			<artifactId>datanucleus-core</artifactId>
@@ -181,6 +179,17 @@
 			<version>3.0.1</version>
 			<type>jar</type>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>groovy</groupId>
+			<artifactId>groovy-all</artifactId>
+			<version>1.1-rc-1</version>
 		</dependency>
 	</dependencies>
 
@@ -347,7 +356,6 @@
 							**/com/spidertracks/datanucleus/query/runtime/AndOperand.java,
 							**/com/spidertracks/datanucleus/query/runtime/CompressableOperand.java,
 							**/com/spidertracks/datanucleus/query/runtime/Columns.java,
-							**/com/spidertracks/datanucleus/query/JDOQLQuery.java,
 							**/com/spidertracks/datanucleus/serialization/Serializer.java,
 							**/com/spidertracks/datanucleus/serialization/JavaSerializer.java,
 							**/com/spidertracks/datanucleus/serialization/ByteSizeEstimator.java,
@@ -356,7 +364,10 @@
 							**/com/spidertracks/datanucleus/CassandraStoreManager.java,
 							**/com/spidertracks/datanucleus/CassandraFetchFieldManager.java,
 							**/com/spidertracks/datanucleus/ColumnFamilyCreator.java,
-							**/com/spidertracks/datanucleus/CassandraPersistenceHandler.java
+							**/com/spidertracks/datanucleus/CassandraPersistenceHandler.java,
+
+                            <!-- Fanout Complexity violation and use of abstract class which the rest of the code demands as a perameter -->
+                            **/com/spidertracks/datanucleus/query/QueryHelper.java
 						</excludes>
 				</configuration>
 				<executions>

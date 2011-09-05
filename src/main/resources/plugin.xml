@@ -51,6 +51,8 @@ Contributors:
             point="org.datanucleus.store_query_query">      
             <query class-name="com.spidertracks.datanucleus.query.JDOQLQuery" datastore="cassandra" name="javax.jdo.query.JDOQL"/>
             <query class-name="com.spidertracks.datanucleus.query.JDOQLQuery" datastore="cassandra" name="JDOQL"/>
+            <query class-name="com.spidertracks.datanucleus.query.JPQLQuery" datastore="cassandra" name="javax.jdo.query.JPQL"/>
+            <query class-name="com.spidertracks.datanucleus.query.JPQLQuery" datastore="cassandra" name="JPQL"/>
          <query
                class-name="com.spidertracks.datanucleus.query.JDOQLQuery"
                datastore="cassandra"

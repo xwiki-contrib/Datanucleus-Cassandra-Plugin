@@ -860,8 +860,120 @@ public class JDOQLBasicTest extends CassandraTest {
 		assertTrue(results.contains(gcTwoOne));
 		assertTrue(results.contains(gcTwoTwo));
 
-	
-
 	}
+
+	/**
+     * basic query JPQL
+     */
+     @SuppressWarnings("rawtypes")
+     @Test
+     public void testQueryJPQL() {
+         PersistenceManager pm = pmf.getPersistenceManager();
+         Transaction tx = pm.currentTransaction();
+
+         try {
+             tx.begin();
+             Query q = pm.newQuery("javax.jdo.query.JPQL", "SELECT doc FROM  com.spidertracks.datanucleus." 
+                     + "basic.model.PrimitiveObject as doc ");
+             Collection c = (Collection) q.execute();
+             assertEquals(3, c.size());
+             tx.commit();
+
+         } finally {
+             if (tx.isActive()) {
+                 tx.rollback();
+             }
+         pm.close();
+         }
+     }
+
+	/**
+     * non index result test for JPQL
+     */
+     @SuppressWarnings("rawtypes")
+     @Test
+     public void testFilterJPQL() {
+         PersistenceManager pm = pmf.getPersistenceManager();
+         Transaction tx = pm.currentTransaction();
+
+         try {
+             tx.begin();
+             Query q = pm.newQuery("javax.jdo.query.JPQL", "SELECT doc FROM  com.spidertracks.datanucleus." 
+                     + "basic.model.PrimitiveObject as doc WHERE doc.testString = 'one' ");
+             Collection c = (Collection) q.execute();
+             assertEquals(1, c.size());
+             Iterator it = c.iterator();
+             assertEquals("one", ((PrimitiveObject) it.next()).getTestString());
+             tx.commit();
+
+         } finally {
+             if (tx.isActive()) {
+                 tx.rollback();
+             }
+         pm.close();
+         }
+     }
+
+    /**
+     * non index result test for JPQL
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testFilterNonIndexedJPQL() {
+        PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+
+        try {
+            tx.begin();
+            Query q = pm
+                    .newQuery(
+                            "javax.jdo.query.JPQL",
+                            "SELECT doc FROM  com.spidertracks.datanucleus."
+                                    + "basic.model.PrimitiveObject as doc WHERE doc.nonIndexedString = 'none'");
+            Collection c = (Collection) q.execute();
+            assertEquals(1, c.size());
+            Iterator it = c.iterator();
+            assertEquals("one", ((PrimitiveObject) it.next()).getTestString());
+            tx.commit();
+
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            pm.close();
+        }
+    }
+
+    /**
+     * test ordering for JPQL
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testOrderingJPQL() {
+        PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+
+        try {
+            tx.begin();
+            Query q = pm
+                    .newQuery(
+                            "javax.jdo.query.JPQL",
+                            "SELECT doc FROM  com.spidertracks.datanucleus."
+                                    + "basic.model.PrimitiveObject as doc ORDER BY doc.testString ");
+            Collection c = (Collection) q.execute();
+            assertEquals(3, c.size());
+            Iterator it = c.iterator();
+            assertEquals("one", ((PrimitiveObject) it.next()).getTestString());
+            assertEquals("three", ((PrimitiveObject) it.next()).getTestString());
+            assertEquals("two", ((PrimitiveObject) it.next()).getTestString());
+            tx.commit();
+
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            pm.close();
+        }
+    }
 
 }
