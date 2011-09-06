@@ -30,56 +30,56 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable(table="InvitationToken", identityType = IdentityType.APPLICATION)
 public class InvitationToken {
 
-	@PrimaryKey
-	@Persistent
-	private String token;
+    @PrimaryKey
+    @Persistent
+    private String token;
 
-	@Persistent(dependent="true", defaultFetchGroup="true")
-	private InvitedPerson person;
-	
-	@Index(name="InvitationToken_TestString")
-	@Persistent
-	private String testString;
+    @Persistent(dependent="true", defaultFetchGroup="true")
+    private InvitedPerson person;
+    
+    @Index(name="InvitationToken_TestString")
+    @Persistent
+    private String testString;
 
-	/**
-	 * @return the token
-	 */
-	public String getToken() {
-		return token;
-	}
+    /**
+     * @return the token
+     */
+    public String getToken() {
+        return token;
+    }
 
-	/**
-	 * @param token the token to set
-	 */
-	public void setToken(String token) {
-		this.token = token;
-	}
+    /**
+     * @param token the token to set
+     */
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-	/**
-	 * @return the person
-	 */
-	public InvitedPerson getPerson() {
-		return person;
-	}
+    /**
+     * @return the person
+     */
+    public InvitedPerson getPerson() {
+        return person;
+    }
 
-	/**
-	 * @param person the person to set
-	 */
-	public void setPerson(InvitedPerson person) {
-		this.person = person;
-	}
+    /**
+     * @param person the person to set
+     */
+    public void setPerson(InvitedPerson person) {
+        this.person = person;
+    }
 
-	/**
-	 * @return the testString
-	 */
-	public String getTestString() {
-		return testString;
-	}
+    /**
+     * @return the testString
+     */
+    public String getTestString() {
+        return testString;
+    }
 
-	/**
-	 * @param testString the testString to set
-	 */
-	public void setTestString(String testString) {
-		this.testString = testString;
-	}
+    /**
+     * @param testString the testString to set
+     */
+    public void setTestString(String testString) {
+        this.testString = testString;
+    }
 }

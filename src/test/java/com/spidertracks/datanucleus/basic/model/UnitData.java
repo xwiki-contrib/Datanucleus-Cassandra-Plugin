@@ -30,55 +30,55 @@ import javax.jdo.annotations.PrimaryKey;
 @PersistenceCapable(table="UnitData", identityType= IdentityType.APPLICATION )
 public class UnitData {
 
-	@PrimaryKey
-	private UnitDataKey key;
-	
-	@Persistent
-	private byte[] data;
-	
-	
-	public UnitDataKey getKey() {
-		return key;
-	}
-	public void setKey(UnitDataKey key) {
-		this.key = key;
-	}
-	
-	public byte[] getData() {
-		return data;
-	}
-	public void setData(byte[] data) {
-		this.data = data;
-	}
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
-		return result;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		UnitData other = (UnitData) obj;
-		if (key == null) {
-			if (other.key != null)
-				return false;
-		} else if (!key.equals(other.key))
-			return false;
-		return true;
-	}
-	
-	
-	
+    @PrimaryKey
+    private UnitDataKey key;
+    
+    @Persistent
+    private byte[] data;
+    
+    
+    public UnitDataKey getKey() {
+        return key;
+    }
+    public void setKey(UnitDataKey key) {
+        this.key = key;
+    }
+    
+    public byte[] getData() {
+        return data;
+    }
+    public void setData(byte[] data) {
+        this.data = data;
+    }
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((key == null) ? 0 : key.hashCode());
+        return result;
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UnitData other = (UnitData) obj;
+        if (key == null) {
+            if (other.key != null)
+                return false;
+        } else if (!key.equals(other.key))
+            return false;
+        return true;
+    }
+    
+    
+    
 
 
-	
-	
-	
+    
+    
+    
 }

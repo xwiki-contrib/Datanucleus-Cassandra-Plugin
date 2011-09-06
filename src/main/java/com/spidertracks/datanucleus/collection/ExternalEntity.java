@@ -40,39 +40,39 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
  */
 public class ExternalEntity {
 
-	protected static final byte DELIM_MIN = 0;
-	protected static final byte DELIM_MAX = 1;
+    protected static final byte DELIM_MIN = 0;
+    protected static final byte DELIM_MAX = 1;
 
-	protected ByteConverterContext context;
+    protected ByteConverterContext context;
 
-	protected String ownerColumnFamily;
+    protected String ownerColumnFamily;
 
-	protected Bytes ownerColumn;
+    protected Bytes ownerColumn;
 
-	protected Bytes rowKey;
+    protected Bytes rowKey;
 
-	protected Selector selector;
+    protected Selector selector;
 
-	/**
-	 * 
-	 * @param context
-	 *            The Byte converter context
-	 * @param ownerColumnFamily
-	 *            The owning column family
-	 * @param rowKey
-	 *            The row key
-	 * @param ownerColumn
-	 *            The bytes of the column
-	 */
-	public ExternalEntity(Selector selector, ByteConverterContext context,
-			String ownerColumnFamily, Bytes rowKey, Bytes ownerColumn) {
-		this.selector = selector;
-		this.context = context;
-		this.ownerColumnFamily = ownerColumnFamily;
-		this.ownerColumn = ownerColumn;
-		this.rowKey = rowKey;
-	}
+    /**
+     * 
+     * @param context
+     *            The Byte converter context
+     * @param ownerColumnFamily
+     *            The owning column family
+     * @param rowKey
+     *            The row key
+     * @param ownerColumn
+     *            The bytes of the column
+     */
+    public ExternalEntity(Selector selector, ByteConverterContext context,
+            String ownerColumnFamily, Bytes rowKey, Bytes ownerColumn) {
+        this.selector = selector;
+        this.context = context;
+        this.ownerColumnFamily = ownerColumnFamily;
+        this.ownerColumn = ownerColumn;
+        this.rowKey = rowKey;
+    }
 
-	
+    
 
 }

@@ -34,20 +34,20 @@ import javax.jdo.annotations.Persistent;
 @Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="GrandChildTwo")
 public class GrandChildTwo extends Child {
 
-	@Persistent
-	private String grandChildTwoField;
+    @Persistent
+    private String grandChildTwoField;
 
-	/**
-	 * @return the grandChildTwoField
-	 */
-	public String getGrandChildTwoField() {
-		return grandChildTwoField;
-	}
+    /**
+     * @return the grandChildTwoField
+     */
+    public String getGrandChildTwoField() {
+        return grandChildTwoField;
+    }
 
-	/**
-	 * @param grandChildTwoField the grandChildTwoField to set
-	 */
-	public void setGrandChildTwoField(String grandChildTwoField) {
-		this.grandChildTwoField = grandChildTwoField;
-	}
+    /**
+     * @param grandChildTwoField the grandChildTwoField to set
+     */
+    public void setGrandChildTwoField(String grandChildTwoField) {
+        this.grandChildTwoField = grandChildTwoField;
+    }
 }

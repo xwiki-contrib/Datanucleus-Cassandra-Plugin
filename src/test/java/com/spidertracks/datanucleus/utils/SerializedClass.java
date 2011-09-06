@@ -25,40 +25,40 @@ import java.io.Serializable;
  */
 
 public class SerializedClass implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5416370150512344462L;
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5416370150512344462L;
 
-	int testVal = 10;
-	
-	boolean testBool = true;
+    int testVal = 10;
+    
+    boolean testBool = true;
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (testBool ? 1231 : 1237);
-		result = prime * result + testVal;
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (testBool ? 1231 : 1237);
+        result = prime * result + testVal;
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SerializedClass other = (SerializedClass) obj;
-		if (testBool != other.testBool)
-			return false;
-		if (testVal != other.testVal)
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SerializedClass other = (SerializedClass) obj;
+        if (testBool != other.testBool)
+            return false;
+        if (testVal != other.testVal)
+            return false;
+        return true;
+    }
 
-	
+    
 }

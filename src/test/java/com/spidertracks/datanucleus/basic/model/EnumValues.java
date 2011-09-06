@@ -23,17 +23,17 @@ package com.spidertracks.datanucleus.basic.model;
  */
 public enum EnumValues {
 
-	ONE(1),
-	TWO(2);
-	
-	private int value;
-	
-	private EnumValues(int value){
-		this.value = value;
-	}
-	
-	public int getValue(){
-		return this.value;
-	}
-	
+    ONE(1),
+    TWO(2);
+    
+    private int value;
+    
+    private EnumValues(int value){
+        this.value = value;
+    }
+    
+    public int getValue(){
+        return this.value;
+    }
+    
 }

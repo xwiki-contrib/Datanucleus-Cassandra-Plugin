@@ -10,27 +10,27 @@ import java.util.Map;
  */
 public class CassEntry implements Map.Entry<Object, Object> {
 
-	private Object key;
-	private Object value;
+    private Object key;
+    private Object value;
 
-	public CassEntry(Object key, Object value) {
-		this.key = key;
-		this.value = value;
-	}
+    public CassEntry(Object key, Object value) {
+        this.key = key;
+        this.value = value;
+    }
 
-	@Override
-	public Object getKey() {
-		return key;
-	}
+    @Override
+    public Object getKey() {
+        return key;
+    }
 
-	@Override
-	public Object getValue() {
-		return value;
-	}
+    @Override
+    public Object getValue() {
+        return value;
+    }
 
-	@Override
-	public Object setValue(Object value) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public Object setValue(Object value) {
+        throw new UnsupportedOperationException();
+    }
 
 }

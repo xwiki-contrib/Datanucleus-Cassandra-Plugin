@@ -31,36 +31,36 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class ObjectLongWrapperConverter implements ByteConverter {
 
-	private ObjectLongConverter dnLongConverter;
-	private ByteConverter longConverter;
+    private ObjectLongConverter dnLongConverter;
+    private ByteConverter longConverter;
 
-	public ObjectLongWrapperConverter(ObjectLongConverter dnLongConverter,
-			ByteConverter longConverter) {
-		this.dnLongConverter = dnLongConverter;
-		this.longConverter = longConverter;
-	}
+    public ObjectLongWrapperConverter(ObjectLongConverter dnLongConverter,
+            ByteConverter longConverter) {
+        this.dnLongConverter = dnLongConverter;
+        this.longConverter = longConverter;
+    }
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_LONG;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_LONG;
+    }
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null) {
-			return null;
-		}
-		return dnLongConverter.toObject((Long) longConverter.getObject(buffer, context));
-	}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null) {
+            return null;
+        }
+        return dnLongConverter.toObject((Long) longConverter.getObject(buffer, context));
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		Long longVal = dnLongConverter.toLong(value);
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        Long longVal = dnLongConverter.toLong(value);
 
-		return longConverter.writeBytes(longVal, buffer, context);
+        return longConverter.writeBytes(longVal, buffer, context);
 
-	}
+    }
 
-	
+    
 
 }

@@ -37,37 +37,37 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @PersistenceCapable(table = "Pack", identityType = IdentityType.APPLICATION, detachable="true")
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class Pack extends BaseEntity implements Serializable {
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	
-	@Persistent(mappedBy="pack")
-	@Element(dependent="true")
-	private List<Card> cards;
-	
-	public Pack(){
-		
-	}
+    
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
+    
+    @Persistent(mappedBy="pack")
+    @Element(dependent="true")
+    private List<Card> cards;
+    
+    public Pack(){
+        
+    }
 
-	/**
-	 * @return the manyToOne
-	 */
-	public List<Card> getCards() {
-		return cards;
-	}
-	
-	public void addCard(Card card){
-		if(this.cards == null){
-			cards = new ArrayList<Card>();
-		}
-		
-		this.cards.add(card);
-		card.setPack(this);
-	}
+    /**
+     * @return the manyToOne
+     */
+    public List<Card> getCards() {
+        return cards;
+    }
+    
+    public void addCard(Card card){
+        if(this.cards == null){
+            cards = new ArrayList<Card>();
+        }
+        
+        this.cards.add(card);
+        card.setPack(this);
+    }
 
-	
+    
 }

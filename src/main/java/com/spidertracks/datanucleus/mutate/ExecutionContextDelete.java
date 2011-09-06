@@ -37,59 +37,59 @@ public class ExecutionContextDelete extends ExecutionContextOp {
 
 
 
-	//operations of mutations to perform
-	//our reference to visited objects so we don't get stuck in a recursive delete
-	private IdentityHashMap<ObjectProvider, Object> visited = new IdentityHashMap<ObjectProvider, Object>();
-	private List<Deletion> mutations = new Stack<Deletion>();
-	private RowDeletor deletor;
+    //operations of mutations to perform
+    //our reference to visited objects so we don't get stuck in a recursive delete
+    private IdentityHashMap<ObjectProvider, Object> visited = new IdentityHashMap<ObjectProvider, Object>();
+    private List<Deletion> mutations = new Stack<Deletion>();
+    private RowDeletor deletor;
 
-	
-	public ExecutionContextDelete(ExecutionContext ctx, RowDeletor deletor) {
-		super(ctx);
-		this.deletor = deletor;
-	}
-
-
-
-
-	/**
-	 * Add the deleting if the op hasn't already been visited
-	 * @param op The object we're deleting
-	 * @param key The key to delete
-	 * @param columnFamily The CF to dele
-	 * @return True if this is the first visit to the object.  False otherwise
-	 */
-	public boolean addDeletion(ObjectProvider op, Bytes key, String columnFamily) {
-		
-		if(visited.containsKey(op)){
-			return false;
-		}
-		
-		visited.put(op, null);
-		
-		mutations.add(new Deletion(key, columnFamily));
-		
-		return true;
-	}
+    
+    public ExecutionContextDelete(ExecutionContext ctx, RowDeletor deletor) {
+        super(ctx);
+        this.deletor = deletor;
+    }
 
 
 
-	public void execute() throws Exception {
-		for (Deletion deletion : mutations) {
-			deletor.deleteRow(deletion.columnFamily, deletion.rowKey, Consistency.get());
-		}
-	}
-	
-	private class Deletion{
-		
-		public Deletion(Bytes rowKey, String columnFamily) {
-			super();
-			this.rowKey = rowKey;
-			this.columnFamily = columnFamily;
-		}
-		
-		private Bytes rowKey;
-		private String columnFamily;
-	}
+
+    /**
+     * Add the deleting if the op hasn't already been visited
+     * @param op The object we're deleting
+     * @param key The key to delete
+     * @param columnFamily The CF to dele
+     * @return True if this is the first visit to the object.  False otherwise
+     */
+    public boolean addDeletion(ObjectProvider op, Bytes key, String columnFamily) {
+        
+        if(visited.containsKey(op)){
+            return false;
+        }
+        
+        visited.put(op, null);
+        
+        mutations.add(new Deletion(key, columnFamily));
+        
+        return true;
+    }
+
+
+
+    public void execute() throws Exception {
+        for (Deletion deletion : mutations) {
+            deletor.deleteRow(deletion.columnFamily, deletion.rowKey, Consistency.get());
+        }
+    }
+    
+    private class Deletion{
+        
+        public Deletion(Bytes rowKey, String columnFamily) {
+            super();
+            this.rowKey = rowKey;
+            this.columnFamily = columnFamily;
+        }
+        
+        private Bytes rowKey;
+        private String columnFamily;
+    }
 
 }

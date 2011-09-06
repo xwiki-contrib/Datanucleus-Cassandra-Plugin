@@ -36,55 +36,55 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @PersistenceCapable(table = "User", identityType = IdentityType.APPLICATION, detachable="true")
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class User extends BaseEntity implements Serializable {
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	
-	@Persistent(mappedBy="user")
-	private List<Vehicle> vehicles;
-	
-	private String name;
-	
-	public User(){
-		
-	}
+    
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    
+    
+    @Persistent(mappedBy="user")
+    private List<Vehicle> vehicles;
+    
+    private String name;
+    
+    public User(){
+        
+    }
 
-	
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
 
-	/**
-	 * @return the manyToOne
-	 */
-	public List<Vehicle> getVehicles() {
-		return vehicles;
-	}
-	
-	public void addVehicle(Vehicle vehicle){
-		if(this.vehicles == null){
-			vehicles = new ArrayList<Vehicle>();
-		}
-		
-		this.vehicles.add(vehicle);
-		vehicle.setUser(this);
-	}
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	
+
+    /**
+     * @return the manyToOne
+     */
+    public List<Vehicle> getVehicles() {
+        return vehicles;
+    }
+    
+    public void addVehicle(Vehicle vehicle){
+        if(this.vehicles == null){
+            vehicles = new ArrayList<Vehicle>();
+        }
+        
+        this.vehicles.add(vehicle);
+        vehicle.setUser(this);
+    }
+
+    
 }

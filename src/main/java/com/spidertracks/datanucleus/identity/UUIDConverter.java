@@ -29,38 +29,38 @@ public class UUIDConverter implements ObjectStringConverter {
 
 
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.datanucleus.store.types.ObjectStringConverter#toObject(java.lang.
-	 * String)
-	 */
-	@Override
-	public Object toObject(String str) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.datanucleus.store.types.ObjectStringConverter#toObject(java.lang.
+     * String)
+     */
+    @Override
+    public Object toObject(String str) {
 
-		if (str == null || str.length() == 0) {
-			return null;
-		}
+        if (str == null || str.length() == 0) {
+            return null;
+        }
 
-		return new UUID(str);
-	}
+        return new UUID(str);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.datanucleus.store.types.ObjectStringConverter#toString(java.lang.
-	 * Object)
-	 */
-	@Override
-	public String toString(Object obj) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.datanucleus.store.types.ObjectStringConverter#toString(java.lang.
+     * Object)
+     */
+    @Override
+    public String toString(Object obj) {
 
-		if (!(obj instanceof UUID)) {
-			return null;
-		}
+        if (!(obj instanceof UUID)) {
+            return null;
+        }
 
-		return obj.toString();
-	}
+        return obj.toString();
+    }
 
 }

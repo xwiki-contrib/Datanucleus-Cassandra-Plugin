@@ -31,34 +31,34 @@ import com.spidertracks.datanucleus.convert.ConverterUtils;
  */
 public class CompositeKeyConverter implements ByteConverter {
 
-	private static final int SIZE = (Long.SIZE*2+Integer.SIZE)/Byte.SIZE;
-	
-	@Override
-	public Object getObject(ByteBuffer buffer,  ByteConverterContext context) {
-		CompositeKey key = new CompositeKey();
+    private static final int SIZE = (Long.SIZE*2+Integer.SIZE)/Byte.SIZE;
+    
+    @Override
+    public Object getObject(ByteBuffer buffer,  ByteConverterContext context) {
+        CompositeKey key = new CompositeKey();
 
-		key.setFirst(buffer.getLong());
-		key.setSecond(buffer.getLong());
-		key.setThird(buffer.getInt());
-		return key;
-	}
+        key.setFirst(buffer.getLong());
+        key.setSecond(buffer.getLong());
+        key.setThird(buffer.getInt());
+        return key;
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
 
-		ByteBuffer checked = ConverterUtils.check(buffer, SIZE);
-		
-		CompositeKey key = (CompositeKey) value;
-		checked.putLong(key.getFirst());
-		checked.putLong(key.getSecond());
-		return checked.putInt(key.getThird());
+        ByteBuffer checked = ConverterUtils.check(buffer, SIZE);
+        
+        CompositeKey key = (CompositeKey) value;
+        checked.putLong(key.getFirst());
+        checked.putLong(key.getSecond());
+        return checked.putInt(key.getThird());
 
-	}
+    }
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
+    }
 
-	
+    
 }

@@ -43,69 +43,69 @@ public class CascadeTest extends CassandraTest {
 
 
 
-	/**
-	 * We should never hit 30 seconds unless we're stuck in endless recursion
-	 * @throws Exception
-	 */
-	@Test
-	public void testDelete() throws Exception {
-		InvitedPerson person = new InvitedPerson();
-		person.setFirstName("firstName");
-		person.setLastName("lastName");
-		person.setLoginCount(10);
-		
-		InvitationToken token = new InvitationToken();
-		token.setToken("testtoken");
-		
-		person.setToken(token);
-		token.setPerson(person);
-		
-		//now persist them.
-		
-		pmf.getPersistenceManager().makePersistent(person);
-		
-		
-		UUID personId = person.getId();
-		String tokenKey = token.getToken();
-		
-		PersistenceManager pm = pmf.getPersistenceManager();
-		Transaction trans = pm.currentTransaction();
-		trans.begin();
-		
-		InvitedPerson saved = pm.getObjectById(InvitedPerson.class, personId);
-		
-		assertNotNull(saved);
-		assertNotNull(saved.getToken());
-		
-		
-		pm.deletePersistent(saved);
-		trans.commit();
-		
-		boolean deleted = false;
+    /**
+     * We should never hit 30 seconds unless we're stuck in endless recursion
+     * @throws Exception
+     */
+    @Test
+    public void testDelete() throws Exception {
+        InvitedPerson person = new InvitedPerson();
+        person.setFirstName("firstName");
+        person.setLastName("lastName");
+        person.setLoginCount(10);
+        
+        InvitationToken token = new InvitationToken();
+        token.setToken("testtoken");
+        
+        person.setToken(token);
+        token.setPerson(person);
+        
+        //now persist them.
+        
+        pmf.getPersistenceManager().makePersistent(person);
+        
+        
+        UUID personId = person.getId();
+        String tokenKey = token.getToken();
+        
+        PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction trans = pm.currentTransaction();
+        trans.begin();
+        
+        InvitedPerson saved = pm.getObjectById(InvitedPerson.class, personId);
+        
+        assertNotNull(saved);
+        assertNotNull(saved.getToken());
+        
+        
+        pm.deletePersistent(saved);
+        trans.commit();
+        
+        boolean deleted = false;
 
-		try {
-			pmf.getPersistenceManager().getObjectById(InvitedPerson.class, personId);
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        try {
+            pmf.getPersistenceManager().getObjectById(InvitedPerson.class, personId);
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertTrue(deleted);
+        assertTrue(deleted);
 
-		deleted = false;
+        deleted = false;
 
-		// now check the cards are gone as well
-		try {
-			pmf.getPersistenceManager().getObjectById(InvitationToken.class, tokenKey);
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        // now check the cards are gone as well
+        try {
+            pmf.getPersistenceManager().getObjectById(InvitationToken.class, tokenKey);
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertTrue(deleted);
+        assertTrue(deleted);
 
-		
-		
-		
-	}
+        
+        
+        
+    }
 
 
 }

@@ -36,21 +36,21 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="Search")
 public abstract class Search extends BaseEntity {
  
-	@Persistent
-	@Index(name="SearchField")
-	private String searchField;
+    @Persistent
+    @Index(name="SearchField")
+    private String searchField;
 
-	/**
-	 * @return the searchField
-	 */
-	public String getSearchField() {
-		return searchField;
-	}
+    /**
+     * @return the searchField
+     */
+    public String getSearchField() {
+        return searchField;
+    }
 
-	/**
-	 * @param searchField the searchField to set
-	 */
-	public void setSearchField(String searchField) {
-		this.searchField = searchField;
-	}
+    /**
+     * @param searchField the searchField to set
+     */
+    public void setSearchField(String searchField) {
+        this.searchField = searchField;
+    }
 }

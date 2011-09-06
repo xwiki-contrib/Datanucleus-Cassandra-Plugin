@@ -21,7 +21,7 @@ Contributors:
 <plugin id="com.spidertracks.datanucleus.test" name="DataNucleus test user plug-ins" provider-name="SpiderTracks">
     <!-- Extension point for custom serialization of values -->
    <extension point="org.datanucleus.java_type">
-		<java-type name="com.spidertracks.datanucleus.basic.model.EnumValues" string-converter="com.spidertracks.datanucleus.basic.converter.EnumConverter"  persistent="true" dfg="true" embedded="true" override="true"  />
+        <java-type name="com.spidertracks.datanucleus.basic.model.EnumValues" string-converter="com.spidertracks.datanucleus.basic.converter.EnumConverter"  persistent="true" dfg="true" embedded="true" override="true"  />
     </extension>
 
 

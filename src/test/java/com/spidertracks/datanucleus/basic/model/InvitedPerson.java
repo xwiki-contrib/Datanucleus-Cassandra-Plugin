@@ -27,20 +27,20 @@ import javax.jdo.annotations.Persistent;
 @PersistenceCapable
 public class InvitedPerson extends Person {
 
-	@Persistent(dependent="true", defaultFetchGroup="true")
-	private InvitationToken token;
+    @Persistent(dependent="true", defaultFetchGroup="true")
+    private InvitationToken token;
 
-	/**
-	 * @return the token
-	 */
-	public InvitationToken getToken() {
-		return token;
-	}
+    /**
+     * @return the token
+     */
+    public InvitationToken getToken() {
+        return token;
+    }
 
-	/**
-	 * @param token the token to set
-	 */
-	public void setToken(InvitationToken token) {
-		this.token = token;
-	}
+    /**
+     * @param token the token to set
+     */
+    public void setToken(InvitationToken token) {
+        this.token = token;
+    }
 }

@@ -41,107 +41,107 @@ import com.spidertracks.datanucleus.model.LongEntity;
 
 public class ByteMapperTest extends CassandraTest {
 
-	@Test
-	public void testLongEntityLoad() throws Exception {
+    @Test
+    public void testLongEntityLoad() throws Exception {
 
-		PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
 
-		LongEntity object = new LongEntity();
-		object.setTestVal("testVal");
-		object.setId(100l);
-		
-		
-		// now save our object
-		pm.makePersistent(object);
+        LongEntity object = new LongEntity();
+        object.setTestVal("testVal");
+        object.setId(100l);
+        
+        
+        // now save our object
+        pm.makePersistent(object);
 
-		// don't want it to come from the cache, get a new pm
-		PersistenceManager pm2 = pmf.getPersistenceManager();
+        // don't want it to come from the cache, get a new pm
+        PersistenceManager pm2 = pmf.getPersistenceManager();
 
-		// now retrieve a copy
-		LongEntity stored = (LongEntity) pm2.getObjectById(
-				LongEntity.class, object.getId());
+        // now retrieve a copy
+        LongEntity stored = (LongEntity) pm2.getObjectById(
+                LongEntity.class, object.getId());
 
-		// make sure they're not the same instance, we want a new one from the
-		// data source
-		assertFalse(object == stored);
+        // make sure they're not the same instance, we want a new one from the
+        // data source
+        assertFalse(object == stored);
 
-		assertEquals(object.getId(), stored.getId());
+        assertEquals(object.getId(), stored.getId());
 
-		assertEquals(object.getTestVal(), stored.getTestVal());
-
-
-	}
-
-	
-	@Test
-	public void testLexicalUUIDEntityLoad() throws Exception {
-
-		PersistenceManager pm = pmf.getPersistenceManager();
-
-		LexicalUUIDEntity object = new LexicalUUIDEntity();
-		object.setTestVal("testVal");
-		object.setId(UUID.randomUUID());
-		
-		
-		// now save our object
-		pm.makePersistent(object);
-
-		// don't want it to come from the cache, get a new pm
-		PersistenceManager pm2 = pmf.getPersistenceManager();
-
-		// now retrieve a copy
-		LexicalUUIDEntity stored = (LexicalUUIDEntity) pm2.getObjectById(
-				LexicalUUIDEntity.class, object.getId());
-
-		// make sure they're not the same instance, we want a new one from the
-		// data source
-		assertFalse(object == stored);
-
-		assertEquals(object.getId(), stored.getId());
-
-		assertEquals(object.getTestVal(), stored.getTestVal());
+        assertEquals(object.getTestVal(), stored.getTestVal());
 
 
-	}
-	
+    }
 
-	@Test
-	public void testCompositeEntityLoad() throws Exception {
+    
+    @Test
+    public void testLexicalUUIDEntityLoad() throws Exception {
 
-		PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
 
-		
-		CompositeKey key = new CompositeKey();
-		key.setFirst(0);
-		key.setSecond(100);
-		key.setThird(300);
-		
-		CompositeEntity object = new CompositeEntity();
-		object.setTestVal("testVal");
-		object.setId(key);
-		
-		
-		
-		// now save our object
-		pm.makePersistent(object);
+        LexicalUUIDEntity object = new LexicalUUIDEntity();
+        object.setTestVal("testVal");
+        object.setId(UUID.randomUUID());
+        
+        
+        // now save our object
+        pm.makePersistent(object);
 
-		// don't want it to come from the cache, get a new pm
-		PersistenceManager pm2 = pmf.getPersistenceManager();
+        // don't want it to come from the cache, get a new pm
+        PersistenceManager pm2 = pmf.getPersistenceManager();
 
-		// now retrieve a copy
-		CompositeEntity stored = (CompositeEntity) pm2.getObjectById(
-				CompositeEntity.class, object.getId());
+        // now retrieve a copy
+        LexicalUUIDEntity stored = (LexicalUUIDEntity) pm2.getObjectById(
+                LexicalUUIDEntity.class, object.getId());
 
-		// make sure they're not the same instance, we want a new one from the
-		// data source
-		assertFalse(object == stored);
+        // make sure they're not the same instance, we want a new one from the
+        // data source
+        assertFalse(object == stored);
 
-		assertEquals(object.getId(), stored.getId());
+        assertEquals(object.getId(), stored.getId());
 
-		assertEquals(object.getTestVal(), stored.getTestVal());
+        assertEquals(object.getTestVal(), stored.getTestVal());
 
 
-	}
+    }
+    
+
+    @Test
+    public void testCompositeEntityLoad() throws Exception {
+
+        PersistenceManager pm = pmf.getPersistenceManager();
+
+        
+        CompositeKey key = new CompositeKey();
+        key.setFirst(0);
+        key.setSecond(100);
+        key.setThird(300);
+        
+        CompositeEntity object = new CompositeEntity();
+        object.setTestVal("testVal");
+        object.setId(key);
+        
+        
+        
+        // now save our object
+        pm.makePersistent(object);
+
+        // don't want it to come from the cache, get a new pm
+        PersistenceManager pm2 = pmf.getPersistenceManager();
+
+        // now retrieve a copy
+        CompositeEntity stored = (CompositeEntity) pm2.getObjectById(
+                CompositeEntity.class, object.getId());
+
+        // make sure they're not the same instance, we want a new one from the
+        // data source
+        assertFalse(object == stored);
+
+        assertEquals(object.getId(), stored.getId());
+
+        assertEquals(object.getTestVal(), stored.getTestVal());
+
+
+    }
 
 
 }

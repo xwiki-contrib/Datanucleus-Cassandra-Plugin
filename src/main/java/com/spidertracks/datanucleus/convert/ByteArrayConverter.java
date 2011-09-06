@@ -30,29 +30,29 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class ByteArrayConverter implements ByteConverter{
 
-	@Override
-	public byte[] getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if(buffer == null){
-			return null;
-		}
-		
-		return Bytes.fromByteBuffer(buffer).toByteArray();
-	}
+    @Override
+    public byte[] getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if(buffer == null){
+            return null;
+        }
+        
+        return Bytes.fromByteBuffer(buffer).toByteArray();
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		byte[] bytes = (byte[]) value;
-		
-		ByteBuffer checked = check(buffer, bytes.length);
-		
-		return checked.put(bytes);
-	}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        byte[] bytes = (byte[]) value;
+        
+        ByteBuffer checked = check(buffer, bytes.length);
+        
+        return checked.put(bytes);
+    }
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
+    }
 
-	
+    
 
 }

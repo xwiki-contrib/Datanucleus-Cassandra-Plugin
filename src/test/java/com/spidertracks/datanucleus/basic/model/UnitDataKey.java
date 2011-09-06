@@ -34,84 +34,84 @@ import com.spidertracks.datanucleus.identity.ByteAware;
  */
 public class UnitDataKey implements Serializable, ByteAware {
 
-	/**
-		 * 
-		 */
-	private static final long serialVersionUID = 1507634768434382394L;
-	public Date createdDate;
-	public String unitId;
+    /**
+         * 
+         */
+    private static final long serialVersionUID = 1507634768434382394L;
+    public Date createdDate;
+    public String unitId;
 
-	public UnitDataKey() {
-	}
+    public UnitDataKey() {
+    }
 
-	public UnitDataKey(Date createdDate, String unitId) {
-		this.createdDate = createdDate;
-		this.unitId = unitId;
-	}
+    public UnitDataKey(Date createdDate, String unitId) {
+        this.createdDate = createdDate;
+        this.unitId = unitId;
+    }
 
-	public Date getCreatedDate() {
-		return createdDate;
-	}
+    public Date getCreatedDate() {
+        return createdDate;
+    }
 
-	public String getUnitId() {
-		return unitId;
-	}
+    public String getUnitId() {
+        return unitId;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		}
-		if (!(obj instanceof UnitDataKey)) {
-			return false;
-		}
-		UnitDataKey c = (UnitDataKey) obj;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof UnitDataKey)) {
+            return false;
+        }
+        UnitDataKey c = (UnitDataKey) obj;
 
-		return unitId.equals(c.unitId) && createdDate.equals(c.createdDate);
-	}
+        return unitId.equals(c.unitId) && createdDate.equals(c.createdDate);
+    }
 
-	@Override
-	public int hashCode() {
-		return this.unitId.hashCode() ^ this.createdDate.hashCode();
-	}
+    @Override
+    public int hashCode() {
+        return this.unitId.hashCode() ^ this.createdDate.hashCode();
+    }
 
-	public String toString() {
-		// Give output expected by String constructor
-		return this.unitId + "::" + this.createdDate.getTime();
-	}
+    public String toString() {
+        // Give output expected by String constructor
+        return this.unitId + "::" + this.createdDate.getTime();
+    }
 
-	@Override
-	public ByteBuffer writeBytes(ByteBuffer buffer, ByteConverterContext context) {
-		
-		ByteBuffer checked = ConverterUtils.check(buffer, 8+this.unitId.length());
-		
-		checked.putLong(this.createdDate.getTime());
-		try {
-			return checked.put(this.unitId.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			// should never happen
-			throw new RuntimeException(e);
-		}
+    @Override
+    public ByteBuffer writeBytes(ByteBuffer buffer, ByteConverterContext context) {
+        
+        ByteBuffer checked = ConverterUtils.check(buffer, 8+this.unitId.length());
+        
+        checked.putLong(this.createdDate.getTime());
+        try {
+            return checked.put(this.unitId.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            // should never happen
+            throw new RuntimeException(e);
+        }
 
-	}
+    }
 
-	@Override
-	public void parseBytes(ByteBuffer buffer, ByteConverterContext context) {
-		this.createdDate = new Date(buffer.getLong());
-		try {
-			this.unitId = new String(buffer.array(), buffer.position(),
-					buffer.remaining(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// should never happen
-			throw new RuntimeException(e);
-		}
+    @Override
+    public void parseBytes(ByteBuffer buffer, ByteConverterContext context) {
+        this.createdDate = new Date(buffer.getLong());
+        try {
+            this.unitId = new String(buffer.array(), buffer.position(),
+                    buffer.remaining(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // should never happen
+            throw new RuntimeException(e);
+        }
 
-	}
+    }
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
+    }
 
 
 }

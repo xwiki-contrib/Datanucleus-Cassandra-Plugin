@@ -31,44 +31,44 @@ import com.spidertracks.datanucleus.identity.ByteAware;
  */
 public class ByteAwareConverter implements ByteConverter {
 
-	private Class<?> targetClass;
+    private Class<?> targetClass;
 
-	public ByteAwareConverter(Class<?> targetClass) {
-		this.targetClass = targetClass;
-	}
+    public ByteAwareConverter(Class<?> targetClass) {
+        this.targetClass = targetClass;
+    }
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
 
-		ByteAware instance = createInstance();
+        ByteAware instance = createInstance();
 
-		instance.parseBytes(buffer, context);
+        instance.parseBytes(buffer, context);
 
-		return instance;
+        return instance;
 
-	}
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
 
-		return ((ByteAware) value).writeBytes(buffer, context);
+        return ((ByteAware) value).writeBytes(buffer, context);
 
-	}
+    }
 
-	@Override
-	public String getComparatorType() {
-		return createInstance().getComparatorType();
-	}
+    @Override
+    public String getComparatorType() {
+        return createInstance().getComparatorType();
+    }
 
-	private ByteAware createInstance() {
-		try {
-			return (ByteAware) targetClass.newInstance();
-		} catch (Exception e) {
-			throw new NucleusDataStoreException(
-					String.format(
-							"Unable to create new instance of class %s.  Please make sure it has a no arg constructor",
-							targetClass.getName()));
-		}
-	}
+    private ByteAware createInstance() {
+        try {
+            return (ByteAware) targetClass.newInstance();
+        } catch (Exception e) {
+            throw new NucleusDataStoreException(
+                    String.format(
+                            "Unable to create new instance of class %s.  Please make sure it has a no arg constructor",
+                            targetClass.getName()));
+        }
+    }
 
 }

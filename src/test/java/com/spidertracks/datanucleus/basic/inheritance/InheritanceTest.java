@@ -50,249 +50,249 @@ import com.spidertracks.datanucleus.basic.inheritance.casetwo.GrandChildTwoTwo;
  */
 public class InheritanceTest extends CassandraTest {
 
-	
-	
-	
-	/**
-	 * Test retrieval works with subclass and superclass mix
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testQueryChildReturnsSubclass() throws Exception {
+    
+    
+    
+    /**
+     * Test retrieval works with subclass and superclass mix
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testQueryChildReturnsSubclass() throws Exception {
 
-		GrandChildOne first = new GrandChildOne();
-		first.setChildField("cf-gc1");
-		first.setGrandChildOneField("gcf-gc1");
-		first.setParentField("pf-gc1");
+        GrandChildOne first = new GrandChildOne();
+        first.setChildField("cf-gc1");
+        first.setGrandChildOneField("gcf-gc1");
+        first.setParentField("pf-gc1");
 
-		GrandChildTwo second = new GrandChildTwo();
-		second.setChildField("cf-gc2");
-		second.setGrandChildTwoField("gcf-gc2");
-		second.setParentField("pf-gc2");
+        GrandChildTwo second = new GrandChildTwo();
+        second.setChildField("cf-gc2");
+        second.setGrandChildTwoField("gcf-gc2");
+        second.setParentField("pf-gc2");
 
-		Child third = new Child();
-		third.setChildField("cf-c1");
-		third.setParentField("pf-c1");
+        Child third = new Child();
+        third.setChildField("cf-c1");
+        third.setParentField("pf-c1");
 
-		PersistenceManager pm = pmf.getPersistenceManager();
-		pm.makePersistent(first);
-		pm.makePersistent(second);
-		pm.makePersistent(third);
+        PersistenceManager pm = pmf.getPersistenceManager();
+        pm.makePersistent(first);
+        pm.makePersistent(second);
+        pm.makePersistent(third);
 
-		// now retrieve to instances of "child" should return 2 subclasses
+        // now retrieve to instances of "child" should return 2 subclasses
 
-		Child savedFirst = pm.getObjectById(Child.class, first.getId());
+        Child savedFirst = pm.getObjectById(Child.class, first.getId());
 
-		assertEquals(first, savedFirst);
+        assertEquals(first, savedFirst);
 
-		Child savedSecond = pm.getObjectById(Child.class, second.getId());
+        Child savedSecond = pm.getObjectById(Child.class, second.getId());
 
-		assertEquals(second, savedSecond);
+        assertEquals(second, savedSecond);
 
-		Child savedThird = pm.getObjectById(Child.class, third.getId());
+        Child savedThird = pm.getObjectById(Child.class, third.getId());
 
-		assertEquals(third, savedThird);
+        assertEquals(third, savedThird);
 
-	}
+    }
 
-	/**
-	 * Test retrieval works when each class has it's own CF
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testQueryChildReturnsSubclassOwnCF() throws Exception {
+    /**
+     * Test retrieval works when each class has it's own CF
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testQueryChildReturnsSubclassOwnCF() throws Exception {
 
-		GrandChildTwoOne first = new GrandChildTwoOne();
-		first.setChildField("cf-gc1");
-		first.setGrandChildOneField("gcf-gc1");
-		first.setParentField("pf-gc1");
+        GrandChildTwoOne first = new GrandChildTwoOne();
+        first.setChildField("cf-gc1");
+        first.setGrandChildOneField("gcf-gc1");
+        first.setParentField("pf-gc1");
 
-		GrandChildTwoTwo second = new GrandChildTwoTwo();
-		second.setChildField("cf-gc2");
-		second.setGrandChildOneField("gcf-gc2");
-		second.setParentField("pf-gc2");
+        GrandChildTwoTwo second = new GrandChildTwoTwo();
+        second.setChildField("cf-gc2");
+        second.setGrandChildOneField("gcf-gc2");
+        second.setParentField("pf-gc2");
 
-		ChildTwo third = new ChildTwo();
-		third.setChildField("cf-c1");
-		third.setParentField("pf-c1");
+        ChildTwo third = new ChildTwo();
+        third.setChildField("cf-c1");
+        third.setParentField("pf-c1");
 
-		PersistenceManager pm = pmf.getPersistenceManager();
-		pm.makePersistent(first);
-		pm.makePersistent(second);
-		pm.makePersistent(third);
+        PersistenceManager pm = pmf.getPersistenceManager();
+        pm.makePersistent(first);
+        pm.makePersistent(second);
+        pm.makePersistent(third);
 
-		// now retrieve to instances of "child" should return 2 subclasses
+        // now retrieve to instances of "child" should return 2 subclasses
 
-		ChildTwo savedFirst = pm.getObjectById(ChildTwo.class, first.getId());
+        ChildTwo savedFirst = pm.getObjectById(ChildTwo.class, first.getId());
 
-		assertEquals(first, savedFirst);
+        assertEquals(first, savedFirst);
 
-		ChildTwo savedSecond = pm.getObjectById(ChildTwo.class, second.getId());
+        ChildTwo savedSecond = pm.getObjectById(ChildTwo.class, second.getId());
 
-		assertEquals(second, savedSecond);
+        assertEquals(second, savedSecond);
 
-		ChildTwo savedThird = pm.getObjectById(ChildTwo.class, third.getId());
+        ChildTwo savedThird = pm.getObjectById(ChildTwo.class, third.getId());
 
-		assertEquals(third, savedThird);
+        assertEquals(third, savedThird);
 
-	}
-	
-	/**
-	 * Test retrieval works when everything is stored in abstract parent class cf
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testQueryChildReturnsSuperclassCF() throws Exception {
+    }
+    
+    /**
+     * Test retrieval works when everything is stored in abstract parent class cf
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testQueryChildReturnsSuperclassCF() throws Exception {
 
-		GrandChildThreeOne first = new GrandChildThreeOne();
-		first.setChildField("cf-gc1");
-		first.setGrandChildOneField("gcf-gc1");
-		first.setParentField("pf-gc1");
+        GrandChildThreeOne first = new GrandChildThreeOne();
+        first.setChildField("cf-gc1");
+        first.setGrandChildOneField("gcf-gc1");
+        first.setParentField("pf-gc1");
 
-		GrandChildThreeTwo second = new GrandChildThreeTwo();
-		second.setChildField("cf-gc2");
-		second.setGrandChildOneField("gcf-gc2");
-		second.setParentField("pf-gc2");
+        GrandChildThreeTwo second = new GrandChildThreeTwo();
+        second.setChildField("cf-gc2");
+        second.setGrandChildOneField("gcf-gc2");
+        second.setParentField("pf-gc2");
 
-		ChildThree third = new ChildThree();
-		third.setChildField("cf-c1");
-		third.setParentField("pf-c1");
+        ChildThree third = new ChildThree();
+        third.setChildField("cf-c1");
+        third.setParentField("pf-c1");
 
-		PersistenceManager pm = pmf.getPersistenceManager();
-		pm.makePersistent(first);
-		pm.makePersistent(second);
-		pm.makePersistent(third);
+        PersistenceManager pm = pmf.getPersistenceManager();
+        pm.makePersistent(first);
+        pm.makePersistent(second);
+        pm.makePersistent(third);
 
-		// now retrieve to instances of "child" should return 2 subclasses
+        // now retrieve to instances of "child" should return 2 subclasses
 
-		ChildThree savedFirst = pm.getObjectById(ChildThree.class, first.getId());
+        ChildThree savedFirst = pm.getObjectById(ChildThree.class, first.getId());
 
-		assertEquals(first, savedFirst);
+        assertEquals(first, savedFirst);
 
-		ChildThree savedSecond = pm.getObjectById(ChildThree.class, second.getId());
+        ChildThree savedSecond = pm.getObjectById(ChildThree.class, second.getId());
 
-		assertEquals(second, savedSecond);
+        assertEquals(second, savedSecond);
 
-		ChildThree savedThird = pm.getObjectById(ChildThree.class, third.getId());
+        ChildThree savedThird = pm.getObjectById(ChildThree.class, third.getId());
 
-		assertEquals(third, savedThird);
+        assertEquals(third, savedThird);
 
-	}
-	
-	/**
-	 * Test retrieval works when everything is stored in abstract parent class cf
-	 * 
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	@Test
-	public void testQueryChildReturnsSuperQuery() throws Exception {
+    }
+    
+    /**
+     * Test retrieval works when everything is stored in abstract parent class cf
+     * 
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testQueryChildReturnsSuperQuery() throws Exception {
 
-		super.deleteAllRows("ParentThree");
-		
-		GrandChildThreeOne first = new GrandChildThreeOne();
-		first.setChildField("cf-gc1");
-		first.setGrandChildOneField("gcf-gc1");
-		first.setParentField("pf-gc1");
+        super.deleteAllRows("ParentThree");
+        
+        GrandChildThreeOne first = new GrandChildThreeOne();
+        first.setChildField("cf-gc1");
+        first.setGrandChildOneField("gcf-gc1");
+        first.setParentField("pf-gc1");
 
-		GrandChildThreeTwo second = new GrandChildThreeTwo();
-		second.setChildField("cf-gc2");
-		second.setGrandChildOneField("gcf-gc2");
-		second.setParentField("pf-gc2");
+        GrandChildThreeTwo second = new GrandChildThreeTwo();
+        second.setChildField("cf-gc2");
+        second.setGrandChildOneField("gcf-gc2");
+        second.setParentField("pf-gc2");
 
-		ChildThree third = new ChildThree();
-		third.setChildField("cf-c1");
-		third.setParentField("pf-c1-new-test");
+        ChildThree third = new ChildThree();
+        third.setChildField("cf-c1");
+        third.setParentField("pf-c1-new-test");
 
-		PersistenceManager pm = pmf.getPersistenceManager();
-		pm.makePersistent(first);
-		pm.makePersistent(second);
-		pm.makePersistent(third);
+        PersistenceManager pm = pmf.getPersistenceManager();
+        pm.makePersistent(first);
+        pm.makePersistent(second);
+        pm.makePersistent(third);
 
-		// now retrieve to instances of "child" should return 2 subclasses
-		
-		Query query = pm.newQuery(ParentThree.class);
-		query.setFilter("parentField == :field");
-		
-		List<ParentThree> results = (List<ParentThree>) query.execute(third.getParentField());
-		
-		assertNotNull(results);
-		
-		assertEquals(1, results.size());
-		
-		
+        // now retrieve to instances of "child" should return 2 subclasses
+        
+        Query query = pm.newQuery(ParentThree.class);
+        query.setFilter("parentField == :field");
+        
+        List<ParentThree> results = (List<ParentThree>) query.execute(third.getParentField());
+        
+        assertNotNull(results);
+        
+        assertEquals(1, results.size());
+        
+        
 
-		ParentThree savedChild = results.get(0);
-		
-		assertEquals(third, savedChild);
+        ParentThree savedChild = results.get(0);
+        
+        assertEquals(third, savedChild);
 
-		
-		
-		
+        
+        
+        
 
-	}
-	
-	/**
-	 * Test retrieval works when everything is stored in abstract parent class cf
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testChildIdQueryDetaches() throws Exception {
+    }
+    
+    /**
+     * Test retrieval works when everything is stored in abstract parent class cf
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testChildIdQueryDetaches() throws Exception {
 
-		String parentField = "pf-gc1";
-		String childField = "cf-gc1";
-		String grandChildOne = "gcf-gc1";
-		
-		GrandChildThreeOne first = new GrandChildThreeOne();
-	
-		first.setChildField(childField);
-		
-		first.setGrandChildOneField(grandChildOne);
-	
-		first.setParentField(parentField);
+        String parentField = "pf-gc1";
+        String childField = "cf-gc1";
+        String grandChildOne = "gcf-gc1";
+        
+        GrandChildThreeOne first = new GrandChildThreeOne();
+    
+        first.setChildField(childField);
+        
+        first.setGrandChildOneField(grandChildOne);
+    
+        first.setParentField(parentField);
 
-		ChildThree third = new ChildThree();
-		third.setChildField("cf-c1");
-		third.setParentField("pf-c1-new-test");
+        ChildThree third = new ChildThree();
+        third.setChildField("cf-c1");
+        third.setParentField("pf-c1-new-test");
 
-		PersistenceManager pm = pmf.getPersistenceManager();
-		
-	
-		pm.makePersistent(first);
-		pm.makePersistent(third);
-		
-		
-		//create a new PM with detach on commit and return detached subclass.  Currently with the bug it is hollowing the instance of subclasses on detach.
-		
+        PersistenceManager pm = pmf.getPersistenceManager();
+        
+    
+        pm.makePersistent(first);
+        pm.makePersistent(third);
+        
+        
+        //create a new PM with detach on commit and return detached subclass.  Currently with the bug it is hollowing the instance of subclasses on detach.
+        
 
-		pm = pmf.getPersistenceManager();
-		pm.setDetachAllOnCommit(true);
-		Transaction trans = pm.currentTransaction();
-		trans.begin();
-		
-		
-		ChildThree returned = pm.getObjectById(ChildThree.class, first.getId());
-		
-		trans.commit();
-		
-		
-		assertNotNull(returned);
-		
+        pm = pmf.getPersistenceManager();
+        pm.setDetachAllOnCommit(true);
+        Transaction trans = pm.currentTransaction();
+        trans.begin();
+        
+        
+        ChildThree returned = pm.getObjectById(ChildThree.class, first.getId());
+        
+        trans.commit();
+        
+        
+        assertNotNull(returned);
+        
 
-		assertEquals(first, returned);
-		assertEquals(childField, returned.getChildField());
-		assertEquals(parentField, returned.getParentField());
-		assertEquals(grandChildOne, ((GrandChildThreeOne)returned).getGrandChildOneField());
-		
-		
-		
-		
+        assertEquals(first, returned);
+        assertEquals(childField, returned.getChildField());
+        assertEquals(parentField, returned.getParentField());
+        assertEquals(grandChildOne, ((GrandChildThreeOne)returned).getGrandChildOneField());
+        
+        
+        
+        
 
-	}
+    }
 
 
 }

@@ -37,25 +37,25 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @PersistenceCapable(table = "PackMapDate", identityType = IdentityType.APPLICATION, detachable="true")
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class PackMapDate extends BaseEntity {
-	
-	@Persistent(mappedBy = "pack")
-	private Map<Date, CardMapDate> cards;
+    
+    @Persistent(mappedBy = "pack")
+    private Map<Date, CardMapDate> cards;
 
-	public PackMapDate() {
-		cards = new  HashMap<Date, CardMapDate>();
-	}
+    public PackMapDate() {
+        cards = new  HashMap<Date, CardMapDate>();
+    }
 
-	/**
-	 * @return the manyToOne
-	 */
-	public Map<Date, CardMapDate> getCards() {
-		return cards;
-	}
-	
+    /**
+     * @return the manyToOne
+     */
+    public Map<Date, CardMapDate> getCards() {
+        return cards;
+    }
+    
 
-	public void AddCard(CardMapDate card){
-		this.cards.put(card.getTime(), card);
-		card.setPack(this);
-	}
+    public void AddCard(CardMapDate card){
+        this.cards.put(card.getTime(), card);
+        card.setPack(this);
+    }
 
 }

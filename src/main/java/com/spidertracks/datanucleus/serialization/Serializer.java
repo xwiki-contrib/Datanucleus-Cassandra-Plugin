@@ -24,26 +24,26 @@ package com.spidertracks.datanucleus.serialization;
  */
 public interface Serializer {
 
-	/**
-	 * Get the bytes for the serialized object
-	 * @param value
-	 * @return
-	 */
-	public byte[] getBytes(Object value);
-	
-	
-	/**
-	 * Get the object for the bytes
-	 * @param <T>
-	 * @param bytes
-	 * @return
-	 */
-	public <T> T getObject(byte[] bytes);
-	
-	/**
-	 * Return the maximum number of bytes this object could have when serialized
-	 */
-	public int size(Object value);
-	
-	
+    /**
+     * Get the bytes for the serialized object
+     * @param value
+     * @return
+     */
+    public byte[] getBytes(Object value);
+    
+    
+    /**
+     * Get the object for the bytes
+     * @param <T>
+     * @param bytes
+     * @return
+     */
+    public <T> T getObject(byte[] bytes);
+    
+    /**
+     * Return the maximum number of bytes this object could have when serialized
+     */
+    public int size(Object value);
+    
+    
 }

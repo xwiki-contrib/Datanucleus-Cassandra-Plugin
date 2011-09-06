@@ -28,31 +28,31 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class LongConverter implements ByteConverter {
 
-	private static final int SIZE = Long.SIZE / Byte.SIZE;
+    private static final int SIZE = Long.SIZE / Byte.SIZE;
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null || buffer.remaining() < SIZE) {
-			return null;
-		}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null || buffer.remaining() < SIZE) {
+            return null;
+        }
 
-		return buffer.getLong();
-	}
+        return buffer.getLong();
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		if (value == null) {
-			return buffer;
-		}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        if (value == null) {
+            return buffer;
+        }
 
-		ByteBuffer returned = check(buffer, SIZE);
+        ByteBuffer returned = check(buffer, SIZE);
 
-		return returned.putLong((Long) value);
-	}
+        return returned.putLong((Long) value);
+    }
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_LONG;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_LONG;
+    }
 
 }

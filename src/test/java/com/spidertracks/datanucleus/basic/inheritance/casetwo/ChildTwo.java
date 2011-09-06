@@ -37,20 +37,20 @@ import com.spidertracks.datanucleus.basic.inheritance.caseone.Parent;
 @Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="ChildTwo")
 public class ChildTwo extends Parent {
 
-	@Persistent
-	private String childField;
+    @Persistent
+    private String childField;
 
-	/**
-	 * @return the childField
-	 */
-	public String getChildField() {
-		return childField;
-	}
+    /**
+     * @return the childField
+     */
+    public String getChildField() {
+        return childField;
+    }
 
-	/**
-	 * @param childField the childField to set
-	 */
-	public void setChildField(String childField) {
-		this.childField = childField;
-	}
+    /**
+     * @param childField the childField to set
+     */
+    public void setChildField(String childField) {
+        this.childField = childField;
+    }
 }

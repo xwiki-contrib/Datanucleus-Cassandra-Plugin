@@ -28,35 +28,35 @@ import java.security.ProtectionDomain;
  *
  */
 public class ByteSizeEstimator  implements ClassFileTransformer {
-	private static Instrumentation instrumentation;
-	
-	/**
-	 * 
-	 * @param args
-	 * @param inst
-	 */
-	public static void agentmain(String args, Instrumentation inst) {
+    private static Instrumentation instrumentation;
+    
+    /**
+     * 
+     * @param args
+     * @param inst
+     */
+    public static void agentmain(String args, Instrumentation inst) {
         instrumentation = inst;
     }
-	
-	public static void premain(String args, Instrumentation inst){
-		agentmain(args, inst);
-	}
+    
+    public static void premain(String args, Instrumentation inst){
+        agentmain(args, inst);
+    }
 
-	/**
-	 * Get the approximate size in memory of an object
-	 * @param o
-	 * @return
-	 */
+    /**
+     * Get the approximate size in memory of an object
+     * @param o
+     * @return
+     */
     public static long getObjectSize(Object o) {
         return instrumentation.getObjectSize(o);
     }
 
-	@Override
-	public byte[] transform(ClassLoader loader, String className,
-			Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
-			byte[] classfileBuffer) throws IllegalClassFormatException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public byte[] transform(ClassLoader loader, String className,
+            Class<?> classBeingRedefined, ProtectionDomain protectionDomain,
+            byte[] classfileBuffer) throws IllegalClassFormatException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

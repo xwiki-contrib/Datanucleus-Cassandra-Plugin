@@ -27,21 +27,21 @@ import javax.jdo.annotations.Persistent;
 @PersistenceCapable(table="PrimitiveObjectSubclass")
 public class PrimitiveObjectSubclass extends PrimitiveObject {
 
-	@Persistent
-	private String subClassString;
+    @Persistent
+    private String subClassString;
 
-	/**
-	 * @return the subClassString
-	 */
-	public String getSubClassString() {
-		return subClassString;
-	}
+    /**
+     * @return the subClassString
+     */
+    public String getSubClassString() {
+        return subClassString;
+    }
 
-	/**
-	 * @param subClassString the subClassString to set
-	 */
-	public void setSubClassString(String subClassString) {
-		this.subClassString = subClassString;
-	}
-	
+    /**
+     * @param subClassString the subClassString to set
+     */
+    public void setSubClassString(String subClassString) {
+        this.subClassString = subClassString;
+    }
+    
 }

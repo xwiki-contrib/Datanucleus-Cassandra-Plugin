@@ -32,76 +32,76 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class StringConverterTest {
 
-	/**
-	 * Test method for
-	 * {@link com.spidertracks.datanucleus.convert.StringConverter#getObject(org.scale7.cassandra.pelops.Bytes)}
-	 * .
-	 * 
-	 * @throws UnsupportedEncodingException
-	 */
-	@Test
-	public void testGetObject() throws UnsupportedEncodingException {
-		String value = "foo";
+    /**
+     * Test method for
+     * {@link com.spidertracks.datanucleus.convert.StringConverter#getObject(org.scale7.cassandra.pelops.Bytes)}
+     * .
+     * 
+     * @throws UnsupportedEncodingException
+     */
+    @Test
+    public void testGetObject() throws UnsupportedEncodingException {
+        String value = "foo";
 
-		StringConverter converter = new StringConverter();
+        StringConverter converter = new StringConverter();
 
-		ByteBuffer buffer = ByteBuffer.allocate(3);
+        ByteBuffer buffer = ByteBuffer.allocate(3);
 
-		buffer.mark();
-		buffer.put(value.getBytes("UTF-8"));
-		buffer.reset();
+        buffer.mark();
+        buffer.put(value.getBytes("UTF-8"));
+        buffer.reset();
 
-		String returned = (String) converter.getObject(buffer, null);
+        String returned = (String) converter.getObject(buffer, null);
 
-		assertEquals(value, returned);
-	}
+        assertEquals(value, returned);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.spidertracks.datanucleus.convert.StringConverter#getBytes(java.lang.Object)}
-	 * .
-	 */
-	@Test
-	public void testGetBytes() {
-		String string = "foo";
-		StringConverter converter = new StringConverter();
+    /**
+     * Test method for
+     * {@link com.spidertracks.datanucleus.convert.StringConverter#getBytes(java.lang.Object)}
+     * .
+     */
+    @Test
+    public void testGetBytes() {
+        String string = "foo";
+        StringConverter converter = new StringConverter();
 
-		Bytes bytes = Bytes.fromUTF8(string);
+        Bytes bytes = Bytes.fromUTF8(string);
 
-		ByteBuffer buffer = converter.writeBytes(string, null, null);
-		buffer.reset();
+        ByteBuffer buffer = converter.writeBytes(string, null, null);
+        buffer.reset();
 
-		byte[] data = new byte[buffer.limit() - buffer.position()];
-		buffer.get(data);
+        byte[] data = new byte[buffer.limit() - buffer.position()];
+        buffer.get(data);
 
-		assertArrayEquals(bytes.toByteArray(), data);
-	}
+        assertArrayEquals(bytes.toByteArray(), data);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.spidertracks.datanucleus.convert.StringConverter#getBytes(java.lang.Object)}
-	 * .
-	 */
-	@Test
-	public void testGetBytesNull() {
-		String string = null;
+    /**
+     * Test method for
+     * {@link com.spidertracks.datanucleus.convert.StringConverter#getBytes(java.lang.Object)}
+     * .
+     */
+    @Test
+    public void testGetBytesNull() {
+        String string = null;
 
-		StringConverter converter = new StringConverter();
+        StringConverter converter = new StringConverter();
 
-		ByteBuffer buffer = converter.writeBytes(string, null, null);
+        ByteBuffer buffer = converter.writeBytes(string, null, null);
 
-		assertNull(buffer);
-	}
+        assertNull(buffer);
+    }
 
-	/**
-	 * Test method for
-	 * {@link com.spidertracks.datanucleus.convert.StringConverter#getComparatorType()}
-	 * .
-	 */
-	@Test
-	public void testGetComparatorType() {
-		assertEquals(ColumnFamilyManager.CFDEF_COMPARATOR_UTF8,
-				new StringConverter().getComparatorType());
-	}
+    /**
+     * Test method for
+     * {@link com.spidertracks.datanucleus.convert.StringConverter#getComparatorType()}
+     * .
+     */
+    @Test
+    public void testGetComparatorType() {
+        assertEquals(ColumnFamilyManager.CFDEF_COMPARATOR_UTF8,
+                new StringConverter().getComparatorType());
+    }
 
 }

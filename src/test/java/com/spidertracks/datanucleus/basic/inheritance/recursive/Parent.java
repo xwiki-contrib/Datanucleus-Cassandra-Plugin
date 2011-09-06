@@ -39,22 +39,22 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="RecursiveParent")
 public abstract class Parent extends BaseEntity {
 
-	@Persistent
-	@Index
-	private String parentField;
+    @Persistent
+    @Index
+    private String parentField;
 
-	/**
-	 * @return the parentField
-	 */
-	public String getParentField() {
-		return parentField;
-	}
+    /**
+     * @return the parentField
+     */
+    public String getParentField() {
+        return parentField;
+    }
 
-	/**
-	 * @param parentField the parentField to set
-	 */
-	public void setParentField(String parentField) {
-		this.parentField = parentField;
-	}
-	
+    /**
+     * @param parentField the parentField to set
+     */
+    public void setParentField(String parentField) {
+        this.parentField = parentField;
+    }
+    
 }

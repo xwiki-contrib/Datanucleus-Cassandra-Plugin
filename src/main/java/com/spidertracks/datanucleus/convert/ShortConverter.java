@@ -28,33 +28,33 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class ShortConverter implements ByteConverter {
 
-	private static final int SIZE = Short.SIZE / Byte.SIZE;
+    private static final int SIZE = Short.SIZE / Byte.SIZE;
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null || buffer.remaining() < SIZE) {
-			return null;
-		}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null || buffer.remaining() < SIZE) {
+            return null;
+        }
 
-		return buffer.getShort();
-	}
+        return buffer.getShort();
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		if (value == null) {
-			return buffer;
-		}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        if (value == null) {
+            return buffer;
+        }
 
-		ByteBuffer returned = check(buffer, SIZE);
+        ByteBuffer returned = check(buffer, SIZE);
 
-		return returned.putShort((Short) value);
+        return returned.putShort((Short) value);
 
-	}
+    }
 
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
+    }
 
 }

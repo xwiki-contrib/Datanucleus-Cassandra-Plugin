@@ -33,20 +33,20 @@ import javax.jdo.annotations.Persistent;
 @Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="SearchThree")
 public class SearchThree extends Search {
 
-	@Persistent
-	private String searchThree;
+    @Persistent
+    private String searchThree;
 
-	/**
-	 * @return the searchOne
-	 */
-	public String getSearchThree() {
-		return searchThree;
-	}
+    /**
+     * @return the searchOne
+     */
+    public String getSearchThree() {
+        return searchThree;
+    }
 
-	/**
-	 * @param searchOne the searchOne to set
-	 */
-	public void setSearchThree(String searchOne) {
-		this.searchThree = searchOne;
-	}
+    /**
+     * @param searchOne the searchOne to set
+     */
+    public void setSearchThree(String searchOne) {
+        this.searchThree = searchOne;
+    }
 }

@@ -19,26 +19,26 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class EmbeddedObject extends BaseEntity {
 
-	@javax.jdo.annotations.Embedded
-	private Embedded embedded = new Embedded();
+    @javax.jdo.annotations.Embedded
+    private Embedded embedded = new Embedded();
 
-	/**
-	 * @return the embedded
-	 */
-	public Embedded getEmbedded() {
-		return embedded;
-	}
+    /**
+     * @return the embedded
+     */
+    public Embedded getEmbedded() {
+        return embedded;
+    }
 
-	/**
-	 * @param embedded
-	 *            the embedded to set
-	 */
-	public void setEmbedded(Embedded embedded) {
-		this.embedded = embedded;
-	}
+    /**
+     * @param embedded
+     *            the embedded to set
+     */
+    public void setEmbedded(Embedded embedded) {
+        this.embedded = embedded;
+    }
 
-	@PersistenceCapable
-	public static class Embedded {
+    @PersistenceCapable
+    public static class Embedded {
 
-	}
+    }
 }

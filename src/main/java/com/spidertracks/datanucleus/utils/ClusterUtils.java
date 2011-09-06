@@ -29,50 +29,50 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class ClusterUtils {
-	
-	private static Logger logger = LoggerFactory.getLogger(ClusterUtils.class);
+    
+    private static Logger logger = LoggerFactory.getLogger(ClusterUtils.class);
 
-	/**
-	 * Get the first node that is online listed in our cluster.  This performs all migrations
-	 * on the same node to avoid migration lag between nodes
-	 * 
-	 * @return A cluster with only a single node
-	 * @throws a NucleusDataStoreExeption is no nodes can be reached
-	 */
-	public static Cluster getFirstAvailableNode(Cluster cluster) {
+    /**
+     * Get the first node that is online listed in our cluster.  This performs all migrations
+     * on the same node to avoid migration lag between nodes
+     * 
+     * @return A cluster with only a single node
+     * @throws a NucleusDataStoreExeption is no nodes can be reached
+     */
+    public static Cluster getFirstAvailableNode(Cluster cluster) {
 
-		Node[] nodes = cluster.getNodes();
+        Node[] nodes = cluster.getNodes();
 
-		for (Node node : nodes) {
-	
-			Cluster  firstNodeOnly = getClusterForNode(node);
-			
-			if(firstNodeOnly == null){
-				continue;
-			}
-			
-			return firstNodeOnly;
-		}
+        for (Node node : nodes) {
+    
+            Cluster  firstNodeOnly = getClusterForNode(node);
+            
+            if(firstNodeOnly == null){
+                continue;
+            }
+            
+            return firstNodeOnly;
+        }
 
-		throw new NucleusDataStoreException("Could not connect to any node to perform migrations %s");
-	}
-	
-	/**
-	 * Get a cluster with only the given node
-	 * @param node
-	 * @return
-	 */
-	public static Cluster getClusterForNode(Node node){
-		Cluster  firstNodeOnly = new Cluster(node.getAddress(), node.getConfig(), false);
-		KeyspaceManager manager = new KeyspaceManager(firstNodeOnly);
-		try {
-			manager.getKeyspaceNames();
-		} catch (Exception e) {
-			logger.error("Unable to connect to node", e);
-			// swallow and try the next one
-			return null;
-		}
-		
-		return firstNodeOnly;
-	}
+        throw new NucleusDataStoreException("Could not connect to any node to perform migrations %s");
+    }
+    
+    /**
+     * Get a cluster with only the given node
+     * @param node
+     * @return
+     */
+    public static Cluster getClusterForNode(Node node){
+        Cluster  firstNodeOnly = new Cluster(node.getAddress(), node.getConfig(), false);
+        KeyspaceManager manager = new KeyspaceManager(firstNodeOnly);
+        try {
+            manager.getKeyspaceNames();
+        } catch (Exception e) {
+            logger.error("Unable to connect to node", e);
+            // swallow and try the next one
+            return null;
+        }
+        
+        return firstNodeOnly;
+    }
 }

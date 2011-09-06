@@ -28,35 +28,35 @@ import org.datanucleus.store.types.ObjectStringConverter;
  */
 public class DateConverter implements ObjectStringConverter {
 
-	
-	                                                                                                                                                                                                   	
-	/* (non-Javadoc)
-	 * @see org.datanucleus.store.types.ObjectStringConverter#toObject(java.lang.String)
-	 */
-	@Override
-	public Object toObject(String str) {
-		
-		if(str == null || str.length() == 0){
-			return null;
-		}
-		
-		long epoch = Long.valueOf(str);
-		
-		return new Date(epoch);
-		
-	}
+    
+                                                                                                                                                                                                           
+    /* (non-Javadoc)
+     * @see org.datanucleus.store.types.ObjectStringConverter#toObject(java.lang.String)
+     */
+    @Override
+    public Object toObject(String str) {
+        
+        if(str == null || str.length() == 0){
+            return null;
+        }
+        
+        long epoch = Long.valueOf(str);
+        
+        return new Date(epoch);
+        
+    }
 
-	/* (non-Javadoc)
-	 * @see org.datanucleus.store.types.ObjectStringConverter#toString(java.lang.Object)
-	 */
-	@Override
-	public String toString(Object obj) {
-		
-		if(!(obj instanceof Date)){
-			return null;
-		}
-		
-		return String.valueOf(((Date)obj).getTime());
-	}
+    /* (non-Javadoc)
+     * @see org.datanucleus.store.types.ObjectStringConverter#toString(java.lang.Object)
+     */
+    @Override
+    public String toString(Object obj) {
+        
+        if(!(obj instanceof Date)){
+            return null;
+        }
+        
+        return String.valueOf(((Date)obj).getTime());
+    }
 
 }

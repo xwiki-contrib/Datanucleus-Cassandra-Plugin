@@ -27,8 +27,8 @@ import org.apache.cassandra.thrift.IndexClause;
  */
 public interface CompressableOperand {
 
-	/**
-	 * Return the index clause of this node and all it's compressible children
-	 */
-	public IndexClause getIndexClause();
+    /**
+     * Return the index clause of this node and all it's compressible children
+     */
+    public IndexClause getIndexClause();
 }

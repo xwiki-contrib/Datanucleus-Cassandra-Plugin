@@ -47,177 +47,177 @@ import com.spidertracks.datanucleus.map.model.PackMapDate;
 
 public class MapTest extends CassandraTest {
 
-	@Test
-	public void testBasicPeristAndLoadOneToManyMap() throws Exception {
+    @Test
+    public void testBasicPeristAndLoadOneToManyMap() throws Exception {
 
-		PackMap pack = new PackMap();
+        PackMap pack = new PackMap();
 
-		CardMap aceSpades = new CardMap();
-		aceSpades.setName("Ace of Spades");
-		pack.AddCard(aceSpades);
+        CardMap aceSpades = new CardMap();
+        aceSpades.setName("Ace of Spades");
+        pack.AddCard(aceSpades);
 
-		CardMap jackHearts = new CardMap();
-		jackHearts.setName("Jack of Hearts");
-		pack.AddCard(jackHearts);
+        CardMap jackHearts = new CardMap();
+        jackHearts.setName("Jack of Hearts");
+        pack.AddCard(jackHearts);
 
-		pmf.getPersistenceManager().makePersistent(pack);
+        pmf.getPersistenceManager().makePersistent(pack);
 
-		PackMap saved = pmf.getPersistenceManager().getObjectById(
-				PackMap.class, pack.getId());
+        PackMap saved = pmf.getPersistenceManager().getObjectById(
+                PackMap.class, pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertEquals(aceSpades, saved.getCards().get(aceSpades.getName()));
+        assertEquals(aceSpades, saved.getCards().get(aceSpades.getName()));
 
-		assertEquals(jackHearts, saved.getCards().get(jackHearts.getName()));
+        assertEquals(jackHearts, saved.getCards().get(jackHearts.getName()));
 
-	}
+    }
 
-	/**
-	 * Test no exception is thrown on orphaned collections
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	@Ignore("Fix the issue with hollow instances being returned")
-	public void testBasicPeristAndLoadOneToManyMapOrphaned() throws Exception {
-		PackMap pack = new PackMap();
+    /**
+     * Test no exception is thrown on orphaned collections
+     * 
+     * @throws Exception
+     */
+    @Test
+    @Ignore("Fix the issue with hollow instances being returned")
+    public void testBasicPeristAndLoadOneToManyMapOrphaned() throws Exception {
+        PackMap pack = new PackMap();
 
-		CardMap aceSpades = new CardMap();
-		aceSpades.setName("Ace of Spades");
-		pack.AddCard(aceSpades);
+        CardMap aceSpades = new CardMap();
+        aceSpades.setName("Ace of Spades");
+        pack.AddCard(aceSpades);
 
-		CardMap jackHearts = new CardMap();
-		jackHearts.setName("Jack of Hearts");
-		pack.AddCard(jackHearts);
+        CardMap jackHearts = new CardMap();
+        jackHearts.setName("Jack of Hearts");
+        pack.AddCard(jackHearts);
 
-		pmf.getPersistenceManager().makePersistent(pack);
+        pmf.getPersistenceManager().makePersistent(pack);
 
-		PackMap saved = pmf.getPersistenceManager().getObjectById(
-				PackMap.class, pack.getId());
+        PackMap saved = pmf.getPersistenceManager().getObjectById(
+                PackMap.class, pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertEquals(aceSpades, saved.getCards().get(aceSpades.getName()));
+        assertEquals(aceSpades, saved.getCards().get(aceSpades.getName()));
 
-		assertEquals(jackHearts, saved.getCards().get(jackHearts.getName()));
+        assertEquals(jackHearts, saved.getCards().get(jackHearts.getName()));
 
-		PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
 
-		CardMap deleted = pm.getObjectById(CardMap.class, jackHearts.getId());
-		pm.deletePersistent(deleted);
+        CardMap deleted = pm.getObjectById(CardMap.class, jackHearts.getId());
+        pm.deletePersistent(deleted);
 
-		saved = pmf.getPersistenceManager().getObjectById(PackMap.class,
-				pack.getId());
+        saved = pmf.getPersistenceManager().getObjectById(PackMap.class,
+                pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertEquals(aceSpades, saved.getCards().get(aceSpades.getName()));
+        assertEquals(aceSpades, saved.getCards().get(aceSpades.getName()));
 
-		assertNull(saved.getCards().get(jackHearts.getName()));
+        assertNull(saved.getCards().get(jackHearts.getName()));
 
-	}
+    }
 
-	@Test
-	public void testBasicPeristAndLoadOneToManyMapByDate() throws Exception {
+    @Test
+    public void testBasicPeristAndLoadOneToManyMapByDate() throws Exception {
 
-		PackMapDate pack = new PackMapDate();
+        PackMapDate pack = new PackMapDate();
 
-		CardMapDate aceSpades = new CardMapDate(2010, 05, 01);
-		aceSpades.setName("Ace of Spades");
-		pack.AddCard(aceSpades);
+        CardMapDate aceSpades = new CardMapDate(2010, 05, 01);
+        aceSpades.setName("Ace of Spades");
+        pack.AddCard(aceSpades);
 
-		CardMapDate jackHearts = new CardMapDate(2010, 05, 02);
-		jackHearts.setName("Jack of Hearts");
-		pack.AddCard(jackHearts);
+        CardMapDate jackHearts = new CardMapDate(2010, 05, 02);
+        jackHearts.setName("Jack of Hearts");
+        pack.AddCard(jackHearts);
 
-		pmf.getPersistenceManager().makePersistent(pack);
+        pmf.getPersistenceManager().makePersistent(pack);
 
-		PackMapDate saved = pmf.getPersistenceManager().getObjectById(
-				PackMapDate.class, pack.getId());
+        PackMapDate saved = pmf.getPersistenceManager().getObjectById(
+                PackMapDate.class, pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertEquals(aceSpades, saved.getCards().get(aceSpades.getTime()));
+        assertEquals(aceSpades, saved.getCards().get(aceSpades.getTime()));
 
-		assertEquals(jackHearts, saved.getCards().get(jackHearts.getTime()));
+        assertEquals(jackHearts, saved.getCards().get(jackHearts.getTime()));
 
-	}
+    }
 
-	@Test
-	public void testDeleteMap() throws Exception {
+    @Test
+    public void testDeleteMap() throws Exception {
 
-		PackMap pack = new PackMap();
+        PackMap pack = new PackMap();
 
-		CardMap aceSpades = new CardMap();
-		aceSpades.setName("Ace of Spades");
-		pack.AddCard(aceSpades);
+        CardMap aceSpades = new CardMap();
+        aceSpades.setName("Ace of Spades");
+        pack.AddCard(aceSpades);
 
-		CardMap jackHearts = new CardMap();
-		jackHearts.setName("Jack of Hearts");
-		pack.AddCard(jackHearts);
+        CardMap jackHearts = new CardMap();
+        jackHearts.setName("Jack of Hearts");
+        pack.AddCard(jackHearts);
 
-		pmf.getPersistenceManager().makePersistent(pack);
+        pmf.getPersistenceManager().makePersistent(pack);
 
-		PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
 
-		PackMap saved = pm.getObjectById(PackMap.class, pack.getId());
+        PackMap saved = pm.getObjectById(PackMap.class, pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertEquals(aceSpades, saved.getCards().get(aceSpades.getName()));
+        assertEquals(aceSpades, saved.getCards().get(aceSpades.getName()));
 
-		assertEquals(jackHearts, saved.getCards().get(jackHearts.getName()));
+        assertEquals(jackHearts, saved.getCards().get(jackHearts.getName()));
 
-		UUID packId = pack.getId();
-		UUID aceId = aceSpades.getId();
-		UUID jackId = jackHearts.getId();
+        UUID packId = pack.getId();
+        UUID aceId = aceSpades.getId();
+        UUID jackId = jackHearts.getId();
 
-		pm.deletePersistent(saved);
+        pm.deletePersistent(saved);
 
-		boolean deleted = false;
+        boolean deleted = false;
 
-		try {
-			pmf.getPersistenceManager().getObjectById(Pack.class, packId);
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        try {
+            pmf.getPersistenceManager().getObjectById(Pack.class, packId);
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertTrue(deleted);
+        assertTrue(deleted);
 
-		deleted = false;
+        deleted = false;
 
-		// now check the cards are gone as well
-		try {
-			pmf.getPersistenceManager().getObjectById(Card.class, aceId);
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        // now check the cards are gone as well
+        try {
+            pmf.getPersistenceManager().getObjectById(Card.class, aceId);
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertTrue(deleted);
+        assertTrue(deleted);
 
-		deleted = false;
-		try {
-			pmf.getPersistenceManager().getObjectById(Card.class, jackId);
+        deleted = false;
+        try {
+            pmf.getPersistenceManager().getObjectById(Card.class, jackId);
 
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertTrue(deleted);
+        assertTrue(deleted);
 
-		deleted = false;
+        deleted = false;
 
-	}
+    }
 
 }

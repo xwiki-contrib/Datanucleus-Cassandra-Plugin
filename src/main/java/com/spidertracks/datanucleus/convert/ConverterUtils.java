@@ -26,37 +26,37 @@ import java.util.Arrays;
  */
 public class ConverterUtils  {
 
-	/**
-	 * Check if the buffer has the remaining capacity to hold the number
-	 * of bytes.  If not, create a new buffer with the required size and return it
-	 * @param buffer
-	 * @param size
-	 * @return
-	 */
-	public static ByteBuffer check(ByteBuffer buffer, int size) {
-		
-		if(buffer == null){
-			ByteBuffer newBuffer =  ByteBuffer.allocate(size);
-			newBuffer.mark();
-			return newBuffer;
-		}
-		
-		if (buffer.remaining() < size) {
+    /**
+     * Check if the buffer has the remaining capacity to hold the number
+     * of bytes.  If not, create a new buffer with the required size and return it
+     * @param buffer
+     * @param size
+     * @return
+     */
+    public static ByteBuffer check(ByteBuffer buffer, int size) {
+        
+        if(buffer == null){
+            ByteBuffer newBuffer =  ByteBuffer.allocate(size);
+            newBuffer.mark();
+            return newBuffer;
+        }
+        
+        if (buffer.remaining() < size) {
 
-			int position = buffer.position();
+            int position = buffer.position();
 
-			ByteBuffer newBuffer = ByteBuffer.allocate(position + size + 1);
-			newBuffer.mark();
+            ByteBuffer newBuffer = ByteBuffer.allocate(position + size + 1);
+            newBuffer.mark();
 
-			buffer.reset();
+            buffer.reset();
 
-			newBuffer.put(Arrays.copyOfRange(buffer.array(), 0, position));
+            newBuffer.put(Arrays.copyOfRange(buffer.array(), 0, position));
 
-			return newBuffer;
+            return newBuffer;
 
-		}
+        }
 
-		return buffer;
-	}
+        return buffer;
+    }
 
 }

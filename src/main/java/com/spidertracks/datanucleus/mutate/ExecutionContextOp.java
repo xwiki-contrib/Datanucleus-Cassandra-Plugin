@@ -24,41 +24,41 @@ import org.datanucleus.store.ExecutionContext;
  *
  */
 public abstract class ExecutionContextOp {
-	
-	private ExecutionContext ctx;
-	private int count;
+    
+    private ExecutionContext ctx;
+    private int count;
 
-	public ExecutionContextOp(ExecutionContext ctx) {
-		this.ctx = ctx;
-		this.count = 0;
-	}
+    public ExecutionContextOp(ExecutionContext ctx) {
+        this.ctx = ctx;
+        this.count = 0;
+    }
 
-	/**
-	 * Get the execution context this mutate belongs to
-	 * 
-	 * @return
-	 */
-	public ExecutionContext getExecutionContext() {
-		return ctx;
-	}
-	/**
-	 * Push the current on to our stack for this execution context
-	 * 
-	 * @param instance
-	 */
-	public void pushInstance() {
-		count++;
-	}
+    /**
+     * Get the execution context this mutate belongs to
+     * 
+     * @return
+     */
+    public ExecutionContext getExecutionContext() {
+        return ctx;
+    }
+    /**
+     * Push the current on to our stack for this execution context
+     * 
+     * @param instance
+     */
+    public void pushInstance() {
+        count++;
+    }
 
-	/**
-	 * Pop the current instance from our execution context
-	 * 
-	 * @param instnace
-	 * @return
-	 */
-	public boolean popInstance() {
-		count--;
-		return count == 0;
+    /**
+     * Pop the current instance from our execution context
+     * 
+     * @param instnace
+     * @return
+     */
+    public boolean popInstance() {
+        count--;
+        return count == 0;
 
-	}
+    }
 }

@@ -29,54 +29,54 @@ import java.io.ObjectOutputStream;
 public class JavaSerializer implements Serializer {
 
 
-	/* (non-Javadoc)
-	 * @see com.spidertracks.datanucleus.serialization.Serializer#getBytes(java.lang.Object)
-	 */
-	@Override
-	public byte[] getBytes(Object value) {
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			ObjectOutputStream oos = new ObjectOutputStream(bos);
-			oos.writeObject(value);
-			oos.flush();
+    /* (non-Javadoc)
+     * @see com.spidertracks.datanucleus.serialization.Serializer#getBytes(java.lang.Object)
+     */
+    @Override
+    public byte[] getBytes(Object value) {
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(value);
+            oos.flush();
 
-			byte[] bytes = bos.toByteArray();
+            byte[] bytes = bos.toByteArray();
 
-			oos.close();
-			bos.close();
+            oos.close();
+            bos.close();
 
-			return bytes;
-		} catch (Exception e) {
-			throw new RuntimeException("Unable to serialize to object", e);
-		}
-	}
+            return bytes;
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to serialize to object", e);
+        }
+    }
 
-	/* (non-Javadoc)
-	 * @see com.spidertracks.datanucleus.serialization.Serializer#getObject(byte[])
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getObject(byte[] bytes) {
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-			ObjectInputStream ois;
+    /* (non-Javadoc)
+     * @see com.spidertracks.datanucleus.serialization.Serializer#getObject(byte[])
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getObject(byte[] bytes) {
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+            ObjectInputStream ois;
 
-			ois = new ObjectInputStream(bis);
+            ois = new ObjectInputStream(bis);
 
-			T serialized = (T) ois.readObject();
-			ois.close();
-			bis.close();
+            T serialized = (T) ois.readObject();
+            ois.close();
+            bis.close();
 
-			return serialized;
-		} catch (Exception e) {
-			throw new RuntimeException("Unable to de-serialize to object", e);
-		}
-	}
+            return serialized;
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to de-serialize to object", e);
+        }
+    }
 
-	@Override
-	public int size(Object value) {
-		//no object can be larger than 2048 bytes
-		return 2048;
-	}
+    @Override
+    public int size(Object value) {
+        //no object can be larger than 2048 bytes
+        return 2048;
+    }
 
 }

@@ -43,180 +43,180 @@ import com.spidertracks.datanucleus.utils.ClusterUtils;
  */
 public class ConnectionFactoryImpl extends AbstractConnectionFactory {
 
-	// matches the pattern
-	// cassandra:<poolname>:<keyspace>:<connectionport>:host1, host2, host3...
-	// etc
-	private static final Pattern URL = Pattern
-			.compile("cassandra:(\\w+):(true|false):(true|false):(\\d+):(\\w+):(\\d+):(\\s*\\S+[.\\S+]*[\\s*,\\s*\\S+[.\\S+]*]*)");
+    // matches the pattern
+    // cassandra:<poolname>:<keyspace>:<connectionport>:host1, host2, host3...
+    // etc
+    private static final Pattern URL = Pattern
+            .compile("cassandra:(\\w+):(true|false):(true|false):(\\d+):(\\w+):(\\d+):(\\s*\\S+[.\\S+]*[\\s*,\\s*\\S+[.\\S+]*]*)");
 
-	private Cluster cluster;
+    private Cluster cluster;
 
-	private String keyspace;
+    private String keyspace;
 
-	private String poolName;
+    private String poolName;
 
-	private CassandraStoreManager manager;
+    private CassandraStoreManager manager;
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param omfContext
-	 *            The OMF context
-	 * @param resourceType
-	 *            Type of resource (tx, nontx)
-	 */
-	public ConnectionFactoryImpl(OMFContext omfContext, String resourceType) {
-		super(omfContext, resourceType);
+    /**
+     * Constructor.
+     * 
+     * @param omfContext
+     *            The OMF context
+     * @param resourceType
+     *            Type of resource (tx, nontx)
+     */
+    public ConnectionFactoryImpl(OMFContext omfContext, String resourceType) {
+        super(omfContext, resourceType);
 
-		String connectionString = omfContext.getPersistenceConfiguration()
-				.getStringProperty("datanucleus.ConnectionURL");
+        String connectionString = omfContext.getPersistenceConfiguration()
+                .getStringProperty("datanucleus.ConnectionURL");
 
-		// now strip off the cassandra: at the beginning and make sure our
-		// format is correct
+        // now strip off the cassandra: at the beginning and make sure our
+        // format is correct
 
-		Matcher hostMatcher = URL.matcher(connectionString);
+        Matcher hostMatcher = URL.matcher(connectionString);
 
-		if (!hostMatcher.matches()) {
-			throw new UnsupportedOperationException(
-					"Your URL must be in the format of cassandra:poolname:<true|false, framed transport>:<true|false, dynamic node discovery>:<timeout in ms>:keyspace:port:host1[,hostN]");
-		}
+        if (!hostMatcher.matches()) {
+            throw new UnsupportedOperationException(
+                    "Your URL must be in the format of cassandra:poolname:<true|false, framed transport>:<true|false, dynamic node discovery>:<timeout in ms>:keyspace:port:host1[,hostN]");
+        }
 
-		// pool name
-		poolName = hostMatcher.group(1);
+        // pool name
+        poolName = hostMatcher.group(1);
 
-		// set framed
-		boolean framed = Boolean.parseBoolean(hostMatcher.group(2));
-		
-		boolean discover = Boolean.parseBoolean(hostMatcher.group(3));
-		
-		int timeout = Integer.parseInt(hostMatcher.group(4));
+        // set framed
+        boolean framed = Boolean.parseBoolean(hostMatcher.group(2));
+        
+        boolean discover = Boolean.parseBoolean(hostMatcher.group(3));
+        
+        int timeout = Integer.parseInt(hostMatcher.group(4));
 
-		// set our keyspace
-		keyspace = hostMatcher.group(5);
+        // set our keyspace
+        keyspace = hostMatcher.group(5);
 
-		// grab our port
-		int defaultPort = Integer.parseInt(hostMatcher.group(6));
+        // grab our port
+        int defaultPort = Integer.parseInt(hostMatcher.group(6));
 
-		String hosts = hostMatcher.group(7);
+        String hosts = hostMatcher.group(7);
 
-		// by default we won't discover other nodes we're not explicitly
-		// connected to. May change in future
+        // by default we won't discover other nodes we're not explicitly
+        // connected to. May change in future
 
-		Config config = new Config(defaultPort, framed, timeout);
+        Config config = new Config(defaultPort, framed, timeout);
 
-		cluster = new Cluster(hosts, config, discover);
+        cluster = new Cluster(hosts, config, discover);
 
-		manager = (CassandraStoreManager) omfContext.getStoreManager();
+        manager = (CassandraStoreManager) omfContext.getStoreManager();
 
-		manager.setConnectionFactory(this);
+        manager.setConnectionFactory(this);
 
-	}
+    }
 
-	/**
-	 * Setup the keyspace if the schema should be created
-	 * 
-	 * @param createSchema
-	 */
-	public void keyspaceComplete(boolean createSchema) {
-		if (!createSchema) {
-			return;
-		}
+    /**
+     * Setup the keyspace if the schema should be created
+     * 
+     * @param createSchema
+     */
+    public void keyspaceComplete(boolean createSchema) {
+        if (!createSchema) {
+            return;
+        }
 
-		KeyspaceManager keyspaceManager = new KeyspaceManager(
-				ClusterUtils.getFirstAvailableNode(cluster));
+        KeyspaceManager keyspaceManager = new KeyspaceManager(
+                ClusterUtils.getFirstAvailableNode(cluster));
 
-		List<KsDef> keyspaces;
-		try {
-			keyspaces = keyspaceManager.getKeyspaceNames();
-		} catch (Exception e) {
-			throw new NucleusDataStoreException("Unable to scan for keyspace");
-		}
+        List<KsDef> keyspaces;
+        try {
+            keyspaces = keyspaceManager.getKeyspaceNames();
+        } catch (Exception e) {
+            throw new NucleusDataStoreException("Unable to scan for keyspace");
+        }
 
-		boolean found = false;
+        boolean found = false;
 
-		for (KsDef ksDef : keyspaces) {
-			if (ksDef.name.equals(keyspace)) {
-				found = true;
-				break;
-			}
-		}
+        for (KsDef ksDef : keyspaces) {
+            if (ksDef.name.equals(keyspace)) {
+                found = true;
+                break;
+            }
+        }
 
-		if (!found) {
-			KsDef keyspaceDefinition = new KsDef(keyspace,
-					KeyspaceManager.KSDEF_STRATEGY_SIMPLE, 1,
-					new ArrayList<CfDef>());
+        if (!found) {
+            KsDef keyspaceDefinition = new KsDef(keyspace,
+                    KeyspaceManager.KSDEF_STRATEGY_SIMPLE, 1,
+                    new ArrayList<CfDef>());
 
-			try {
-				keyspaceManager.addKeyspace(keyspaceDefinition);
-			} catch (Exception e) {
-				throw new NucleusDataStoreException("Not supported", e);
-			}
+            try {
+                keyspaceManager.addKeyspace(keyspaceDefinition);
+            } catch (Exception e) {
+                throw new NucleusDataStoreException("Not supported", e);
+            }
 
-		}
+        }
 
-		if (Pelops.getDbConnPool(poolName) == null) {
-			OperandPolicy opPolicy = new OperandPolicy();
-			opPolicy.setMaxOpRetries(3);
-			opPolicy.setDeleteIfNull(true);
-			
-			Policy policy = new Policy();
-			
-			Pelops.addPool(poolName, cluster, keyspace, policy, opPolicy);
-		}
-	}
+        if (Pelops.getDbConnPool(poolName) == null) {
+            OperandPolicy opPolicy = new OperandPolicy();
+            opPolicy.setMaxOpRetries(3);
+            opPolicy.setDeleteIfNull(true);
+            
+            Policy policy = new Policy();
+            
+            Pelops.addPool(poolName, cluster, keyspace, policy, opPolicy);
+        }
+    }
 
-	/**
-	 * Setup the keyspace if the schema should be created
-	 * 
-	 * @param createSchema
-	 */
-	public void cfComplete(boolean createColumnFamilies, boolean createColumns) {
-		if (createColumnFamilies) {
-			manager.getMetaDataManager().registerListener(
-					new ColumnFamilyCreator(manager, cluster, keyspace,
-							createColumnFamilies, createColumns));
-		}
-	}
+    /**
+     * Setup the keyspace if the schema should be created
+     * 
+     * @param createSchema
+     */
+    public void cfComplete(boolean createColumnFamilies, boolean createColumns) {
+        if (createColumnFamilies) {
+            manager.getMetaDataManager().registerListener(
+                    new ColumnFamilyCreator(manager, cluster, keyspace,
+                            createColumnFamilies, createColumns));
+        }
+    }
 
-	/**
-	 * Obtain a connection from the Factory. The connection will be enlisted
-	 * within the {@link org.datanucleus.Transaction} associated to the
-	 * <code>poolKey</code> if "enlist" is set to true.
-	 * 
-	 * @param poolKey
-	 *            the pool that is bound the connection during its lifecycle (or
-	 *            null)
-	 * @param options
-	 *            Any options for then creating the connection
-	 * @return the {@link org.datanucleus.store.connection.ManagedConnection}
-	 */
-	@SuppressWarnings("rawtypes")
-	public ManagedConnection createManagedConnection(Object poolKey,
-			Map transactionOptions) {
+    /**
+     * Obtain a connection from the Factory. The connection will be enlisted
+     * within the {@link org.datanucleus.Transaction} associated to the
+     * <code>poolKey</code> if "enlist" is set to true.
+     * 
+     * @param poolKey
+     *            the pool that is bound the connection during its lifecycle (or
+     *            null)
+     * @param options
+     *            Any options for then creating the connection
+     * @return the {@link org.datanucleus.store.connection.ManagedConnection}
+     */
+    @SuppressWarnings("rawtypes")
+    public ManagedConnection createManagedConnection(Object poolKey,
+            Map transactionOptions) {
 
-		throw new NucleusDataStoreException("Not supported");
+        throw new NucleusDataStoreException("Not supported");
 
-	}
+    }
 
-	/**
-	 * @return the cluster
-	 */
-	public Cluster getCluster() {
-		return cluster;
-	}
+    /**
+     * @return the cluster
+     */
+    public Cluster getCluster() {
+        return cluster;
+    }
 
-	/**
-	 * @return the keyspace
-	 */
-	public String getKeyspace() {
-		return keyspace;
-	}
+    /**
+     * @return the keyspace
+     */
+    public String getKeyspace() {
+        return keyspace;
+    }
 
-	/**
-	 * @return the poolName
-	 */
-	public String getPoolName() {
-		return poolName;
-	}
+    /**
+     * @return the poolName
+     */
+    public String getPoolName() {
+        return poolName;
+    }
 
 }

@@ -40,114 +40,114 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
  */
 public class ExternalEntityWriter extends ExternalEntity {
 
-	private static final int ITERATION_SIZE = 100;
+    private static final int ITERATION_SIZE = 100;
 
-	private Set<Bytes> savedColumns;
+    private Set<Bytes> savedColumns;
 
-	public ExternalEntityWriter(Selector selector,
-			ByteConverterContext context, String ownerColumnFamily,
-			Bytes rowKey, Bytes ownerColumn) {
-		super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
-		savedColumns = new HashSet<Bytes>();
-	}
+    public ExternalEntityWriter(Selector selector,
+            ByteConverterContext context, String ownerColumnFamily,
+            Bytes rowKey, Bytes ownerColumn) {
+        super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
+        savedColumns = new HashSet<Bytes>();
+    }
 
-	/**
-	 * Add the stored column to our internal queue
-	 * 
-	 * @param column
-	 */
-	protected void addStoredColumn(ByteBuffer column) {
-		savedColumns.add(Bytes.fromByteBuffer(column));
-	}
+    /**
+     * Add the stored column to our internal queue
+     * 
+     * @param column
+     */
+    protected void addStoredColumn(ByteBuffer column) {
+        savedColumns.add(Bytes.fromByteBuffer(column));
+    }
 
-	/**
-	 * Remove all columns from the collection/map. Useful for if a collection is
-	 * set to null
-	 */
-	public void removeAllColumns(Mutator mutator) {
+    /**
+     * Remove all columns from the collection/map. Useful for if a collection is
+     * set to null
+     */
+    public void removeAllColumns(Mutator mutator) {
 
-		byte[] columnBytes = ownerColumn.toByteArray();
+        byte[] columnBytes = ownerColumn.toByteArray();
 
-		SliceRange range = new SliceRange();
-		range.setCount(ITERATION_SIZE);
-		range.setFinish(createBuffer(columnBytes, DELIM_MAX));
+        SliceRange range = new SliceRange();
+        range.setCount(ITERATION_SIZE);
+        range.setFinish(createBuffer(columnBytes, DELIM_MAX));
 
-		SlicePredicate predicate = new SlicePredicate();
-		predicate.setSlice_range(range);
+        SlicePredicate predicate = new SlicePredicate();
+        predicate.setSlice_range(range);
 
-		List<Column> results = null;
+        List<Column> results = null;
 
-		do {
+        do {
 
-			range.setStart(createBuffer(columnBytes, DELIM_MIN));
+            range.setStart(createBuffer(columnBytes, DELIM_MIN));
 
-			results = selector.getColumnsFromRow(ownerColumnFamily, rowKey,
-					predicate, Consistency.get());
+            results = selector.getColumnsFromRow(ownerColumnFamily, rowKey,
+                    predicate, Consistency.get());
 
-			// remove all columns that are presisted
-			for (Column col : results) {
-				mutator.deleteColumn(ownerColumnFamily, rowKey,
-						Bytes.fromByteArray(col.getName()));
-			}
+            // remove all columns that are presisted
+            for (Column col : results) {
+                mutator.deleteColumn(ownerColumnFamily, rowKey,
+                        Bytes.fromByteArray(col.getName()));
+            }
 
-			// advance our start key if required
-			if (results.size() == ITERATION_SIZE) {
-				columnBytes = results.get(ITERATION_SIZE - 1).getName();
-			}
+            // advance our start key if required
+            if (results.size() == ITERATION_SIZE) {
+                columnBytes = results.get(ITERATION_SIZE - 1).getName();
+            }
 
-		} while (results != null && results.size() == ITERATION_SIZE);
+        } while (results != null && results.size() == ITERATION_SIZE);
 
-	}
+    }
 
-	/**
-	 * Removes all columns that have not been marked as persisted.
-	 */
-	public void removeRemaining(Mutator mutator) {
-		byte[] columnBytes = ownerColumn.toByteArray();
+    /**
+     * Removes all columns that have not been marked as persisted.
+     */
+    public void removeRemaining(Mutator mutator) {
+        byte[] columnBytes = ownerColumn.toByteArray();
 
-		SliceRange range = new SliceRange();
-		range.setCount(ITERATION_SIZE);
-		range.setFinish(createBuffer(columnBytes, DELIM_MAX));
+        SliceRange range = new SliceRange();
+        range.setCount(ITERATION_SIZE);
+        range.setFinish(createBuffer(columnBytes, DELIM_MAX));
 
-		SlicePredicate predicate = new SlicePredicate();
-		predicate.setSlice_range(range);
+        SlicePredicate predicate = new SlicePredicate();
+        predicate.setSlice_range(range);
 
-		List<Column> results = null;
+        List<Column> results = null;
 
-		do {
+        do {
 
-			range.setStart(createBuffer(columnBytes, DELIM_MIN));
+            range.setStart(createBuffer(columnBytes, DELIM_MIN));
 
-			results = selector.getColumnsFromRow(ownerColumnFamily, rowKey,
-					predicate, Consistency.get());
+            results = selector.getColumnsFromRow(ownerColumnFamily, rowKey,
+                    predicate, Consistency.get());
 
-			// remove all columns that are presisted
-			for (Column col : results) {
+            // remove all columns that are presisted
+            for (Column col : results) {
 
-				//not in our already saved columns, remove it
-				if (!savedColumns.contains(Bytes.fromByteBuffer(col.name))) {
-					mutator.deleteColumn(ownerColumnFamily, rowKey,
-							Bytes.fromByteArray(col.getName()));
-				}
-			}
+                //not in our already saved columns, remove it
+                if (!savedColumns.contains(Bytes.fromByteBuffer(col.name))) {
+                    mutator.deleteColumn(ownerColumnFamily, rowKey,
+                            Bytes.fromByteArray(col.getName()));
+                }
+            }
 
-			// advance our start key if required
-			if (results.size() == ITERATION_SIZE) {
-				columnBytes = results.get(ITERATION_SIZE - 1).getName();
-			}
+            // advance our start key if required
+            if (results.size() == ITERATION_SIZE) {
+                columnBytes = results.get(ITERATION_SIZE - 1).getName();
+            }
 
-		} while (results.size() == ITERATION_SIZE);
+        } while (results.size() == ITERATION_SIZE);
 
-	}
+    }
 
-	protected ByteBuffer createBuffer(byte[] columnBytes, byte delimByte) {
-		ByteBuffer buffer = ByteBuffer.allocate(columnBytes.length + 1);
-		buffer.mark();
-		buffer.put(columnBytes);
-		buffer.put(delimByte);
-		buffer.reset();
+    protected ByteBuffer createBuffer(byte[] columnBytes, byte delimByte) {
+        ByteBuffer buffer = ByteBuffer.allocate(columnBytes.length + 1);
+        buffer.mark();
+        buffer.put(columnBytes);
+        buffer.put(delimByte);
+        buffer.reset();
 
-		return buffer;
-	}
+        return buffer;
+    }
 
 }

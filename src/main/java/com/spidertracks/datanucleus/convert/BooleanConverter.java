@@ -28,40 +28,40 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class BooleanConverter implements ByteConverter {
 
-	private static final byte TRUE = 1;
-	private static final byte FALSE = 0;
-	
-	@Override
-	public Boolean getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if(buffer == null){
-			return null;
-		}
-		
-		return buffer.get() == TRUE;
-	}
+    private static final byte TRUE = 1;
+    private static final byte FALSE = 0;
+    
+    @Override
+    public Boolean getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if(buffer == null){
+            return null;
+        }
+        
+        return buffer.get() == TRUE;
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		ByteBuffer checked = check(buffer, 1);
-		
-		if((Boolean) value){
-			checked.put(TRUE);
-		}else{
-			checked.put(FALSE);
-		}
-		
-		return checked;
-		
-	}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        ByteBuffer checked = check(buffer, 1);
+        
+        if((Boolean) value){
+            checked.put(TRUE);
+        }else{
+            checked.put(FALSE);
+        }
+        
+        return checked;
+        
+    }
 
 
-	
+    
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
+    }
 
-	
+    
 
 }

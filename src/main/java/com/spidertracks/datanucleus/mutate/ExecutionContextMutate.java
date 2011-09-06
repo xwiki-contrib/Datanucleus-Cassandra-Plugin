@@ -29,23 +29,23 @@ import com.spidertracks.datanucleus.client.Consistency;
  */
 public class ExecutionContextMutate extends ExecutionContextOp {
 
-	// operations of mutations to perform
-	private Mutator mutator;
+    // operations of mutations to perform
+    private Mutator mutator;
 
-	public ExecutionContextMutate(ExecutionContext ctx, Mutator mutator) {
-		super(ctx);
-		this.mutator = mutator;
-	}
+    public ExecutionContextMutate(ExecutionContext ctx, Mutator mutator) {
+        super(ctx);
+        this.mutator = mutator;
+    }
 
-	public void execute() throws Exception {
-		mutator.execute(Consistency.get());
-	}
+    public void execute() throws Exception {
+        mutator.execute(Consistency.get());
+    }
 
-	/**
-	 * @return the mutator
-	 */
-	public Mutator getMutator() {
-		return mutator;
-	}
+    /**
+     * @return the mutator
+     */
+    public Mutator getMutator() {
+        return mutator;
+    }
 
 }

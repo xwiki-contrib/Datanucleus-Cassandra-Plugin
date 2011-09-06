@@ -36,44 +36,44 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class Card extends BaseEntity  implements Serializable{
 
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	@Persistent
-	private Pack pack;
-	
-	private String name;
-	
+    @Persistent
+    private Pack pack;
+    
+    private String name;
+    
 
-	/**
-	 * @return the pack
-	 */
-	public Pack getPack() {
-		return pack;
-	}
+    /**
+     * @return the pack
+     */
+    public Pack getPack() {
+        return pack;
+    }
 
-	/**
-	 * @param pack the pack to set
-	 */
-	public void setPack(Pack pack) {
-		this.pack = pack;
-	}
+    /**
+     * @param pack the pack to set
+     */
+    public void setPack(Pack pack) {
+        this.pack = pack;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
 }

@@ -30,61 +30,61 @@ import org.scale7.cassandra.pelops.Bytes;
  *
  */
 public class Columns {
-	
-	private Bytes rowKey;
-	private Map<Bytes, Bytes> values;
+    
+    private Bytes rowKey;
+    private Map<Bytes, Bytes> values;
 
-	
-	public Columns(Bytes rowKey){
-		this.rowKey = rowKey;
-		values = new LinkedHashMap<Bytes,Bytes>();
-	}
-	
-	public Bytes getColumnValue(Bytes key) {
-		return values.get(key);
-	}
+    
+    public Columns(Bytes rowKey){
+        this.rowKey = rowKey;
+        values = new LinkedHashMap<Bytes,Bytes>();
+    }
+    
+    public Bytes getColumnValue(Bytes key) {
+        return values.get(key);
+    }
 
-	/**
-	 * Add the result
-	 * @param column
-	 */
-	public void addResult(Column column){
-		values.put(new Bytes(column.getName()), new Bytes(column.getValue()));
-	}
+    /**
+     * Add the result
+     * @param column
+     */
+    public void addResult(Column column){
+        values.put(new Bytes(column.getName()), new Bytes(column.getValue()));
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((rowKey == null) ? 0 : rowKey.hashCode());
-		result = prime * result + ((values == null) ? 0 : values.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((rowKey == null) ? 0 : rowKey.hashCode());
+        result = prime * result + ((values == null) ? 0 : values.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Columns other = (Columns) obj;
-		if (rowKey == null) {
-			if (other.rowKey != null)
-				return false;
-		} else if (!rowKey.equals(other.rowKey))
-			return false;
-		if (values == null) {
-			if (other.values != null)
-				return false;
-		} else if (!values.equals(other.values))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Columns other = (Columns) obj;
+        if (rowKey == null) {
+            if (other.rowKey != null)
+                return false;
+        } else if (!rowKey.equals(other.rowKey))
+            return false;
+        if (values == null) {
+            if (other.values != null)
+                return false;
+        } else if (!values.equals(other.values))
+            return false;
+        return true;
+    }
 
 
 
-	
-	
+    
+    
 }

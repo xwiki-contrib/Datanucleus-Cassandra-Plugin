@@ -30,28 +30,28 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
  */
 public interface ByteAware {
 
-	/**
-	 * Create a byte buffer and write all bytes to it for storage.  The returned buffer
-	 * will be used for all subsequent write operations.  If the buffer is null
-	 * it should be allocated to the correct capacity for this instance.  If it is too small
-	 * a new buffer should be allocated
-	 * @return
-	 */
-	public ByteBuffer writeBytes(ByteBuffer buffer, ByteConverterContext context);
-	
-	/**
-	 * Populate a new instance of the object from the bytes
-	 * @param buffer
-	 */
-	public void parseBytes(ByteBuffer buffer, ByteConverterContext context);
-	
+    /**
+     * Create a byte buffer and write all bytes to it for storage.  The returned buffer
+     * will be used for all subsequent write operations.  If the buffer is null
+     * it should be allocated to the correct capacity for this instance.  If it is too small
+     * a new buffer should be allocated
+     * @return
+     */
+    public ByteBuffer writeBytes(ByteBuffer buffer, ByteConverterContext context);
+    
+    /**
+     * Populate a new instance of the object from the bytes
+     * @param buffer
+     */
+    public void parseBytes(ByteBuffer buffer, ByteConverterContext context);
+    
 
-	
+    
 
-	/**
-	 * Returns the comparator type (UTF-8, TimeUUIDType etc) that should be used to compare values
-	 * Only used with secondary indexing
-	 * @return
-	 */
-	public String getComparatorType();
+    /**
+     * Returns the comparator type (UTF-8, TimeUUIDType etc) that should be used to compare values
+     * Only used with secondary indexing
+     * @return
+     */
+    public String getComparatorType();
 }

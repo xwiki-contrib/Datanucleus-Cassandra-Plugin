@@ -32,23 +32,23 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class EnumEntity extends BaseEntity {
 
-	private EnumValues first;
-	
-	private EnumValues second;
+    private EnumValues first;
+    
+    private EnumValues second;
 
-	public EnumValues getFirst() {
-		return first;
-	}
+    public EnumValues getFirst() {
+        return first;
+    }
 
-	public void setFirst(EnumValues first) {
-		this.first = first;
-	}
+    public void setFirst(EnumValues first) {
+        this.first = first;
+    }
 
-	public EnumValues getSecond() {
-		return second;
-	}
+    public EnumValues getSecond() {
+        return second;
+    }
 
-	public void setSecond(EnumValues second) {
-		this.second = second;
-	}
+    public void setSecond(EnumValues second) {
+        this.second = second;
+    }
 }

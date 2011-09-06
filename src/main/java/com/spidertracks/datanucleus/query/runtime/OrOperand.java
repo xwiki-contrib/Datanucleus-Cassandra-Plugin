@@ -27,44 +27,44 @@ import org.scale7.cassandra.pelops.Bytes;
  */
 public class OrOperand extends Operand {
 
-	/* (non-Javadoc)
-	 * @see com.spidertracks.datanucleus.query.QueryResult#complete(com.spidertracks.datanucleus.query.QueryResult)
-	 */
-	@Override
-	public synchronized void complete(Operand child) {
-		//by default && should union the results from left and right
-		
-		//first child to call
-		if(candidateKeys == null){
-			candidateKeys = child.getCandidateKeys();
-			return;
-		}
-		
-		//second child to call
-		candidateKeys.addAll(child.getCandidateKeys());
-		
-		if(parent != null){
-			parent.complete(this);
-		}
-	
-	}
+    /* (non-Javadoc)
+     * @see com.spidertracks.datanucleus.query.QueryResult#complete(com.spidertracks.datanucleus.query.QueryResult)
+     */
+    @Override
+    public synchronized void complete(Operand child) {
+        //by default && should union the results from left and right
+        
+        //first child to call
+        if(candidateKeys == null){
+            candidateKeys = child.getCandidateKeys();
+            return;
+        }
+        
+        //second child to call
+        candidateKeys.addAll(child.getCandidateKeys());
+        
+        if(parent != null){
+            parent.complete(this);
+        }
+    
+    }
 
-	@Override
-	public void performQuery(String poolName, String cfName, Bytes[] columns) {
-		
-		left.performQuery(poolName, cfName, columns);
-		right.performQuery(poolName, cfName, columns);
-		
-	}
+    @Override
+    public void performQuery(String poolName, String cfName, Bytes[] columns) {
+        
+        left.performQuery(poolName, cfName, columns);
+        right.performQuery(poolName, cfName, columns);
+        
+    }
 
-	@Override
-	public Operand optimizeDescriminator(Bytes descriminatorColumnValue,
-			List<Bytes> possibleValues) {
-		setLeft(left.optimizeDescriminator(descriminatorColumnValue, possibleValues));
-		setRight(right.optimizeDescriminator(descriminatorColumnValue, possibleValues));
-		
-		return this;
-		
-	}
+    @Override
+    public Operand optimizeDescriminator(Bytes descriminatorColumnValue,
+            List<Bytes> possibleValues) {
+        setLeft(left.optimizeDescriminator(descriminatorColumnValue, possibleValues));
+        setRight(right.optimizeDescriminator(descriminatorColumnValue, possibleValues));
+        
+        return this;
+        
+    }
 
 }

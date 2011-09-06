@@ -38,25 +38,25 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class PackMap extends BaseEntity {
 
-	@Persistent(mappedBy = "pack")
-	@Element(dependent="true")
-	private Map<String, CardMap> cards;
+    @Persistent(mappedBy = "pack")
+    @Element(dependent="true")
+    private Map<String, CardMap> cards;
 
-	public PackMap() {
-		cards = new  HashMap<String, CardMap>();
-	}
+    public PackMap() {
+        cards = new  HashMap<String, CardMap>();
+    }
 
-	/**
-	 * @return the manyToOne
-	 */
-	public Map<String, CardMap> getCards() {
-		return cards;
-	}
-	
+    /**
+     * @return the manyToOne
+     */
+    public Map<String, CardMap> getCards() {
+        return cards;
+    }
+    
 
-	public void AddCard(CardMap card){
-		this.cards.put(card.getName(), card);
-		card.setPack(this);
-	}
+    public void AddCard(CardMap card){
+        this.cards.put(card.getName(), card);
+        card.setPack(this);
+    }
 
 }

@@ -35,91 +35,91 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @PersistenceCapable(table = "Person", identityType = IdentityType.APPLICATION)
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class Person extends BaseEntity {
-	
-	//all 3 fields and persistent and secondary indexed
-	@Persistent
-	@Index
-	private String firstName;
-	
-	@Persistent
-	@Index
-	private String lastName;
-	
-	//should auto generate secondary index name with name "Person_email"
-	@Persistent
-	@Index
-	private String email;
-	
-	
-	//data that's persisted but not indexed
-	@Persistent
-	private int loginCount;
-	
-	@Persistent
-	@Index
-	private Date lastLogin;
-	/**
-	 * @return the firstName
-	 */
-	public String getFirstName() {
-		return firstName;
-	}
-	/**
-	 * @param firstName the firstName to set
-	 */
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
-	/**
-	 * @return the lastName
-	 */
-	public String getLastName() {
-		return lastName;
-	}
-	/**
-	 * @param lastName the lastName to set
-	 */
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
-	/**
-	 * @return the email
-	 */
-	public String getEmail() {
-		return email;
-	}
-	/**
-	 * @param email the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	/**
-	 * @return the loginCount
-	 */
-	public int getLoginCount() {
-		return loginCount;
-	}
-	/**
-	 * @param loginCount the loginCount to set
-	 */
-	public void setLoginCount(int loginCount) {
-		this.loginCount = loginCount;
-	}
-	/**
-	 * @return the lastLogin
-	 */
-	public Date getLastLogin() {
-		return lastLogin;
-	}
-	/**
-	 * @param lastLogin the lastLogin to set
-	 */
-	public void setLastLogin(Date lastLogin) {
-		this.lastLogin = lastLogin;
-	}
-	
-	
-	
+    
+    //all 3 fields and persistent and secondary indexed
+    @Persistent
+    @Index
+    private String firstName;
+    
+    @Persistent
+    @Index
+    private String lastName;
+    
+    //should auto generate secondary index name with name "Person_email"
+    @Persistent
+    @Index
+    private String email;
+    
+    
+    //data that's persisted but not indexed
+    @Persistent
+    private int loginCount;
+    
+    @Persistent
+    @Index
+    private Date lastLogin;
+    /**
+     * @return the firstName
+     */
+    public String getFirstName() {
+        return firstName;
+    }
+    /**
+     * @param firstName the firstName to set
+     */
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+    /**
+     * @return the lastName
+     */
+    public String getLastName() {
+        return lastName;
+    }
+    /**
+     * @param lastName the lastName to set
+     */
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    /**
+     * @return the email
+     */
+    public String getEmail() {
+        return email;
+    }
+    /**
+     * @param email the email to set
+     */
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    /**
+     * @return the loginCount
+     */
+    public int getLoginCount() {
+        return loginCount;
+    }
+    /**
+     * @param loginCount the loginCount to set
+     */
+    public void setLoginCount(int loginCount) {
+        this.loginCount = loginCount;
+    }
+    /**
+     * @return the lastLogin
+     */
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+    /**
+     * @param lastLogin the lastLogin to set
+     */
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+    
+    
+    
 
 }

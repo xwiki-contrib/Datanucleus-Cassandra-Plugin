@@ -30,43 +30,43 @@ import com.eaio.uuid.UUID;
  */
 public class CassandraUUIDGenerator extends AbstractGenerator {
 
-	/**
-	 * 
-	 * @param name
-	 * @param props
-	 */
-	public CassandraUUIDGenerator(String name, Properties props) {
-		
-		super(name, props);
-	}
+    /**
+     * 
+     * @param name
+     * @param props
+     */
+    public CassandraUUIDGenerator(String name, Properties props) {
+        
+        super(name, props);
+    }
 
-	/**
-	 * Method to reserve "size" ValueGenerations to the ValueGenerationBlock.
-	 * 
-	 * @param size
-	 *            The block size
-	 * @return The reserved block
-	 */
-	public ValueGenerationBlock reserveBlock(long size) {
-		
-		
-		UUID[] ids = new UUID[(int) size];
-		for (int i = 0; i < size; i++) {
-			ids[i] = getIdentifier();
-		}
-		
-		return new ValueGenerationBlock(ids);
-	}
+    /**
+     * Method to reserve "size" ValueGenerations to the ValueGenerationBlock.
+     * 
+     * @param size
+     *            The block size
+     * @return The reserved block
+     */
+    public ValueGenerationBlock reserveBlock(long size) {
+        
+        
+        UUID[] ids = new UUID[(int) size];
+        for (int i = 0; i < size; i++) {
+            ids[i] = getIdentifier();
+        }
+        
+        return new ValueGenerationBlock(ids);
+    }
 
-	/**
-	 * Create a UUID identifier.
-	 * 
-	 * @return The identifier
-	 */
-	protected UUID getIdentifier()
+    /**
+     * Create a UUID identifier.
+     * 
+     * @return The identifier
+     */
+    protected UUID getIdentifier()
     {
-		 return new com.eaio.uuid.UUID();
+         return new com.eaio.uuid.UUID();
 
     }
-	
+    
 }

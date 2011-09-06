@@ -30,33 +30,33 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class StringConverter implements ByteConverter {
 
-	private static final Charset ENCODING = Charset.forName("UTF-8");
+    private static final Charset ENCODING = Charset.forName("UTF-8");
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_UTF8;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_UTF8;
+    }
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null || buffer.remaining() == 0) {
-			return null;
-		}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null || buffer.remaining() == 0) {
+            return null;
+        }
 
-		return new String(buffer.array(), buffer.position(),
-				buffer.remaining(), ENCODING);
+        return new String(buffer.array(), buffer.position(),
+                buffer.remaining(), ENCODING);
 
-	}
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		if (value == null) {
-			return buffer;
-		}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        if (value == null) {
+            return buffer;
+        }
 
-		byte[] bytes = ((String) value).getBytes(ENCODING);
-		ByteBuffer returned = check(buffer, bytes.length);
-		return returned.put(bytes);
-	}
+        byte[] bytes = ((String) value).getBytes(ENCODING);
+        ByteBuffer returned = check(buffer, bytes.length);
+        return returned.put(bytes);
+    }
 
 }

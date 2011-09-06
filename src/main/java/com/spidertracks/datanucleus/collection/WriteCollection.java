@@ -34,37 +34,37 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
 public class WriteCollection extends ExternalEntityWriter {
 
 
-	private static final Bytes PLACEHOLDER = new Bytes(new byte[] { 0 });
+    private static final Bytes PLACEHOLDER = new Bytes(new byte[] { 0 });
 
 
-	public WriteCollection(Selector selector, ByteConverterContext context,
-			String ownerColumnFamily, Bytes rowKey, Bytes ownerColumn) {
-		super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
-	}
+    public WriteCollection(Selector selector, ByteConverterContext context,
+            String ownerColumnFamily, Bytes rowKey, Bytes ownerColumn) {
+        super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
+    }
 
 
-	/**
-	 * Write the relationship column
-	 * @param mutator
-	 */
-	public void writeRelationship(Mutator mutator, Object entityKey) {
-		// a DRE, take the property +256 bytes so the buffer hopefully won't need to be re-allocated and copied.
-		ByteBuffer buffer = ByteBuffer.allocate(ownerColumn.length() + 256);
+    /**
+     * Write the relationship column
+     * @param mutator
+     */
+    public void writeRelationship(Mutator mutator, Object entityKey) {
+        // a DRE, take the property +256 bytes so the buffer hopefully won't need to be re-allocated and copied.
+        ByteBuffer buffer = ByteBuffer.allocate(ownerColumn.length() + 256);
 
-		buffer.mark();
-		buffer.put(ownerColumn.toByteArray());
-		buffer.put(DELIM_MIN);
-		buffer = this.context.getRowKeyForId(entityKey, buffer);
-		buffer.limit(buffer.position());
+        buffer.mark();
+        buffer.put(ownerColumn.toByteArray());
+        buffer.put(DELIM_MIN);
+        buffer = this.context.getRowKeyForId(entityKey, buffer);
+        buffer.limit(buffer.position());
 
-		buffer.reset();
-		
-		super.addStoredColumn(buffer);
+        buffer.reset();
+        
+        super.addStoredColumn(buffer);
 
-		Column keyColumn = mutator.newColumn(Bytes.fromByteBuffer(buffer),
-				PLACEHOLDER);
+        Column keyColumn = mutator.newColumn(Bytes.fromByteBuffer(buffer),
+                PLACEHOLDER);
 
-		mutator.writeColumn(ownerColumnFamily, rowKey, keyColumn, true);
+        mutator.writeColumn(ownerColumnFamily, rowKey, keyColumn, true);
 
-	}
+    }
 }

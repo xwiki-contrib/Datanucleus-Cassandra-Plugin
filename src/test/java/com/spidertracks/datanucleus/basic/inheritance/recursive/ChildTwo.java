@@ -35,20 +35,20 @@ import javax.jdo.annotations.Persistent;
 @Discriminator(strategy=DiscriminatorStrategy.VALUE_MAP, value="ChildTwo")
 public class ChildTwo extends Parent {
 
-	@Persistent
-	private String childTwoField;
+    @Persistent
+    private String childTwoField;
 
-	/**
-	 * @return the childField
-	 */
-	public String getChildTwoField() {
-		return childTwoField;
-	}
+    /**
+     * @return the childField
+     */
+    public String getChildTwoField() {
+        return childTwoField;
+    }
 
-	/**
-	 * @param childField the childField to set
-	 */
-	public void setChildTwoField(String childField) {
-		this.childTwoField = childField;
-	}
+    /**
+     * @param childField the childField to set
+     */
+    public void setChildTwoField(String childField) {
+        this.childTwoField = childField;
+    }
 }

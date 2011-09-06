@@ -43,199 +43,199 @@ import org.slf4j.LoggerFactory;
  */
 public class EqualityOperand extends Operand implements CompressableOperand {
 
-	private static final Logger logger = LoggerFactory.getLogger(EqualityOperand.class);
-	
-	private IndexClause clause;
+    private static final Logger logger = LoggerFactory.getLogger(EqualityOperand.class);
+    
+    private IndexClause clause;
 
-	public EqualityOperand(int count) {
-		clause = new IndexClause();
-		clause.setStart_key(new byte[] {});
-		clause.setCount(count);
-		clause.setExpressions(new ArrayList<IndexExpression>());//TODO Remove
-		candidateKeys = new LinkedHashSet<Columns>();
-	}
+    public EqualityOperand(int count) {
+        clause = new IndexClause();
+        clause.setStart_key(new byte[] {});
+        clause.setCount(count);
+        clause.setExpressions(new ArrayList<IndexExpression>());//TODO Remove
+        candidateKeys = new LinkedHashSet<Columns>();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.spidertracks.datanucleus.query.runtime.Operand#complete(com.spidertracks
-	 * .datanucleus.query.runtime.Operand)
-	 */
-	@Override
-	public void complete(Operand child) {
-		throw new UnsupportedOperationException(
-				"Equality operands should have no children");
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.spidertracks.datanucleus.query.runtime.Operand#complete(com.spidertracks
+     * .datanucleus.query.runtime.Operand)
+     */
+    @Override
+    public void complete(Operand child) {
+        throw new UnsupportedOperationException(
+                "Equality operands should have no children");
+    }
 
-	/**
-	 * Add the index expression to the clause
-	 * 
-	 * @param expression
-	 */
-	public void addExpression(IndexExpression expression) {
-		clause.addToExpressions(expression);
-		
-		if(logger.isDebugEnabled()){
-			logger.debug("Adding clause for name: {} value: {}", new String(Hex.encodeHex(expression.getColumn_name())), new String(Hex.encodeHex(expression.getValue())));
-		}
-	}
+    /**
+     * Add the index expression to the clause
+     * 
+     * @param expression
+     */
+    public void addExpression(IndexExpression expression) {
+        clause.addToExpressions(expression);
+        
+        if(logger.isDebugEnabled()){
+            logger.debug("Adding clause for name: {} value: {}", new String(Hex.encodeHex(expression.getColumn_name())), new String(Hex.encodeHex(expression.getValue())));
+        }
+    }
 
-	/**
-	 * Add all expression to the index clause
-	 * 
-	 * @param expressions
-	 */
-	public void addAll(List<IndexExpression> expressions) {
-		for (IndexExpression expr : expressions) {
-			clause.addToExpressions(expr);
-			
-			if(logger.isDebugEnabled()){
-				logger.debug("Adding clause for name: {} value: {}", new String(Hex.encodeHex(expr.getColumn_name())), new String(Hex.encodeHex(expr.getValue())));
-			}
-		
-		}
-	}
+    /**
+     * Add all expression to the index clause
+     * 
+     * @param expressions
+     */
+    public void addAll(List<IndexExpression> expressions) {
+        for (IndexExpression expr : expressions) {
+            clause.addToExpressions(expr);
+            
+            if(logger.isDebugEnabled()){
+                logger.debug("Adding clause for name: {} value: {}", new String(Hex.encodeHex(expr.getColumn_name())), new String(Hex.encodeHex(expr.getValue())));
+            }
+        
+        }
+    }
 
-	@Override
-	public IndexClause getIndexClause() {
-		return clause;
-	}
+    @Override
+    public IndexClause getIndexClause() {
+        return clause;
+    }
 
-	@Override
-	public void performQuery(String poolName, String cfName, Bytes[] columns) {
+    @Override
+    public void performQuery(String poolName, String cfName, Bytes[] columns) {
 
-		try {
-			Map<Bytes, List<Column>> results = Pelops.createSelector(poolName)
-					.getIndexedColumns(cfName, clause,
-							Selector.newColumnsPredicate(columns),
-							ConsistencyLevel.QUORUM);
-			Columns cols;
+        try {
+            Map<Bytes, List<Column>> results = Pelops.createSelector(poolName)
+                    .getIndexedColumns(cfName, clause,
+                            Selector.newColumnsPredicate(columns),
+                            ConsistencyLevel.QUORUM);
+            Columns cols;
 
-			for (Entry<Bytes, List<Column>> entry : results.entrySet()) {
+            for (Entry<Bytes, List<Column>> entry : results.entrySet()) {
 
-				if (entry.getValue().size() == 0) {
-					continue;
-				}
+                if (entry.getValue().size() == 0) {
+                    continue;
+                }
 
-				cols = new Columns(entry.getKey());
+                cols = new Columns(entry.getKey());
 
-				for (Column currentCol : entry.getValue()) {
+                for (Column currentCol : entry.getValue()) {
 
-					cols.addResult(currentCol);
-				}
+                    cols.addResult(currentCol);
+                }
 
-				super.candidateKeys.add(cols);
-			}
+                super.candidateKeys.add(cols);
+            }
 
-		} catch (Exception e) {
-			throw new NucleusException("Error processing secondary index", e);
-		}
+        } catch (Exception e) {
+            throw new NucleusException("Error processing secondary index", e);
+        }
 
-		// signal to the parent node the query completed
-		if (parent != null) {
-			parent.complete(this);
-		}
+        // signal to the parent node the query completed
+        if (parent != null) {
+            parent.complete(this);
+        }
 
-	}
+    }
 
-	@Override
-	public Operand optimizeDescriminator(Bytes descriminatorColumnValue,
-			List<Bytes> possibleValues) {
+    @Override
+    public Operand optimizeDescriminator(Bytes descriminatorColumnValue,
+            List<Bytes> possibleValues) {
 
-		// the equality node is always a leaf, so we don't need to recurse
+        // the equality node is always a leaf, so we don't need to recurse
 
-		if (possibleValues.size() == 1) {
+        if (possibleValues.size() == 1) {
 
-			IndexExpression leaf = new IndexExpression();
+            IndexExpression leaf = new IndexExpression();
 
-			leaf.setColumn_name(descriminatorColumnValue.getBytes());
+            leaf.setColumn_name(descriminatorColumnValue.getBytes());
 
-			leaf.setValue(possibleValues.get(0).getBytes());
+            leaf.setValue(possibleValues.get(0).getBytes());
 
-			leaf.setOp(IndexOperator.EQ);
-			
-			addExpression(leaf);
+            leaf.setOp(IndexOperator.EQ);
+            
+            addExpression(leaf);
 
-			return this;
-		}
+            return this;
+        }
 
-		Stack<EqualityOperand> eqOps = new Stack<EqualityOperand>();
+        Stack<EqualityOperand> eqOps = new Stack<EqualityOperand>();
 
-		Stack<OrOperand> orOps = new Stack<OrOperand>();
+        Stack<OrOperand> orOps = new Stack<OrOperand>();
 
-		for (Bytes value : possibleValues) {
+        for (Bytes value : possibleValues) {
 
-			if (orOps.size() == 2) {
-				OrOperand orOp = new OrOperand();
-				orOp.setLeft(orOps.pop());
-				orOp.setRight(orOps.pop());
+            if (orOps.size() == 2) {
+                OrOperand orOp = new OrOperand();
+                orOp.setLeft(orOps.pop());
+                orOp.setRight(orOps.pop());
 
-				orOps.push(orOp);
-			}
+                orOps.push(orOp);
+            }
 
-			if (eqOps.size() == 2) {
-				OrOperand orOp = new OrOperand();
-				orOp.setLeft(eqOps.pop());
-				orOp.setRight(eqOps.pop());
-				orOps.push(orOp);
-			}
+            if (eqOps.size() == 2) {
+                OrOperand orOp = new OrOperand();
+                orOp.setLeft(eqOps.pop());
+                orOp.setRight(eqOps.pop());
+                orOps.push(orOp);
+            }
 
-			EqualityOperand subClass = new EqualityOperand(clause.getCount());
+            EqualityOperand subClass = new EqualityOperand(clause.getCount());
 
-			// add the existing clause
-			subClass.addAll(this.getIndexClause().getExpressions());
+            // add the existing clause
+            subClass.addAll(this.getIndexClause().getExpressions());
 
-			IndexExpression expression = new IndexExpression();
+            IndexExpression expression = new IndexExpression();
 
-			expression.setColumn_name(descriminatorColumnValue.getBytes());
+            expression.setColumn_name(descriminatorColumnValue.getBytes());
 
-			expression.setValue(value.getBytes());
+            expression.setValue(value.getBytes());
 
-			expression.setOp(IndexOperator.EQ);
+            expression.setOp(IndexOperator.EQ);
 
-			// now add the discriminator
-			subClass.addExpression(expression);
+            // now add the discriminator
+            subClass.addExpression(expression);
 
-			// push onto the stack
-			eqOps.push(subClass);
+            // push onto the stack
+            eqOps.push(subClass);
 
-		}
+        }
 
-		// only rewritten without needing to OR to other clauses, short circuit
+        // only rewritten without needing to OR to other clauses, short circuit
 
-		while (eqOps.size() > 0) {
+        while (eqOps.size() > 0) {
 
-			OrOperand orOp = new OrOperand();
+            OrOperand orOp = new OrOperand();
 
-			if (eqOps.size() % 2 == 0) {
-				orOp.setLeft(eqOps.pop());
-				orOp.setRight(eqOps.pop());
+            if (eqOps.size() % 2 == 0) {
+                orOp.setLeft(eqOps.pop());
+                orOp.setRight(eqOps.pop());
 
-			}
+            }
 
-			else {
-				orOp.setLeft(eqOps.pop());
-				orOp.setRight(orOps.pop());
-			}
+            else {
+                orOp.setLeft(eqOps.pop());
+                orOp.setRight(orOps.pop());
+            }
 
-			orOps.push(orOp);
-		}
+            orOps.push(orOp);
+        }
 
-		while (orOps.size() > 1) {
+        while (orOps.size() > 1) {
 
-			OrOperand orOp = new OrOperand();
+            OrOperand orOp = new OrOperand();
 
-			orOp.setLeft(orOps.pop());
-			orOp.setRight(orOps.pop());
+            orOp.setLeft(orOps.pop());
+            orOp.setRight(orOps.pop());
 
-			orOps.push(orOp);
-		}
+            orOps.push(orOp);
+        }
 
-		// check if there's anything left in the eqOps.
+        // check if there's anything left in the eqOps.
 
-		return orOps.pop();
+        return orOps.pop();
 
-	}
+    }
 
 }

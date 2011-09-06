@@ -48,376 +48,376 @@ import com.spidertracks.datanucleus.collection.model.Vehicle;
 
 public class CollectionTest extends CassandraTest {
 
-	@Test
-	public void testBasicPeristAndLoadOneToManyCollection() throws Exception {
+    @Test
+    public void testBasicPeristAndLoadOneToManyCollection() throws Exception {
 
-		Pack pack = new Pack();
+        Pack pack = new Pack();
 
-		Card aceSpades = new Card();
-		aceSpades.setName("Ace of Spades");
-		pack.addCard(aceSpades);
+        Card aceSpades = new Card();
+        aceSpades.setName("Ace of Spades");
+        pack.addCard(aceSpades);
 
-		Card jackHearts = new Card();
-		jackHearts.setName("Jack of Hearts");
-		pack.addCard(jackHearts);
+        Card jackHearts = new Card();
+        jackHearts.setName("Jack of Hearts");
+        pack.addCard(jackHearts);
 
-		pmf.getPersistenceManager().makePersistent(pack);
+        pmf.getPersistenceManager().makePersistent(pack);
 
-		Pack saved = pmf.getPersistenceManager().getObjectById(Pack.class,
-				pack.getId());
+        Pack saved = pmf.getPersistenceManager().getObjectById(Pack.class,
+                pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertTrue(saved.getCards().contains(aceSpades));
+        assertTrue(saved.getCards().contains(aceSpades));
 
-		assertTrue(saved.getCards().contains(jackHearts));
+        assertTrue(saved.getCards().contains(jackHearts));
 
-	}
+    }
 
-	@Test
-	@Ignore("Fix the issue with hollow instances being returned")
-	public void testBasicPeristAndLoadOneToManyOrphaned() throws Exception {
+    @Test
+    @Ignore("Fix the issue with hollow instances being returned")
+    public void testBasicPeristAndLoadOneToManyOrphaned() throws Exception {
 
-		Pack pack = new Pack();
+        Pack pack = new Pack();
 
-		Card aceSpades = new Card();
-		aceSpades.setName("Ace of Spades");
-		pack.addCard(aceSpades);
+        Card aceSpades = new Card();
+        aceSpades.setName("Ace of Spades");
+        pack.addCard(aceSpades);
 
-		Card jackHearts = new Card();
-		jackHearts.setName("Jack of Hearts");
-		pack.addCard(jackHearts);
+        Card jackHearts = new Card();
+        jackHearts.setName("Jack of Hearts");
+        pack.addCard(jackHearts);
 
-		pmf.getPersistenceManager().makePersistent(pack);
+        pmf.getPersistenceManager().makePersistent(pack);
 
-		Pack saved = pmf.getPersistenceManager().getObjectById(Pack.class,
-				pack.getId());
+        Pack saved = pmf.getPersistenceManager().getObjectById(Pack.class,
+                pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertTrue(saved.getCards().contains(aceSpades));
+        assertTrue(saved.getCards().contains(aceSpades));
 
-		assertTrue(saved.getCards().contains(jackHearts));
+        assertTrue(saved.getCards().contains(jackHearts));
 
-		// now delete the card
-		PersistenceManager pm = pmf.getPersistenceManager();
-		Card stored = pm.getObjectById(Card.class, jackHearts.getId());
-		pm.deletePersistent(stored);
+        // now delete the card
+        PersistenceManager pm = pmf.getPersistenceManager();
+        Card stored = pm.getObjectById(Card.class, jackHearts.getId());
+        pm.deletePersistent(stored);
 
-		pm = pmf.getPersistenceManager();
-		pm.evictAll();
-		Transaction trans = pm.currentTransaction();
-		trans.begin();
+        pm = pmf.getPersistenceManager();
+        pm.evictAll();
+        Transaction trans = pm.currentTransaction();
+        trans.begin();
 
-		saved = pm.getObjectById(Pack.class, pack.getId());
+        saved = pm.getObjectById(Pack.class, pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertTrue(saved.getCards().contains(aceSpades));
+        assertTrue(saved.getCards().contains(aceSpades));
 
-		assertFalse(saved.getCards().contains(jackHearts));
-		
-		trans.commit();
+        assertFalse(saved.getCards().contains(jackHearts));
+        
+        trans.commit();
 
-	}
+    }
 
-	@Test
-	public void testBasicPeristAndLoadBiDirectionalCollection()
-			throws Exception {
+    @Test
+    public void testBasicPeristAndLoadBiDirectionalCollection()
+            throws Exception {
 
-		Pack pack = new Pack();
+        Pack pack = new Pack();
 
-		Card aceSpades = new Card();
-		aceSpades.setName("Ace of Spades");
-		pack.addCard(aceSpades);
+        Card aceSpades = new Card();
+        aceSpades.setName("Ace of Spades");
+        pack.addCard(aceSpades);
 
-		Card jackHearts = new Card();
-		jackHearts.setName("Jack of Hearts");
-		pack.addCard(jackHearts);
+        Card jackHearts = new Card();
+        jackHearts.setName("Jack of Hearts");
+        pack.addCard(jackHearts);
 
-		pmf.getPersistenceManager().makePersistent(pack);
-		
-		PersistenceManager pm = pmf.getPersistenceManager();
-		Transaction trans = pm.currentTransaction();
-		trans.begin();
-		
-		Pack saved = pm.getObjectById(Pack.class,
-				pack.getId());
+        pmf.getPersistenceManager().makePersistent(pack);
+        
+        PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction trans = pm.currentTransaction();
+        trans.begin();
+        
+        Pack saved = pm.getObjectById(Pack.class,
+                pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertTrue(saved.getCards().contains(aceSpades));
+        assertTrue(saved.getCards().contains(aceSpades));
 
-		assertTrue(saved.getCards().contains(jackHearts));
+        assertTrue(saved.getCards().contains(jackHearts));
 
-		// saved ace spades
-		Card savedAceSpades = saved.getCards().get(
-				saved.getCards().indexOf(aceSpades));
+        // saved ace spades
+        Card savedAceSpades = saved.getCards().get(
+                saved.getCards().indexOf(aceSpades));
 
-		assertEquals(pack, savedAceSpades.getPack());
-		assertEquals(aceSpades.getName(), savedAceSpades.getName());
+        assertEquals(pack, savedAceSpades.getPack());
+        assertEquals(aceSpades.getName(), savedAceSpades.getName());
 
-		Card savedJackHeartsSpades = saved.getCards().get(
-				saved.getCards().indexOf(jackHearts));
+        Card savedJackHeartsSpades = saved.getCards().get(
+                saved.getCards().indexOf(jackHearts));
 
-		assertEquals(pack, savedJackHeartsSpades.getPack());
-		assertEquals(jackHearts.getName(), savedJackHeartsSpades.getName());
-		
-		trans.commit();
+        assertEquals(pack, savedJackHeartsSpades.getPack());
+        assertEquals(jackHearts.getName(), savedJackHeartsSpades.getName());
+        
+        trans.commit();
 
-	}
+    }
 
-	@Test
-	public void testSaveAndLoadSamePmf() throws Exception {
+    @Test
+    public void testSaveAndLoadSamePmf() throws Exception {
 
-		Pack pack = new Pack();
+        Pack pack = new Pack();
 
-		Card aceSpades = new Card();
-		aceSpades.setName("Ace of Spades");
-		pack.addCard(aceSpades);
+        Card aceSpades = new Card();
+        aceSpades.setName("Ace of Spades");
+        pack.addCard(aceSpades);
 
-		Card jackHearts = new Card();
-		jackHearts.setName("Jack of Hearts");
-		pack.addCard(jackHearts);
+        Card jackHearts = new Card();
+        jackHearts.setName("Jack of Hearts");
+        pack.addCard(jackHearts);
 
-		PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
 
-		pm.makePersistent(pack);
+        pm.makePersistent(pack);
 
-		Pack saved = pm.getObjectById(Pack.class, pack.getId());
+        Pack saved = pm.getObjectById(Pack.class, pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertTrue(saved.getCards().contains(aceSpades));
+        assertTrue(saved.getCards().contains(aceSpades));
 
-		assertTrue(saved.getCards().contains(jackHearts));
+        assertTrue(saved.getCards().contains(jackHearts));
 
-		// saved ace spades
-		Card savedAceSpades = saved.getCards().get(
-				saved.getCards().indexOf(aceSpades));
+        // saved ace spades
+        Card savedAceSpades = saved.getCards().get(
+                saved.getCards().indexOf(aceSpades));
 
-		assertEquals(pack, savedAceSpades.getPack());
+        assertEquals(pack, savedAceSpades.getPack());
 
-		Card savedJackHeartsSpades = saved.getCards().get(
-				saved.getCards().indexOf(jackHearts));
+        Card savedJackHeartsSpades = saved.getCards().get(
+                saved.getCards().indexOf(jackHearts));
 
-		assertEquals(pack, savedJackHeartsSpades.getPack());
-	}
+        assertEquals(pack, savedJackHeartsSpades.getPack());
+    }
 
-	/**
-	 * Tests that when an empty collection is persisted then lazy loaded, no
-	 * exceptions occur.
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void emptyCollectionDoesNotCauseException() throws Exception {
+    /**
+     * Tests that when an empty collection is persisted then lazy loaded, no
+     * exceptions occur.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void emptyCollectionDoesNotCauseException() throws Exception {
 
-		Pack pack = new Pack();
+        Pack pack = new Pack();
 
-		PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
 
-		pm.makePersistent(pack);
+        pm.makePersistent(pack);
 
-		PersistenceManager pm2 = pmf.getPersistenceManager();
+        PersistenceManager pm2 = pmf.getPersistenceManager();
 
-		Pack saved = pm2.getObjectById(Pack.class, pack.getId());
+        Pack saved = pm2.getObjectById(Pack.class, pack.getId());
 
-		List<Card> emptyList = saved.getCards();
+        List<Card> emptyList = saved.getCards();
 
-		
-		assertNull(emptyList);
+        
+        assertNull(emptyList);
 
-	}
+    }
 
-	@Test
-	public void testDeleteDependencies() throws Exception {
+    @Test
+    public void testDeleteDependencies() throws Exception {
 
-		Pack pack = new Pack();
+        Pack pack = new Pack();
 
-		Card aceSpades = new Card();
-		aceSpades.setName("Ace of Spades");
-		pack.addCard(aceSpades);
+        Card aceSpades = new Card();
+        aceSpades.setName("Ace of Spades");
+        pack.addCard(aceSpades);
 
-		Card jackHearts = new Card();
-		jackHearts.setName("Jack of Hearts");
-		pack.addCard(jackHearts);
+        Card jackHearts = new Card();
+        jackHearts.setName("Jack of Hearts");
+        pack.addCard(jackHearts);
 
-		pmf.getPersistenceManager().makePersistent(pack);
+        pmf.getPersistenceManager().makePersistent(pack);
 
-		PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
 
-		Pack saved = pm.getObjectById(Pack.class, pack.getId());
+        Pack saved = pm.getObjectById(Pack.class, pack.getId());
 
-		assertEquals(pack, saved);
+        assertEquals(pack, saved);
 
-		assertNotNull(saved.getCards());
+        assertNotNull(saved.getCards());
 
-		assertTrue(saved.getCards().contains(aceSpades));
+        assertTrue(saved.getCards().contains(aceSpades));
 
-		assertTrue(saved.getCards().contains(jackHearts));
+        assertTrue(saved.getCards().contains(jackHearts));
 
-		// saved ace spades
-		Card savedAceSpades = saved.getCards().get(
-				saved.getCards().indexOf(aceSpades));
+        // saved ace spades
+        Card savedAceSpades = saved.getCards().get(
+                saved.getCards().indexOf(aceSpades));
 
-		assertEquals(pack, savedAceSpades.getPack());
+        assertEquals(pack, savedAceSpades.getPack());
 
-		Card savedJackHearts = saved.getCards().get(
-				saved.getCards().indexOf(jackHearts));
+        Card savedJackHearts = saved.getCards().get(
+                saved.getCards().indexOf(jackHearts));
 
-		assertEquals(pack, savedJackHearts.getPack());
+        assertEquals(pack, savedJackHearts.getPack());
 
-		UUID packId = pack.getId();
-		UUID aceId = aceSpades.getId();
-		UUID jackId = jackHearts.getId();
+        UUID packId = pack.getId();
+        UUID aceId = aceSpades.getId();
+        UUID jackId = jackHearts.getId();
 
-		// now perform a delete and ensure that everything is deleted
-		pm.deletePersistent(saved);
+        // now perform a delete and ensure that everything is deleted
+        pm.deletePersistent(saved);
 
-		boolean deleted = false;
+        boolean deleted = false;
 
-		try {
-			pmf.getPersistenceManager().getObjectById(Pack.class, packId);
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        try {
+            pmf.getPersistenceManager().getObjectById(Pack.class, packId);
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertTrue(deleted);
+        assertTrue(deleted);
 
-		deleted = false;
+        deleted = false;
 
-		// now check the cards are gone as well
-		try {
-			pmf.getPersistenceManager().getObjectById(Card.class, aceId);
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        // now check the cards are gone as well
+        try {
+            pmf.getPersistenceManager().getObjectById(Card.class, aceId);
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertTrue(deleted);
+        assertTrue(deleted);
 
-		deleted = false;
-		try {
-			pmf.getPersistenceManager().getObjectById(Card.class, jackId);
+        deleted = false;
+        try {
+            pmf.getPersistenceManager().getObjectById(Card.class, jackId);
 
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertTrue(deleted);
+        assertTrue(deleted);
 
-		deleted = false;
-	}
-	
+        deleted = false;
+    }
+    
 
-	@Test
-	public void testRemoveCollectionEntry() throws Exception {
+    @Test
+    public void testRemoveCollectionEntry() throws Exception {
 
-		User user = new User();
-		user.setName("test");
-		
-		Vehicle car = new Vehicle();
-		car.setName("car");
-		
-		user.addVehicle(car);
-		
-		Vehicle truck = new Vehicle();
-		truck.setName("truck");
-		
-		user.addVehicle(truck);
-		
-		
-		
-		pmf.getPersistenceManager().makePersistent(user);
+        User user = new User();
+        user.setName("test");
+        
+        Vehicle car = new Vehicle();
+        car.setName("car");
+        
+        user.addVehicle(car);
+        
+        Vehicle truck = new Vehicle();
+        truck.setName("truck");
+        
+        user.addVehicle(truck);
+        
+        
+        
+        pmf.getPersistenceManager().makePersistent(user);
 
-		PersistenceManager pm = pmf.getPersistenceManager();
+        PersistenceManager pm = pmf.getPersistenceManager();
 
-		User saved = pm.getObjectById(User.class, user.getId());
+        User saved = pm.getObjectById(User.class, user.getId());
 
-		assertEquals(user, saved);
+        assertEquals(user, saved);
 
-		assertNotNull(saved.getVehicles());
+        assertNotNull(saved.getVehicles());
 
-		assertTrue(saved.getVehicles().contains(car));
+        assertTrue(saved.getVehicles().contains(car));
 
-		assertTrue(saved.getVehicles().contains(truck));
+        assertTrue(saved.getVehicles().contains(truck));
 
-		
-		
-		
-		
-		int carIndex = saved.getVehicles().indexOf(car);
-	
-		Vehicle savedCar = saved.getVehicles().get(carIndex);
+        
+        
+        
+        
+        int carIndex = saved.getVehicles().indexOf(car);
+    
+        Vehicle savedCar = saved.getVehicles().get(carIndex);
 
-		assertEquals(user, savedCar.getUser());
+        assertEquals(user, savedCar.getUser());
 
-		Vehicle savedTruck = saved.getVehicles().get(
-				saved.getVehicles().indexOf(truck));
+        Vehicle savedTruck = saved.getVehicles().get(
+                saved.getVehicles().indexOf(truck));
 
-		assertEquals(user, savedTruck.getUser());
+        assertEquals(user, savedTruck.getUser());
 
-		
-		
-		UUID userId = user.getId();
-		UUID carId = car.getId();
-		UUID truckId = truck.getId();
+        
+        
+        UUID userId = user.getId();
+        UUID carId = car.getId();
+        UUID truckId = truck.getId();
 
-		// now perform a delete and ensure that everything is deleted
-		
-		saved.getVehicles().remove(carIndex);
-		
-		pm.makePersistent(saved);
+        // now perform a delete and ensure that everything is deleted
+        
+        saved.getVehicles().remove(carIndex);
+        
+        pm.makePersistent(saved);
 
-		boolean deleted = false;
+        boolean deleted = false;
 
-		try {
-			pmf.getPersistenceManager().getObjectById(User.class, userId);
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        try {
+            pmf.getPersistenceManager().getObjectById(User.class, userId);
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertFalse(deleted);
+        assertFalse(deleted);
 
-		deleted = false;
+        deleted = false;
 
-		// now check the cards are gone as well
-		try {
-			pmf.getPersistenceManager().getObjectById(Vehicle.class, carId);
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        // now check the cards are gone as well
+        try {
+            pmf.getPersistenceManager().getObjectById(Vehicle.class, carId);
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertFalse(deleted);
+        assertFalse(deleted);
 
-		deleted = false;
-		try {
-			pmf.getPersistenceManager().getObjectById(Vehicle.class, truckId);
+        deleted = false;
+        try {
+            pmf.getPersistenceManager().getObjectById(Vehicle.class, truckId);
 
-		} catch (JDODataStoreException n) {
-			deleted = n.getCause() instanceof NucleusObjectNotFoundException;
-		}
+        } catch (JDODataStoreException n) {
+            deleted = n.getCause() instanceof NucleusObjectNotFoundException;
+        }
 
-		assertFalse(deleted);
-		
-		pm = pmf.getPersistenceManager();
-		saved = pm.getObjectById(User.class, user.getId());
-		
-		assertEquals(-1, saved.getVehicles().indexOf(car));
-		assertEquals(0, saved.getVehicles().indexOf(truck));
-		
-		
+        assertFalse(deleted);
+        
+        pm = pmf.getPersistenceManager();
+        saved = pm.getObjectById(User.class, user.getId());
+        
+        assertEquals(-1, saved.getVehicles().indexOf(car));
+        assertEquals(0, saved.getVehicles().indexOf(truck));
+        
+        
 
-	}
+    }
 
 }

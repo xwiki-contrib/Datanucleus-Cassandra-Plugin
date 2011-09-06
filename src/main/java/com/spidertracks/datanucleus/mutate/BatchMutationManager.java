@@ -33,109 +33,109 @@ import com.spidertracks.datanucleus.CassandraStoreManager;
  */
 public class BatchMutationManager {
 
-	private Map<ExecutionContext, ExecutionContextMutate> contextMutations = new HashMap<ExecutionContext, ExecutionContextMutate>();
-	private Map<ExecutionContext, ExecutionContextDelete> contextDeletions = new HashMap<ExecutionContext, ExecutionContextDelete>();
+    private Map<ExecutionContext, ExecutionContextMutate> contextMutations = new HashMap<ExecutionContext, ExecutionContextMutate>();
+    private Map<ExecutionContext, ExecutionContextDelete> contextDeletions = new HashMap<ExecutionContext, ExecutionContextDelete>();
 
-	private CassandraStoreManager manager;
+    private CassandraStoreManager manager;
 
-	public BatchMutationManager(CassandraStoreManager manager) {
-		this.manager = manager;
-	}
+    public BatchMutationManager(CassandraStoreManager manager) {
+        this.manager = manager;
+    }
 
-	public ExecutionContextDelete beginDelete(ExecutionContext context,
-			ObjectProvider op) {
-		ExecutionContextDelete deleteContext = getDeletions(context);
-		deleteContext.pushInstance();
-		return deleteContext;
+    public ExecutionContextDelete beginDelete(ExecutionContext context,
+            ObjectProvider op) {
+        ExecutionContextDelete deleteContext = getDeletions(context);
+        deleteContext.pushInstance();
+        return deleteContext;
 
-	}
+    }
 
-	public ExecutionContextMutate beginWrite(ExecutionContext context) {
-		ExecutionContextMutate mutationContext = getMutations(context);
-		mutationContext.pushInstance();
-		return mutationContext;
-	}
+    public ExecutionContextMutate beginWrite(ExecutionContext context) {
+        ExecutionContextMutate mutationContext = getMutations(context);
+        mutationContext.pushInstance();
+        return mutationContext;
+    }
 
-	/**
-	 * Returns true if this is the last object to end writing. This mean the
-	 * mutation for this context should be saved
-	 * 
-	 * @param context
-	 * @param sm
-	 * @return
-	 * @throws Exception
-	 */
-	public void endDelete(ExecutionContext context)
-			throws Exception {
-		// not our root instance, don't create a batch mutation
-		if (!getDeletions(context).popInstance()) {
-			return;
-		}
+    /**
+     * Returns true if this is the last object to end writing. This mean the
+     * mutation for this context should be saved
+     * 
+     * @param context
+     * @param sm
+     * @return
+     * @throws Exception
+     */
+    public void endDelete(ExecutionContext context)
+            throws Exception {
+        // not our root instance, don't create a batch mutation
+        if (!getDeletions(context).popInstance()) {
+            return;
+        }
 
-		// it is our root instance, create the batch mutation.
+        // it is our root instance, create the batch mutation.
 
-		getDeletions(context).execute();
-		contextDeletions.remove(context);
+        getDeletions(context).execute();
+        contextDeletions.remove(context);
 
-	}
+    }
 
-	/**
-	 * Returns true if this is the last object to end writing. This mean the
-	 * mutation for this context should be saved
-	 * 
-	 * @param context
-	 * @param sm
-	 * @return
-	 * @throws Exception
-	 */
-	public void endWrite(ExecutionContext context)
-			throws Exception {
-		// not our root instance, don't create a batch mutation
-		if (!getMutations(context).popInstance()) {
-			return;
-		}
+    /**
+     * Returns true if this is the last object to end writing. This mean the
+     * mutation for this context should be saved
+     * 
+     * @param context
+     * @param sm
+     * @return
+     * @throws Exception
+     */
+    public void endWrite(ExecutionContext context)
+            throws Exception {
+        // not our root instance, don't create a batch mutation
+        if (!getMutations(context).popInstance()) {
+            return;
+        }
 
-		// it is our root instance, create the batch mutation.
+        // it is our root instance, create the batch mutation.
 
-		getMutations(context).execute();
-		contextMutations.remove(context);
+        getMutations(context).execute();
+        contextMutations.remove(context);
 
-	}
+    }
 
-	/**
-	 * Get the mutations for this execution context
-	 * 
-	 * @param context
-	 * @return
-	 */
-	private ExecutionContextMutate getMutations(ExecutionContext context) {
-		ExecutionContextMutate operations = contextMutations.get(context);
+    /**
+     * Get the mutations for this execution context
+     * 
+     * @param context
+     * @return
+     */
+    private ExecutionContextMutate getMutations(ExecutionContext context) {
+        ExecutionContextMutate operations = contextMutations.get(context);
 
-		if (operations == null) {
-			operations = new ExecutionContextMutate(context,
-					Pelops.createMutator(manager.getPoolName(), System.nanoTime()/1000));
-			contextMutations.put(context, operations);
-		}
+        if (operations == null) {
+            operations = new ExecutionContextMutate(context,
+                    Pelops.createMutator(manager.getPoolName(), System.nanoTime()/1000));
+            contextMutations.put(context, operations);
+        }
 
-		return operations;
-	}
+        return operations;
+    }
 
-	/**
-	 * Get the mutations for this execution context
-	 * 
-	 * @param context
-	 * @return
-	 */
-	private ExecutionContextDelete getDeletions(ExecutionContext context) {
-		ExecutionContextDelete operations = contextDeletions.get(context);
+    /**
+     * Get the mutations for this execution context
+     * 
+     * @param context
+     * @return
+     */
+    private ExecutionContextDelete getDeletions(ExecutionContext context) {
+        ExecutionContextDelete operations = contextDeletions.get(context);
 
-		if (operations == null) {
-			operations = new ExecutionContextDelete(context, Pelops
-					.createRowDeletor(manager.getPoolName(), System.nanoTime()/1000));
-			contextDeletions.put(context, operations);
-		}
+        if (operations == null) {
+            operations = new ExecutionContextDelete(context, Pelops
+                    .createRowDeletor(manager.getPoolName(), System.nanoTime()/1000));
+            contextDeletions.put(context, operations);
+        }
 
-		return operations;
-	}
+        return operations;
+    }
 
 }

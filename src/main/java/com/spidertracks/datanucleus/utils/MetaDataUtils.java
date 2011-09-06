@@ -52,362 +52,362 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
  */
 public class MetaDataUtils {
 
-	public static final Charset UTF8 = Charset.forName("UTF-8");
-
-	//A null place holder for the cached values
-	private static final String NULL = "\uffff\uffff";
-
-	private static ConcurrentMap<String, String> classToCfNames = new ConcurrentHashMap<String, String>();
-
-	private static ConcurrentMap<AbstractMemberMetaData, Bytes> fieldToColumnNames = new ConcurrentHashMap<AbstractMemberMetaData, Bytes>();
-
-	private static ConcurrentMap<AbstractMemberMetaData, String> fieldToIndexNames = new ConcurrentHashMap<AbstractMemberMetaData, String>();
-
-	private static ConcurrentMap<String, List<Bytes>> classToSubclasses = new ConcurrentHashMap<String, List<Bytes>>();
-
-
-	/**
-	 * Get the column metadata for the class and fieldname
-	 * 
-	 * @param metaData
-	 * @param absoluteFieldNumber
-	 * @return
-	 */
-	public static Bytes getColumnName(AbstractClassMetaData metaData,
-			int absoluteFieldNumber) {
-
-		AbstractMemberMetaData memberMetaData = metaData
-				.getMetaDataForManagedMemberAtAbsolutePosition(absoluteFieldNumber);
-
-		Bytes cached = fieldToColumnNames.get(memberMetaData);
-
-		if (cached != null) {
-			return cached;
-		}
-
-		String name = null;
-		// Try the first column if specified
-		ColumnMetaData[] colmds = memberMetaData.getColumnMetaData();
-		if (colmds != null && colmds.length > 0) {
-			name = colmds[0].getName();
-		} else {
-			name = memberMetaData.getName();
-		}
-
-		cached = Bytes.fromUTF8(name);
-		
-		fieldToColumnNames.putIfAbsent(memberMetaData, cached);
-
-		return cached;
+    public static final Charset UTF8 = Charset.forName("UTF-8");
+
+    //A null place holder for the cached values
+    private static final String NULL = "\uffff\uffff";
+
+    private static ConcurrentMap<String, String> classToCfNames = new ConcurrentHashMap<String, String>();
+
+    private static ConcurrentMap<AbstractMemberMetaData, Bytes> fieldToColumnNames = new ConcurrentHashMap<AbstractMemberMetaData, Bytes>();
+
+    private static ConcurrentMap<AbstractMemberMetaData, String> fieldToIndexNames = new ConcurrentHashMap<AbstractMemberMetaData, String>();
+
+    private static ConcurrentMap<String, List<Bytes>> classToSubclasses = new ConcurrentHashMap<String, List<Bytes>>();
+
+
+    /**
+     * Get the column metadata for the class and fieldname
+     * 
+     * @param metaData
+     * @param absoluteFieldNumber
+     * @return
+     */
+    public static Bytes getColumnName(AbstractClassMetaData metaData,
+            int absoluteFieldNumber) {
+
+        AbstractMemberMetaData memberMetaData = metaData
+                .getMetaDataForManagedMemberAtAbsolutePosition(absoluteFieldNumber);
+
+        Bytes cached = fieldToColumnNames.get(memberMetaData);
+
+        if (cached != null) {
+            return cached;
+        }
+
+        String name = null;
+        // Try the first column if specified
+        ColumnMetaData[] colmds = memberMetaData.getColumnMetaData();
+        if (colmds != null && colmds.length > 0) {
+            name = colmds[0].getName();
+        } else {
+            name = memberMetaData.getName();
+        }
+
+        cached = Bytes.fromUTF8(name);
+        
+        fieldToColumnNames.putIfAbsent(memberMetaData, cached);
+
+        return cached;
 
-	}
-
-	/**
-	 * Get the column metadata for the class and fieldname
-	 * 
-	 * @param metaData
-	 * @param absoluteFieldNumber
-	 * @return
-	 */
-	public static Bytes getIdentityColumn(AbstractClassMetaData metaData) {
-
-		int[] pks = metaData.getPKMemberPositions();
+    }
+
+    /**
+     * Get the column metadata for the class and fieldname
+     * 
+     * @param metaData
+     * @param absoluteFieldNumber
+     * @return
+     */
+    public static Bytes getIdentityColumn(AbstractClassMetaData metaData) {
+
+        int[] pks = metaData.getPKMemberPositions();
 
-		if (pks.length != 1) {
-			throw new NucleusDataStoreException(
-					"Currently only single field identity objects are allowed");
-		}
-
-		AbstractMemberMetaData memberMetaData = metaData
-				.getMetaDataForManagedMemberAtAbsolutePosition(pks[0]);
-
-		// Try the first column if specified
-		ColumnMetaData[] colmds = memberMetaData.getColumnMetaData();
-		if (colmds != null && colmds.length > 0) {
-			return Bytes.fromUTF8(colmds[0].getName());
-		}
-
-		// TODO should we allow defaults?
-		return Bytes.fromUTF8(memberMetaData.getName());
-
-	}
-
-	/**
-	 * Get the column name from the meta data, if it's not specified the default
-	 * name of "classtype" is returned
-	 * 
-	 * @param metaData
-	 * @return
-	 */
-	public static Bytes getDiscriminatorColumnName(
-			DiscriminatorMetaData metaData) {
-		String name = metaData.getColumnName();
-
-		if (name == null) {
-			name = "classtype";
-		}
-
-		return Bytes.fromUTF8(name);
-	}
-
-	/**
-	 * Get the column name from the meta data, if it's not specified the default
-	 * name of "classtype" is returned
-	 * 
-	 * @param acmd
-	 * @return
-	 */
-	public static Bytes getDiscriminatorColumnName(AbstractClassMetaData acmd) {
-		DiscriminatorMetaData meta = acmd.getDiscriminatorMetaData();
-
-		if (meta == null) {
-			return null;
-		}
-
-		return getDiscriminatorColumnName(meta);
-
-	}
-	
-
-
-	/**
-	 * Get the name of the index. Will return null if no index is defined. If
-	 * one is, it takes the name assigned by the user, otherwise it will create
-	 * an index in the format of <TableName>_<FieldName>
-	 * 
-	 * @param metaData
-	 * @return
-	 */
-	public static String getIndexName(AbstractClassMetaData classMetaData,
-			AbstractMemberMetaData fieldMetaData) {
-
-		// already indexed, return it
-		String name = fieldToIndexNames.get(fieldMetaData);
-
-		if (NULL == name) {
-			return null;
-		}
-
-		IndexMetaData metaData = fieldMetaData.getIndexMetaData();
-
-		// no index defined, set it to null and cache it
-		if (metaData == null) {
-			fieldToIndexNames.putIfAbsent(fieldMetaData, NULL);
-			return null;
-
-		}
-
-		name = metaData.getName();
-
-		if (name == null) {
-			StringBuffer nameBuffer = new StringBuffer();
-
-			nameBuffer.append(fieldMetaData.getName()).append("_index");
-			name = nameBuffer.toString();
-		}
-		
-	
-		fieldToIndexNames.putIfAbsent(fieldMetaData, name);
+        if (pks.length != 1) {
+            throw new NucleusDataStoreException(
+                    "Currently only single field identity objects are allowed");
+        }
+
+        AbstractMemberMetaData memberMetaData = metaData
+                .getMetaDataForManagedMemberAtAbsolutePosition(pks[0]);
+
+        // Try the first column if specified
+        ColumnMetaData[] colmds = memberMetaData.getColumnMetaData();
+        if (colmds != null && colmds.length > 0) {
+            return Bytes.fromUTF8(colmds[0].getName());
+        }
+
+        // TODO should we allow defaults?
+        return Bytes.fromUTF8(memberMetaData.getName());
+
+    }
+
+    /**
+     * Get the column name from the meta data, if it's not specified the default
+     * name of "classtype" is returned
+     * 
+     * @param metaData
+     * @return
+     */
+    public static Bytes getDiscriminatorColumnName(
+            DiscriminatorMetaData metaData) {
+        String name = metaData.getColumnName();
+
+        if (name == null) {
+            name = "classtype";
+        }
+
+        return Bytes.fromUTF8(name);
+    }
+
+    /**
+     * Get the column name from the meta data, if it's not specified the default
+     * name of "classtype" is returned
+     * 
+     * @param acmd
+     * @return
+     */
+    public static Bytes getDiscriminatorColumnName(AbstractClassMetaData acmd) {
+        DiscriminatorMetaData meta = acmd.getDiscriminatorMetaData();
+
+        if (meta == null) {
+            return null;
+        }
+
+        return getDiscriminatorColumnName(meta);
+
+    }
+    
+
+
+    /**
+     * Get the name of the index. Will return null if no index is defined. If
+     * one is, it takes the name assigned by the user, otherwise it will create
+     * an index in the format of <TableName>_<FieldName>
+     * 
+     * @param metaData
+     * @return
+     */
+    public static String getIndexName(AbstractClassMetaData classMetaData,
+            AbstractMemberMetaData fieldMetaData) {
+
+        // already indexed, return it
+        String name = fieldToIndexNames.get(fieldMetaData);
+
+        if (NULL == name) {
+            return null;
+        }
+
+        IndexMetaData metaData = fieldMetaData.getIndexMetaData();
+
+        // no index defined, set it to null and cache it
+        if (metaData == null) {
+            fieldToIndexNames.putIfAbsent(fieldMetaData, NULL);
+            return null;
+
+        }
+
+        name = metaData.getName();
+
+        if (name == null) {
+            StringBuffer nameBuffer = new StringBuffer();
+
+            nameBuffer.append(fieldMetaData.getName()).append("_index");
+            name = nameBuffer.toString();
+        }
+        
+    
+        fieldToIndexNames.putIfAbsent(fieldMetaData, name);
 
-		return name;
+        return name;
 
-	}
+    }
 
-	/**
-	 * Get the byte value of the column names
-	 * 
-	 * @param metaData
-	 * @param absoluteFieldNumber
-	 * @return
-	 */
-	public static Bytes getColumnNameBytes(AbstractClassMetaData metaData,
-			int absoluteFieldNumber) {
-
-		return getColumnName(metaData, absoluteFieldNumber);
-
-	}
-
-	/**
-	 * Get the column path to the entire class
-	 * 
-	 * @param metaData
-	 * @return
-	 */
-	public static ColumnPath getClassColumnFamily(AbstractClassMetaData metaData) {
-		return new ColumnPath(getColumnFamily(metaData));
+    /**
+     * Get the byte value of the column names
+     * 
+     * @param metaData
+     * @param absoluteFieldNumber
+     * @return
+     */
+    public static Bytes getColumnNameBytes(AbstractClassMetaData metaData,
+            int absoluteFieldNumber) {
+
+        return getColumnName(metaData, absoluteFieldNumber);
+
+    }
+
+    /**
+     * Get the column path to the entire class
+     * 
+     * @param metaData
+     * @return
+     */
+    public static ColumnPath getClassColumnFamily(AbstractClassMetaData metaData) {
+        return new ColumnPath(getColumnFamily(metaData));
 
-	}
+    }
 
-	/**
-	 * Get the column parent for the given class metadata. Matches the
-	 * "table name" on the class meta data
-	 * 
-	 * @param op
-	 * @return
-	 */
-	public static ColumnParent getColumnParent(AbstractClassMetaData metaData) {
-		return new ColumnParent(getColumnFamily(metaData));
-	}
+    /**
+     * Get the column parent for the given class metadata. Matches the
+     * "table name" on the class meta data
+     * 
+     * @param op
+     * @return
+     */
+    public static ColumnParent getColumnParent(AbstractClassMetaData metaData) {
+        return new ColumnParent(getColumnFamily(metaData));
+    }
 
-	/**
-	 * Get the name of the column family. Uses table name, if one doesn't exist,
-	 * it uses the simple name of the class. If this class should never be
-	 * persisted directly (subclass table persistence) null is returned
-	 * 
-	 * @param metaData
-	 * @return
-	 */
-	public static String getColumnFamily(AbstractClassMetaData metaData) {
+    /**
+     * Get the name of the column family. Uses table name, if one doesn't exist,
+     * it uses the simple name of the class. If this class should never be
+     * persisted directly (subclass table persistence) null is returned
+     * 
+     * @param metaData
+     * @return
+     */
+    public static String getColumnFamily(AbstractClassMetaData metaData) {
 
-		String passedClassName = metaData.getFullClassName();
-		String cfName = classToCfNames.get(passedClassName);
+        String passedClassName = metaData.getFullClassName();
+        String cfName = classToCfNames.get(passedClassName);
 
-		if (cfName != null) {
-			return cfName;
-		}
+        if (cfName != null) {
+            return cfName;
+        }
 
-		AbstractClassMetaData current = metaData;
-		InheritanceMetaData inheritance = null;
-		String tableName = null;
+        AbstractClassMetaData current = metaData;
+        InheritanceMetaData inheritance = null;
+        String tableName = null;
 
-		while (current != null) {
-			tableName = current.getTable();
+        while (current != null) {
+            tableName = current.getTable();
 
-			if (tableName != null) {
-				cfName = tableName;
-				break;
-			}
+            if (tableName != null) {
+                cfName = tableName;
+                break;
+            }
 
-			inheritance = metaData.getInheritanceMetaData();
+            inheritance = metaData.getInheritanceMetaData();
 
-			if (inheritance != null) {
+            if (inheritance != null) {
 
-				InheritanceStrategy strategy = inheritance.getStrategy();
+                InheritanceStrategy strategy = inheritance.getStrategy();
 
-				if (InheritanceStrategy.NEW_TABLE.equals(strategy)) {
-					cfName = metaData.getTable();
+                if (InheritanceStrategy.NEW_TABLE.equals(strategy)) {
+                    cfName = metaData.getTable();
 
-					if (cfName == null) {
-						cfName = metaData.getEntityName();
+                    if (cfName == null) {
+                        cfName = metaData.getEntityName();
 
-					}
+                    }
 
-					break;
-				}
+                    break;
+                }
 
-				// this class should never be persisted directly, return null
-				else if (InheritanceStrategy.SUBCLASS_TABLE.equals(strategy)) {
-					return null;
-				}
+                // this class should never be persisted directly, return null
+                else if (InheritanceStrategy.SUBCLASS_TABLE.equals(strategy)) {
+                    return null;
+                }
 
-			}
+            }
 
-			current = (AbstractClassMetaData) current
-					.getSuperAbstractClassMetaData();
+            current = (AbstractClassMetaData) current
+                    .getSuperAbstractClassMetaData();
 
-		}
+        }
 
-		classToCfNames.put(passedClassName, cfName);
+        classToCfNames.put(passedClassName, cfName);
 
-		return cfName;
+        return cfName;
 
-	}
+    }
 
-	/**
-	 * Get all discriminators as strings for this class and all possible
-	 * subclasses. Will return at a minimum the discriminator for the passed
-	 * class
-	 * 
-	 * @param className
-	 * @param clr
-	 * @param ec
-	 * @return
-	 */
-	public static List<Bytes> getDescriminatorValues(String className,
-			ClassLoaderResolver clr, ExecutionContext ec, ByteConverterContext converter) {
+    /**
+     * Get all discriminators as strings for this class and all possible
+     * subclasses. Will return at a minimum the discriminator for the passed
+     * class
+     * 
+     * @param className
+     * @param clr
+     * @param ec
+     * @return
+     */
+    public static List<Bytes> getDescriminatorValues(String className,
+            ClassLoaderResolver clr, ExecutionContext ec, ByteConverterContext converter) {
 
-		List<Bytes> descriminators = classToSubclasses.get(className);
+        List<Bytes> descriminators = classToSubclasses.get(className);
 
-		if (descriminators != null) {
-			return descriminators;
-		}
+        if (descriminators != null) {
+            return descriminators;
+        }
 
-		descriminators = new ArrayList<Bytes>();
+        descriminators = new ArrayList<Bytes>();
 
-		MetaDataManager mdm = ec.getMetaDataManager();
+        MetaDataManager mdm = ec.getMetaDataManager();
 
-		AbstractClassMetaData metaData = mdm
-				.getMetaDataForClass(className, clr);
+        AbstractClassMetaData metaData = mdm
+                .getMetaDataForClass(className, clr);
 
-		DiscriminatorMetaData discriminator = metaData
-				.getDiscriminatorMetaData();
+        DiscriminatorMetaData discriminator = metaData
+                .getDiscriminatorMetaData();
 
-		Bytes value = converter.getBytes(discriminator.getValue());
-		
-		descriminators.add(value);
+        Bytes value = converter.getBytes(discriminator.getValue());
+        
+        descriminators.add(value);
 
-		String[] subClasses = mdm.getSubclassesForClass(className, true);
+        String[] subClasses = mdm.getSubclassesForClass(className, true);
 
-		if (subClasses != null) {
+        if (subClasses != null) {
 
-			for (String subclassName : subClasses) {
-				metaData = mdm.getMetaDataForClass(subclassName, clr);
+            for (String subclassName : subClasses) {
+                metaData = mdm.getMetaDataForClass(subclassName, clr);
 
-				
-				value = converter.getBytes(metaData.getDiscriminatorMetaData().getValue());
+                
+                value = converter.getBytes(metaData.getDiscriminatorMetaData().getValue());
 
-				descriminators.add(value);
-			}
-		}
+                descriminators.add(value);
+            }
+        }
 
-		classToSubclasses.putIfAbsent(className, descriminators);
+        classToSubclasses.putIfAbsent(className, descriminators);
 
-		return descriminators;
-	}
-	
+        return descriminators;
+    }
+    
 
 
-	/**
-	 * Create a slice predicate with all mapped fetch column lists
-	 * 
-	 * @param metaData
-	 * @param fieldNumbers
-	 * @return
-	 */
-	public static SlicePredicate getFetchColumnList(
-			AbstractClassMetaData metaData, int[] fieldNumbers) {
+    /**
+     * Create a slice predicate with all mapped fetch column lists
+     * 
+     * @param metaData
+     * @param fieldNumbers
+     * @return
+     */
+    public static SlicePredicate getFetchColumnList(
+            AbstractClassMetaData metaData, int[] fieldNumbers) {
 
-		Bytes[] fieldNames = new Bytes[fieldNumbers.length];
+        Bytes[] fieldNames = new Bytes[fieldNumbers.length];
 
-		for (int i = 0; i < fieldNumbers.length; i++) {
-			fieldNames[i] = getColumnName(metaData, fieldNumbers[i]);
-		}
+        for (int i = 0; i < fieldNumbers.length; i++) {
+            fieldNames[i] = getColumnName(metaData, fieldNumbers[i]);
+        }
 
-		return Selector.newColumnsPredicate(fieldNames);
-	}
+        return Selector.newColumnsPredicate(fieldNames);
+    }
 
-	/**
-	 * Create a slice predicate that will retreive the discriminator column if
-	 * one doesn't exist, null is returned
-	 * 
-	 * @param metaData
-	 * @param fieldNumbers
-	 * @return
-	 */
-	public static SlicePredicate getDescriminatorColumn(
-			AbstractClassMetaData metaData) {
+    /**
+     * Create a slice predicate that will retreive the discriminator column if
+     * one doesn't exist, null is returned
+     * 
+     * @param metaData
+     * @param fieldNumbers
+     * @return
+     */
+    public static SlicePredicate getDescriminatorColumn(
+            AbstractClassMetaData metaData) {
 
-		DiscriminatorMetaData discriminatorMetaData = metaData
-				.getDiscriminatorMetaData();
+        DiscriminatorMetaData discriminatorMetaData = metaData
+                .getDiscriminatorMetaData();
 
-		if (discriminatorMetaData == null) {
-			return null;
-		}
+        if (discriminatorMetaData == null) {
+            return null;
+        }
 
-		Bytes columnName = getDiscriminatorColumnName(discriminatorMetaData);
+        Bytes columnName = getDiscriminatorColumnName(discriminatorMetaData);
 
-		return Selector.newColumnsPredicate(columnName);
-	}
+        return Selector.newColumnsPredicate(columnName);
+    }
 
 
 }

@@ -31,35 +31,35 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class ObjectStringWrapperConverter implements ByteConverter {
 
-	private ObjectStringConverter dnStringConverter;
-	private ByteConverter stringConverter;
+    private ObjectStringConverter dnStringConverter;
+    private ByteConverter stringConverter;
 
-	public ObjectStringWrapperConverter(ObjectStringConverter dnLongConverter,
-			ByteConverter stringConverter) {
-		this.dnStringConverter = dnLongConverter;
-		this.stringConverter = stringConverter;
-	}
+    public ObjectStringWrapperConverter(ObjectStringConverter dnLongConverter,
+            ByteConverter stringConverter) {
+        this.dnStringConverter = dnLongConverter;
+        this.stringConverter = stringConverter;
+    }
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_UTF8;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_UTF8;
+    }
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null) {
-			return null;
-		}
-		return dnStringConverter.toObject((String) stringConverter
-				.getObject(buffer, context));
-	}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null) {
+            return null;
+        }
+        return dnStringConverter.toObject((String) stringConverter
+                .getObject(buffer, context));
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		String stringVal = dnStringConverter.toString(value);
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        String stringVal = dnStringConverter.toString(value);
 
-		return stringConverter.writeBytes(stringVal, buffer, context);
-	}
+        return stringConverter.writeBytes(stringVal, buffer, context);
+    }
 
 
 }

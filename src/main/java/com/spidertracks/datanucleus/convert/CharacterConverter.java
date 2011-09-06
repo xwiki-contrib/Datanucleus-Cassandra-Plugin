@@ -28,30 +28,30 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class CharacterConverter implements ByteConverter {
 
-	private static final int SIZE = Character.SIZE / Byte.SIZE;
-	
-	@Override
-	public Character getObject(ByteBuffer buff, ByteConverterContext context) {
-		if(buff == null || buff.remaining() < SIZE){
-			return null;
-		}
-		return buff.getChar();
-	}
+    private static final int SIZE = Character.SIZE / Byte.SIZE;
+    
+    @Override
+    public Character getObject(ByteBuffer buff, ByteConverterContext context) {
+        if(buff == null || buff.remaining() < SIZE){
+            return null;
+        }
+        return buff.getChar();
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buff, ByteConverterContext context) {
-		ByteBuffer returned = check(buff, SIZE);
-		
-		return returned.putChar((Character) value);
-	}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buff, ByteConverterContext context) {
+        ByteBuffer returned = check(buff, SIZE);
+        
+        return returned.putChar((Character) value);
+    }
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
+    }
 
-	
+    
 
-	
+    
 
 }

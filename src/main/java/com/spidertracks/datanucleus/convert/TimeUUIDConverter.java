@@ -31,39 +31,39 @@ import com.eaio.uuid.UUID;
  */
 public class TimeUUIDConverter implements ByteConverter {
 
-	private static final int SIZE = 128 / Byte.SIZE;
+    private static final int SIZE = 128 / Byte.SIZE;
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null || buffer.remaining() < SIZE) {
-			return null;
-		}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null || buffer.remaining() < SIZE) {
+            return null;
+        }
 
-		long time = buffer.getLong();
-		long clockSeqNode = buffer.getLong();
+        long time = buffer.getLong();
+        long clockSeqNode = buffer.getLong();
 
-		return new UUID(time, clockSeqNode);
+        return new UUID(time, clockSeqNode);
 
-	}
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		if (value == null) {
-			return buffer;
-		}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        if (value == null) {
+            return buffer;
+        }
 
-		ByteBuffer returned = check(buffer, SIZE);
+        ByteBuffer returned = check(buffer, SIZE);
 
-		UUID uuid = (UUID) value;
+        UUID uuid = (UUID) value;
 
-		returned.putLong(uuid.getTime());
-		return returned.putLong(uuid.getClockSeqAndNode());
+        returned.putLong(uuid.getTime());
+        return returned.putLong(uuid.getClockSeqAndNode());
 
-	}
+    }
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_TIME_UUID;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_TIME_UUID;
+    }
 
 }

@@ -33,77 +33,77 @@ import com.thoughtworks.xstream.XStream;
  */
 public class XStreamSerializer implements Serializer {
 
-	public XStreamSerializer() {
+    public XStreamSerializer() {
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.spidertracks.datanucleus.serialization.Serializer#getBytes(java.lang
-	 * .Object)
-	 */
-	@Override
-	public byte[] getBytes(Object value) {
-		try {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.spidertracks.datanucleus.serialization.Serializer#getBytes(java.lang
+     * .Object)
+     */
+    @Override
+    public byte[] getBytes(Object value) {
+        try {
 
-			// we have to unwrap SCO instances, otherwise serialization blows up
-			if (value instanceof SCO) {
-				value = ((SCO) value).getValue();
-			}
+            // we have to unwrap SCO instances, otherwise serialization blows up
+            if (value instanceof SCO) {
+                value = ((SCO) value).getValue();
+            }
 
-			ByteArrayOutputStream output = new ByteArrayOutputStream();
+            ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-			XStream xstream = new XStream();
+            XStream xstream = new XStream();
 
-			xstream.toXML(value, output);
+            xstream.toXML(value, output);
 
-			output.flush();
+            output.flush();
 
-			byte[] result = output.toByteArray();
+            byte[] result = output.toByteArray();
 
-			output.close();
+            output.close();
 
-			return result;
-		} catch (IOException e) {
-			throw new RuntimeException("Unable to serialize to json", e);
-		}
+            return result;
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to serialize to json", e);
+        }
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.spidertracks.datanucleus.serialization.Serializer#getObject(byte[])
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T getObject(byte[] bytes) {
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.spidertracks.datanucleus.serialization.Serializer#getObject(byte[])
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getObject(byte[] bytes) {
 
-		try {
+        try {
 
-			ByteArrayInputStream input = new ByteArrayInputStream(bytes);
+            ByteArrayInputStream input = new ByteArrayInputStream(bytes);
 
-			XStream xstream = new XStream();
+            XStream xstream = new XStream();
 
-			T result = (T) xstream.fromXML(input);
+            T result = (T) xstream.fromXML(input);
 
-			input.close();
+            input.close();
 
-			return result;
+            return result;
 
-		} catch (Exception e) {
-			throw new RuntimeException("Unable to de-serialize xml to object.  Make sure you used this converter to persist the object", e);
-		}
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to de-serialize xml to object.  Make sure you used this converter to persist the object", e);
+        }
 
-	}
+    }
 
-	@Override
-	public int size(Object value) {
-		//no object can be larger than 2048 bytes
-		return 2048;
-	}
+    @Override
+    public int size(Object value) {
+        //no object can be larger than 2048 bytes
+        return 2048;
+    }
 
 }

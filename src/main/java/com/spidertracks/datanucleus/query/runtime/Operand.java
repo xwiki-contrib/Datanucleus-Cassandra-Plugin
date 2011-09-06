@@ -32,58 +32,58 @@ import org.scale7.cassandra.pelops.Bytes;
  */
 public abstract class Operand {
 
-	protected Operand parent;
+    protected Operand parent;
 
-	protected Operand left;
+    protected Operand left;
 
-	protected Operand right;
+    protected Operand right;
 
-	protected Set<Columns> candidateKeys;
+    protected Set<Columns> candidateKeys;
 
-	/**
-	 * Called by the child when it has completed it's operation to signal to the
-	 * parent it is done
-	 * 
-	 * @param child
-	 */
-	public abstract void complete(Operand child);
+    /**
+     * Called by the child when it has completed it's operation to signal to the
+     * parent it is done
+     * 
+     * @param child
+     */
+    public abstract void complete(Operand child);
 
-	/**
-	 * Will run the query.
-	 */
-	public abstract void performQuery(String poolName, String cfName,
-			Bytes[] columns);
+    /**
+     * Will run the query.
+     */
+    public abstract void performQuery(String poolName, String cfName,
+            Bytes[] columns);
 
-	/**
-	 * Optimize the query tree for CFS that have descriminators
-	 * 
-	 * @param descriminatorColumnValue
-	 * @param possibleValues
-	 */
-	public abstract Operand optimizeDescriminator(Bytes descriminatorColumnValue,
-			List<Bytes> possibleValues);
+    /**
+     * Optimize the query tree for CFS that have descriminators
+     * 
+     * @param descriminatorColumnValue
+     * @param possibleValues
+     */
+    public abstract Operand optimizeDescriminator(Bytes descriminatorColumnValue,
+            List<Bytes> possibleValues);
 
-	public Set<Columns> getCandidateKeys() {
-		return candidateKeys;
-	}
+    public Set<Columns> getCandidateKeys() {
+        return candidateKeys;
+    }
 
-	public void setParent(Operand parent) {
-		this.parent = parent;
-	}
+    public void setParent(Operand parent) {
+        this.parent = parent;
+    }
 
-	public void setLeft(Operand left) {
-		this.left = left;
-		if (left != null) {
-			left.setParent(this);
-		}
-	}
+    public void setLeft(Operand left) {
+        this.left = left;
+        if (left != null) {
+            left.setParent(this);
+        }
+    }
 
-	public void setRight(Operand right) {
-		this.right = right;
+    public void setRight(Operand right) {
+        this.right = right;
 
-		if (right != null) {
-			right.setParent(this);
-		}
-	}
+        if (right != null) {
+            right.setParent(this);
+        }
+    }
 
 }

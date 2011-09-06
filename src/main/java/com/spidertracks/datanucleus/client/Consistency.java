@@ -29,51 +29,51 @@ import org.apache.cassandra.thrift.ConsistencyLevel;
  */
 public class Consistency {
 
-	private static final ThreadLocal<ConsistencyLevel> level = new ThreadLocal<ConsistencyLevel>();
-	
-	private static ConsistencyLevel defaultLevel;
+    private static final ThreadLocal<ConsistencyLevel> level = new ThreadLocal<ConsistencyLevel>();
+    
+    private static ConsistencyLevel defaultLevel;
 
-	
-	static {
-		defaultLevel = ConsistencyLevel.ONE;
-	}
-	
-	/**
-	 * Set the default level if it hasn't been set
-	 * @param c
-	 */
-	public static void setDefault(ConsistencyLevel c){
-		defaultLevel = c;
-	}
-	/**
-	 * Set the consistency level for this thread
-	 * 
-	 * @param c
-	 */
-	public static void set(ConsistencyLevel c) {
-		level.set(c);
-	}
+    
+    static {
+        defaultLevel = ConsistencyLevel.ONE;
+    }
+    
+    /**
+     * Set the default level if it hasn't been set
+     * @param c
+     */
+    public static void setDefault(ConsistencyLevel c){
+        defaultLevel = c;
+    }
+    /**
+     * Set the consistency level for this thread
+     * 
+     * @param c
+     */
+    public static void set(ConsistencyLevel c) {
+        level.set(c);
+    }
 
-	/**
-	 * Convenience wrapper for set(null)
-	 */
-	public static void remove() {
-		set(null);
-	}
+    /**
+     * Convenience wrapper for set(null)
+     */
+    public static void remove() {
+        set(null);
+    }
 
-	/**
-	 * Get the currently set consistency level;
-	 * 
-	 * @return
-	 */
-	public static ConsistencyLevel get() {
-		ConsistencyLevel l = level.get();
+    /**
+     * Get the currently set consistency level;
+     * 
+     * @return
+     */
+    public static ConsistencyLevel get() {
+        ConsistencyLevel l = level.get();
 
-		if (l == null) {
-			return defaultLevel;
-		}
+        if (l == null) {
+            return defaultLevel;
+        }
 
-		return l;
-	}
+        return l;
+    }
 
 }

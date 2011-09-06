@@ -34,39 +34,39 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class CardMap extends BaseEntity {
 
-	
-	@Persistent
-	private PackMap pack;
-	
-	private String name;
-	
+    
+    @Persistent
+    private PackMap pack;
+    
+    private String name;
+    
 
-	/**
-	 * @return the pack
-	 */
-	public PackMap getPack() {
-		return pack;
-	}
+    /**
+     * @return the pack
+     */
+    public PackMap getPack() {
+        return pack;
+    }
 
-	/**
-	 * @param pack the pack to set
-	 */
-	public void setPack(PackMap pack) {
-		this.pack = pack;
-	}
+    /**
+     * @param pack the pack to set
+     */
+    public void setPack(PackMap pack) {
+        this.pack = pack;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
 }

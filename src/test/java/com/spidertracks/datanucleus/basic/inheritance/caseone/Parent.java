@@ -31,21 +31,21 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @PersistenceCapable
 public abstract class Parent extends BaseEntity {
 
-	@Persistent
-	private String parentField;
+    @Persistent
+    private String parentField;
 
-	/**
-	 * @return the parentField
-	 */
-	public String getParentField() {
-		return parentField;
-	}
+    /**
+     * @return the parentField
+     */
+    public String getParentField() {
+        return parentField;
+    }
 
-	/**
-	 * @param parentField the parentField to set
-	 */
-	public void setParentField(String parentField) {
-		this.parentField = parentField;
-	}
-	
+    /**
+     * @param parentField the parentField to set
+     */
+    public void setParentField(String parentField) {
+        this.parentField = parentField;
+    }
+    
 }

@@ -30,41 +30,41 @@ import com.spidertracks.datanucleus.basic.model.EnumValues;
  */
 public class EnumConverter implements ObjectStringConverter {
 
-	private static int fromCount = 0;
-	private static int toCount = 0;
-	
-	private Map<Integer, EnumValues> indexed = new HashMap<Integer, EnumValues>();
-	
-	
-	public EnumConverter(){
-		for(EnumValues current: EnumValues.values()){
-			indexed.put(current.getValue(), current);
-		}
-	}
-	/* (non-Javadoc)
-	 * @see org.datanucleus.store.types.ObjectStringConverter#toObject(java.lang.String)
-	 */
-	@Override
-	public Object toObject(String str) {
-		toCount++;
-		return indexed.get(Integer.valueOf(str));
-		
-	}
+    private static int fromCount = 0;
+    private static int toCount = 0;
+    
+    private Map<Integer, EnumValues> indexed = new HashMap<Integer, EnumValues>();
+    
+    
+    public EnumConverter(){
+        for(EnumValues current: EnumValues.values()){
+            indexed.put(current.getValue(), current);
+        }
+    }
+    /* (non-Javadoc)
+     * @see org.datanucleus.store.types.ObjectStringConverter#toObject(java.lang.String)
+     */
+    @Override
+    public Object toObject(String str) {
+        toCount++;
+        return indexed.get(Integer.valueOf(str));
+        
+    }
 
-	/* (non-Javadoc)
-	 * @see org.datanucleus.store.types.ObjectStringConverter#toString(java.lang.Object)
-	 */
-	@Override
-	public String toString(Object obj) {
-		fromCount++;
-		return String.valueOf(((EnumValues)obj).getValue());
-	}
+    /* (non-Javadoc)
+     * @see org.datanucleus.store.types.ObjectStringConverter#toString(java.lang.Object)
+     */
+    @Override
+    public String toString(Object obj) {
+        fromCount++;
+        return String.valueOf(((EnumValues)obj).getValue());
+    }
 
-	public static int getFromCount(){
-		return fromCount;
-	}
-	
-	public static int getToCount(){
-		return toCount;
-	}
+    public static int getFromCount(){
+        return fromCount;
+    }
+    
+    public static int getToCount(){
+        return toCount;
+    }
 }

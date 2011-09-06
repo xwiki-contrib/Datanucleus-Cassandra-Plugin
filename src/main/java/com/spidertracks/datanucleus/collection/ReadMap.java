@@ -38,114 +38,114 @@ import com.spidertracks.datanucleus.convert.ByteConverterContext;
  * 
  */
 public class ReadMap extends ExternalEntity implements Iterable<CassEntry>,
-		Iterator<CassEntry> {
+        Iterator<CassEntry> {
 
-	private Class<?> keyClass;
+    private Class<?> keyClass;
 
-	private Class<?> valueClass;
+    private Class<?> valueClass;
 
-	private int index = -1;
+    private int index = -1;
 
-	private List<Column> columns;
+    private List<Column> columns;
 
-	public ReadMap(Selector selector, ByteConverterContext context, String ownerColumnFamily,
-			Bytes rowKey, Bytes ownerColumn, Class<?> keyClass,
-			Class<?> valueClass) {
-		super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
-		this.keyClass = keyClass;
-		this.valueClass = valueClass;
-	}
+    public ReadMap(Selector selector, ByteConverterContext context, String ownerColumnFamily,
+            Bytes rowKey, Bytes ownerColumn, Class<?> keyClass,
+            Class<?> valueClass) {
+        super(selector, context, ownerColumnFamily, rowKey, ownerColumn);
+        this.keyClass = keyClass;
+        this.valueClass = valueClass;
+    }
 
-	/**
-	 * Get the slice predicate for selecting all the columns from the given
-	 * start key (inclusive). If the key is null, the range reads from the
-	 * beginning. Reads up to the max for the given column from start using
-	 * count.
-	 * 
-	 * @param count
-	 * @param startKey
-	 * @return
-	 */
-	public void fetchColumns(int count, Bytes startKey) {
+    /**
+     * Get the slice predicate for selecting all the columns from the given
+     * start key (inclusive). If the key is null, the range reads from the
+     * beginning. Reads up to the max for the given column from start using
+     * count.
+     * 
+     * @param count
+     * @param startKey
+     * @return
+     */
+    public void fetchColumns(int count, Bytes startKey) {
 
-		SliceRange range = new SliceRange();
+        SliceRange range = new SliceRange();
 
-		int length = ownerColumn.length() + 1;
+        int length = ownerColumn.length() + 1;
 
-		if (startKey != null) {
-			length += startKey.length();
-		}
+        if (startKey != null) {
+            length += startKey.length();
+        }
 
-		ByteBuffer startBuff = ByteBuffer.allocate(length);
-		startBuff.mark();
-		startBuff.put(ownerColumn.toByteArray());
-		startBuff.put(DELIM_MIN);
+        ByteBuffer startBuff = ByteBuffer.allocate(length);
+        startBuff.mark();
+        startBuff.put(ownerColumn.toByteArray());
+        startBuff.put(DELIM_MIN);
 
-		if (startKey != null) {
-			startBuff.put(startKey.toByteArray());
-		}
+        if (startKey != null) {
+            startBuff.put(startKey.toByteArray());
+        }
 
-		startBuff.reset();
+        startBuff.reset();
 
-		range.setStart(startBuff);
+        range.setStart(startBuff);
 
-		ByteBuffer endBuff = ByteBuffer.allocate(ownerColumn.length() + 1);
-		endBuff.mark();
-		endBuff.put(ownerColumn.toByteArray());
-		endBuff.put(DELIM_MAX);
-		endBuff.reset();
+        ByteBuffer endBuff = ByteBuffer.allocate(ownerColumn.length() + 1);
+        endBuff.mark();
+        endBuff.put(ownerColumn.toByteArray());
+        endBuff.put(DELIM_MAX);
+        endBuff.reset();
 
-		range.setFinish(endBuff);
-		range.setCount(count);
+        range.setFinish(endBuff);
+        range.setCount(count);
 
-		SlicePredicate predicate = new SlicePredicate();
+        SlicePredicate predicate = new SlicePredicate();
 
-		predicate.setSlice_range(range);
+        predicate.setSlice_range(range);
 
-		columns = selector.getColumnsFromRow(ownerColumnFamily, rowKey,
-				predicate, Consistency.get());
+        columns = selector.getColumnsFromRow(ownerColumnFamily, rowKey,
+                predicate, Consistency.get());
 
-	}
+    }
 
-	public int getColumnCount() {
-		return columns == null ? 0 : columns.size();
-	}
+    public int getColumnCount() {
+        return columns == null ? 0 : columns.size();
+    }
 
-	@Override
-	public Iterator<CassEntry> iterator() {
-		return this;
-	}
+    @Override
+    public Iterator<CassEntry> iterator() {
+        return this;
+    }
 
-	@Override
-	public boolean hasNext() {
-		return columns != null && index + 1 < columns.size();
-	}
+    @Override
+    public boolean hasNext() {
+        return columns != null && index + 1 < columns.size();
+    }
 
-	/**
-	 * Returns the bytes as an object identity
-	 */
-	@Override
-	public CassEntry next() {
-		if (++index > columns.size()) {
-			throw new NoSuchElementException("No elements left");
-		}
+    /**
+     * Returns the bytes as an object identity
+     */
+    @Override
+    public CassEntry next() {
+        if (++index > columns.size()) {
+            throw new NoSuchElementException("No elements left");
+        }
 
-		Column col = columns.get(index);
+        Column col = columns.get(index);
 
-		ByteBuffer buffer = col.name;
-		buffer.position(buffer.position() + ownerColumn.length() + 1);
+        ByteBuffer buffer = col.name;
+        buffer.position(buffer.position() + ownerColumn.length() + 1);
 
-		Object key = context.getObject(buffer, keyClass);
+        Object key = context.getObject(buffer, keyClass);
 
-		Object value = context.getObject(col.value, valueClass);
+        Object value = context.getObject(col.value, valueClass);
 
-		return new CassEntry(key, value);
+        return new CassEntry(key, value);
 
-	}
+    }
 
-	@Override
-	public void remove() {
-		throw new UnsupportedOperationException("remove isn't supported");
-	}
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("remove isn't supported");
+    }
 
 }

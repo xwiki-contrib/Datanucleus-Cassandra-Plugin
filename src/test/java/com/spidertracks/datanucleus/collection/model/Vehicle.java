@@ -36,44 +36,44 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class Vehicle extends BaseEntity  implements Serializable{
 
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	@Persistent
-	private User user;
-	
-	private String name;
-	
+    @Persistent
+    private User user;
+    
+    private String name;
+    
 
-	/**
-	 * @return the pack
-	 */
-	public User getUser() {
-		return user;
-	}
+    /**
+     * @return the pack
+     */
+    public User getUser() {
+        return user;
+    }
 
-	/**
-	 * @param pack the pack to set
-	 */
-	public void setUser(User pack) {
-		this.user = pack;
-	}
+    /**
+     * @param pack the pack to set
+     */
+    public void setUser(User pack) {
+        this.user = pack;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-	
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    
 }

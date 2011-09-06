@@ -33,24 +33,24 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @PersistenceCapable(table = "PackArray", identityType = IdentityType.APPLICATION)
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class PackArray extends BaseEntity {
-	
-	
-	@Persistent(mappedBy="pack")
-	@Element(dependent="true")
-	private CardArray[] cards;
-	
-	public PackArray(){
-		cards = new CardArray[2];
-	}
+    
+    
+    @Persistent(mappedBy="pack")
+    @Element(dependent="true")
+    private CardArray[] cards;
+    
+    public PackArray(){
+        cards = new CardArray[2];
+    }
 
-	/**
-	 * @return the manyToOne
-	 */
-	public CardArray[] getCards() {
-		return cards;
-	}
-	
-	
+    /**
+     * @return the manyToOne
+     */
+    public CardArray[] getCards() {
+        return cards;
+    }
+    
+    
 
-	
+    
 }

@@ -31,42 +31,42 @@ import com.spidertracks.datanucleus.serialization.Serializer;
  * 
  */
 public class SerializerWrapperConverter implements ByteConverter {
-	private Serializer serializer;
+    private Serializer serializer;
 
-	public SerializerWrapperConverter(Serializer serializer) {
-		this.serializer = serializer;
-	}
+    public SerializerWrapperConverter(Serializer serializer) {
+        this.serializer = serializer;
+    }
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null) {
-			return null;
-		}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null) {
+            return null;
+        }
 
-		// TODO this be required to copy
-		byte[] data = new byte[buffer.limit() - buffer.position()];
+        // TODO this be required to copy
+        byte[] data = new byte[buffer.limit() - buffer.position()];
 
-		buffer.get(data);
+        buffer.get(data);
 
-		return serializer.getObject(data);
+        return serializer.getObject(data);
 
-	}
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
 
-		byte[] serialized = serializer.getBytes(value);
+        byte[] serialized = serializer.getBytes(value);
 
-		ByteBuffer returned = check(buffer, serialized.length);
+        ByteBuffer returned = check(buffer, serialized.length);
 
-		return returned.put(serialized);
+        return returned.put(serialized);
 
-	}
+    }
 
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_BYTES;
+    }
 
 }

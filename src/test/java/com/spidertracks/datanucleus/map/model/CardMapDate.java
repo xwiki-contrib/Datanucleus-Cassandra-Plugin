@@ -40,57 +40,57 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
 public class CardMapDate extends BaseEntity {
 
-	private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
-	@Persistent
-	private PackMapDate pack;
+    @Persistent
+    private PackMapDate pack;
 
-	private String name;
+    private String name;
 
-	private Date time;
+    private Date time;
 
-	public CardMapDate(int year, int month, int date) {
-		
-		Calendar cal = new GregorianCalendar(UTC);
-		cal.clear();
-		cal.set(year, month, date);
-		
-		this.time = cal.getTime();
-		
-	}
+    public CardMapDate(int year, int month, int date) {
+        
+        Calendar cal = new GregorianCalendar(UTC);
+        cal.clear();
+        cal.set(year, month, date);
+        
+        this.time = cal.getTime();
+        
+    }
 
-	public Date getTime() {
-		return time;
-	}
+    public Date getTime() {
+        return time;
+    }
 
-	/**
-	 * @return the pack
-	 */
-	public PackMapDate getPack() {
-		return pack;
-	}
+    /**
+     * @return the pack
+     */
+    public PackMapDate getPack() {
+        return pack;
+    }
 
-	/**
-	 * @param pack
-	 *            the pack to set
-	 */
-	public void setPack(PackMapDate pack) {
-		this.pack = pack;
-	}
+    /**
+     * @param pack
+     *            the pack to set
+     */
+    public void setPack(PackMapDate pack) {
+        this.pack = pack;
+    }
 
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param name
-	 *            the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @param name
+     *            the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
 }

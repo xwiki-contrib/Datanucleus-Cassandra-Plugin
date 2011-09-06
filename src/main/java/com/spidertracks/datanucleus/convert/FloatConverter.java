@@ -28,32 +28,32 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class FloatConverter implements ByteConverter {
 
-	private static final int SIZE = Float.SIZE / Byte.SIZE;
+    private static final int SIZE = Float.SIZE / Byte.SIZE;
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null || buffer.remaining() < SIZE) {
-			return null;
-		}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null || buffer.remaining() < SIZE) {
+            return null;
+        }
 
-		return buffer.getFloat();
-	}
+        return buffer.getFloat();
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		if (value == null) {
-			return buffer;
-		}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        if (value == null) {
+            return buffer;
+        }
 
-		ByteBuffer checked = check(buffer, SIZE);
-		
-		return checked.putFloat((Float) value);
-	}
+        ByteBuffer checked = check(buffer, SIZE);
+        
+        return checked.putFloat((Float) value);
+    }
 
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_LONG;
-	}
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_LONG;
+    }
 
 }

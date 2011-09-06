@@ -33,13 +33,13 @@ Contributors:
     
      <!-- CASSANDRA'S RECOMMENDED UUID  -->
     <extension point="org.datanucleus.store_valuegenerator">
-    	<valuegenerator name="uuid-cassandra" class-name="com.spidertracks.datanucleus.identity.CassandraUUIDGenerator" unique="true"/>
+        <valuegenerator name="uuid-cassandra" class-name="com.spidertracks.datanucleus.identity.CassandraUUIDGenerator" unique="true"/>
     </extension> 
     
     <!-- Extension point for custom serialization of values -->
     <extension point="org.datanucleus.java_type">
     
-    	<!-- keep all the default properties, but override the string converter for cassandra -->
+        <!-- keep all the default properties, but override the string converter for cassandra -->
            <java-type name="java.util.Date" persistent="true" dfg="true" embedded="true" wrapper-type="org.datanucleus.store.types.sco.simple.Date"
             string-converter="com.spidertracks.datanucleus.identity.DateConverter"
             long-converter="org.datanucleus.store.types.DateLongConverter" override="true"/>

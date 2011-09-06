@@ -29,41 +29,41 @@ import org.scale7.cassandra.pelops.ColumnFamilyManager;
  */
 public class LexicalUUIDConverter implements ByteConverter {
 
-	private static final int SIZE = 128 / Byte.SIZE;
+    private static final int SIZE = 128 / Byte.SIZE;
 
-	@Override
-	public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
-		if (buffer == null || buffer.remaining() < SIZE) {
-			return null;
-		}
+    @Override
+    public Object getObject(ByteBuffer buffer, ByteConverterContext context) {
+        if (buffer == null || buffer.remaining() < SIZE) {
+            return null;
+        }
 
-		long msb = buffer.getLong();
-		long lsb = buffer.getLong();
+        long msb = buffer.getLong();
+        long lsb = buffer.getLong();
 
-		return new UUID(msb, lsb);
+        return new UUID(msb, lsb);
 
-	}
+    }
 
-	@Override
-	public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
-		if (value == null) {
-			return buffer;
-		}
+    @Override
+    public ByteBuffer writeBytes(Object value, ByteBuffer buffer, ByteConverterContext context) {
+        if (value == null) {
+            return buffer;
+        }
 
-		UUID uuid = (UUID) value;
-		
-		ByteBuffer returned = check(buffer, SIZE);
-
-
-		returned.putLong(uuid.getMostSignificantBits());
-		return returned.putLong(uuid.getLeastSignificantBits());
-
-	}
+        UUID uuid = (UUID) value;
+        
+        ByteBuffer returned = check(buffer, SIZE);
 
 
-	@Override
-	public String getComparatorType() {
-		return ColumnFamilyManager.CFDEF_COMPARATOR_LEXICAL_UUID;
-	}
+        returned.putLong(uuid.getMostSignificantBits());
+        return returned.putLong(uuid.getLeastSignificantBits());
+
+    }
+
+
+    @Override
+    public String getComparatorType() {
+        return ColumnFamilyManager.CFDEF_COMPARATOR_LEXICAL_UUID;
+    }
 
 }
