@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,9 +79,11 @@ public class PelopsIndexingTest extends CassandraTest {
                 ClusterUtils.getFirstAvailableNode(cluster));
 
     
-        KsDef keyspaceDefinition = new KsDef(KEYSPACE,
-                KeyspaceManager.KSDEF_STRATEGY_SIMPLE, 1,
-                new ArrayList<CfDef>());
+        final KsDef keyspaceDefinition =
+            new KsDef(KEYSPACE, KeyspaceManager.KSDEF_STRATEGY_SIMPLE, new ArrayList<CfDef>(0));
+        keyspaceDefinition.setStrategy_options(new HashMap<String,String>() {{
+            put("replication_factor", "1");
+        }});
 
         try {
             keyspaceManager.addKeyspace(keyspaceDefinition);

@@ -19,6 +19,8 @@ import org.scale7.cassandra.pelops.Cluster.Node;
 import org.scale7.cassandra.pelops.ColumnFamilyManager;
 import org.scale7.cassandra.pelops.KeyspaceManager;
 import org.scale7.cassandra.pelops.Pelops;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.spidertracks.datanucleus.convert.ByteConverterContext;
 import com.spidertracks.datanucleus.utils.ClusterUtils;
@@ -31,8 +33,9 @@ import com.spidertracks.datanucleus.utils.MetaDataUtils;
  * @author Todd Nine
  * 
  */
-public class ColumnFamilyCreator implements MetaDataListener {
-
+public class ColumnFamilyCreator implements MetaDataListener
+{
+    private static final Logger LOGGER = LoggerFactory.getLogger(ColumnFamilyCreator.class);
     private Cluster cluster = null;
     private String keyspace;
 
@@ -85,7 +88,7 @@ public class ColumnFamilyCreator implements MetaDataListener {
                 schemaChanged = createColumnFamily(migrationCluster, cfName);
             }
             
-            if(createColumns){
+            if(createColumns && schemaChanged){
                 List<ColumnDef> changed = getNewIndexes(migrationCluster, cmd, cfName);
                 
                 if(changed.size() > 0){
@@ -94,13 +97,15 @@ public class ColumnFamilyCreator implements MetaDataListener {
                     
                     columnFamily.getColumn_metadata().addAll(changed);
                     
-                    ColumnFamilyManager manager = Pelops.createColumnFamilyManager(
-                            migrationCluster, keyspace);
-                    
+                    final ColumnFamilyManager manager =
+                        Pelops.createColumnFamilyManager(migrationCluster, this.keyspace);
+
+                    LOGGER.info("Adding column family [{}] to keyspace [{}].",
+                                cfName, this.keyspace);
                     try {
                         manager.updateColumnFamily(columnFamily);
                     } catch (Exception e) {
-                        throw new NucleusDataStoreException("Unable to migrate column families");
+                        throw new NucleusDataStoreException("Unable to migrate column families", e);
                     }
                     
                     schemaChanged = true;
@@ -190,7 +195,7 @@ public class ColumnFamilyCreator implements MetaDataListener {
 
         // no column family, define one
         if (columnFamily == null && createColumnFamilies) {
-            
+            LOGGER.info("Creating new column family [{}] in keyspace [{}]", cfName, this.keyspace);
 
             columnFamily = new CfDef(keyspace, cfName);
             columnFamily
@@ -256,6 +261,9 @@ public class ColumnFamilyCreator implements MetaDataListener {
         ByteConverterContext context = ((CassandraStoreManager) storeManager)
                 .getByteConverterContext();
 
+        LOGGER.info("Checking for indexes to be created for new column family [{}] "
+                    + "in keyspace [{}].", cfName, this.keyspace);
+
         for (int field : cmd.getAllMemberPositions()) {
             AbstractMemberMetaData memberData = cmd.getMetaDataForManagedMemberAtAbsolutePosition(field);
 
@@ -283,6 +291,8 @@ public class ColumnFamilyCreator implements MetaDataListener {
             def.setIndex_name(indexName);
             def.setIndex_type(IndexType.KEYS);
 
+            LOGGER.info("Adding index [{}] in column family [{}] of keyspace [{}].",
+                        new Object[] {indexName, cfName, this.keyspace});
             indexColumns.add(def);
         }
 
@@ -292,12 +302,15 @@ public class ColumnFamilyCreator implements MetaDataListener {
                 .getDiscriminatorColumnName(cmd);
 
         if (discriminatorColumn != null    && !hasColumn(discriminatorColumn, columnFamily)) {
+            LOGGER.debug("Creating new discriminator column [{}] for column family [{}].",
+                         discriminatorColumn.toUTF8(), cfName);
             ColumnDef def = new ColumnDef();
 
             def.setName(discriminatorColumn.toByteArray());
             def.setValidation_class(ColumnFamilyManager.CFDEF_COMPARATOR_UTF8);
 
-            def.setIndex_name(discriminatorColumn.toUTF8() + "_index");
+            // Indexes need to be unique across the whole keyspace.
+            def.setIndex_name(cfName + "_" + discriminatorColumn.toUTF8() + "_index");
             def.setIndex_type(IndexType.KEYS);
             indexColumns.add(def);
         }

@@ -84,7 +84,8 @@ public class ArrayTest extends CassandraTest {
         jackHearts.setName("Jack of Hearts");
         pack.getCards()[1] = jackHearts;
 
-        pmf.getPersistenceManager().makePersistent(pack);
+        final PersistenceManager pm1 = pmf.getPersistenceManager();
+        pm1.makePersistent(pack);
 
         PersistenceManager pm = pmf.getPersistenceManager();
         PackArray saved = pm.getObjectById(PackArray.class, pack.getId());

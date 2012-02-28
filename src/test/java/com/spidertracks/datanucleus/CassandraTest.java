@@ -39,16 +39,8 @@ import org.scale7.cassandra.pelops.support.EmbeddedCassandraServer;
  * @author Todd Nine
  * 
  */
-public abstract class CassandraTest {
-
-    public static final String RPC_LISTEN_ADDRESS = "localhost";
-
-    public static final int RPC_PORT = 19160;
-
-    public static String BASE_DIRECTORY = "target/cassandra";
-
-    public static final String KEYSPACE = "TestingKeyspace";
-
+public abstract class CassandraTest
+{
     protected static PersistenceManagerFactory pmf;
 
     /**
@@ -58,7 +50,12 @@ public abstract class CassandraTest {
      */
     @BeforeClass
     public static void setup() throws Exception {
-        Server.INSTANCE.start();
+        try {
+            Server.INSTANCE.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
         pmf = Server.INSTANCE.getFactory();
     }
 
@@ -71,8 +68,7 @@ public abstract class CassandraTest {
 
         public void start() throws Exception {
             if (cassandraServer == null) {
-                cassandraServer = new EmbeddedCassandraServer(
-                        RPC_LISTEN_ADDRESS, RPC_PORT, BASE_DIRECTORY);
+                cassandraServer = new EmbeddedCassandraServer();
                 cassandraServer.start();
 
                 // wait until cassandra server starts up. could wait less time,
@@ -81,7 +77,6 @@ public abstract class CassandraTest {
                 Thread.sleep(2000);
 
                 pmf = JDOHelper.getPersistenceManagerFactory("Test");
-
             }
         }
 

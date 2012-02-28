@@ -282,8 +282,8 @@ public class CassandraPersistenceHandler extends AbstractPersistenceHandler {
 
         // if we have a discriminator, write the value
         if (metaData.hasDiscriminatorStrategy()) {
-            DiscriminatorMetaData discriminator = metaData
-                    .getDiscriminatorMetaData();
+
+            final DiscriminatorMetaData discriminator = metaData.getDiscriminatorMetaData();
 
             Bytes colName = getDiscriminatorColumnName(discriminator);
 

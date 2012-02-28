@@ -18,6 +18,7 @@ Contributors : Todd Nine
 package com.spidertracks.datanucleus;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -35,13 +36,18 @@ import org.scale7.cassandra.pelops.KeyspaceManager;
 import org.scale7.cassandra.pelops.OperandPolicy;
 import org.scale7.cassandra.pelops.Pelops;
 import org.scale7.cassandra.pelops.pool.CommonsBackedPool.Policy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.spidertracks.datanucleus.utils.ClusterUtils;
 
 /**
  * Implementation of a ConnectionFactory for HBase.
  */
-public class ConnectionFactoryImpl extends AbstractConnectionFactory {
+public class ConnectionFactoryImpl extends AbstractConnectionFactory
+{
+    /** The logger. */
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConnectionFactoryImpl.class);
 
     // matches the pattern
     // cassandra:<poolname>:<keyspace>:<connectionport>:host1, host2, host3...
@@ -125,6 +131,7 @@ public class ConnectionFactoryImpl extends AbstractConnectionFactory {
         KeyspaceManager keyspaceManager = new KeyspaceManager(
                 ClusterUtils.getFirstAvailableNode(cluster));
 
+        LOGGER.info("Scanning for keyspaces in cluster [{}].", cluster);
         List<KsDef> keyspaces;
         try {
             keyspaces = keyspaceManager.getKeyspaceNames();
@@ -142,9 +149,12 @@ public class ConnectionFactoryImpl extends AbstractConnectionFactory {
         }
 
         if (!found) {
-            KsDef keyspaceDefinition = new KsDef(keyspace,
-                    KeyspaceManager.KSDEF_STRATEGY_SIMPLE, 1,
-                    new ArrayList<CfDef>());
+            LOGGER.info("Creating new keyspace [{}]", this.keyspace);
+            final KsDef keyspaceDefinition =
+                new KsDef(keyspace, KeyspaceManager.KSDEF_STRATEGY_SIMPLE, new ArrayList<CfDef>(0));
+            keyspaceDefinition.setStrategy_options(new HashMap<String,String>() {{
+                put("replication_factor", "1");
+            }});
 
             try {
                 keyspaceManager.addKeyspace(keyspaceDefinition);
@@ -160,7 +170,9 @@ public class ConnectionFactoryImpl extends AbstractConnectionFactory {
             opPolicy.setDeleteIfNull(true);
             
             Policy policy = new Policy();
-            
+
+            LOGGER.info("Creating connection pool [{}] using keyspace [{}].",
+                        poolName, this.keyspace);
             Pelops.addPool(poolName, cluster, keyspace, policy, opPolicy);
         }
     }

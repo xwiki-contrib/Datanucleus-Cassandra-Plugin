@@ -40,6 +40,8 @@ import com.spidertracks.datanucleus.collection.model.Card;
 import com.spidertracks.datanucleus.collection.model.Pack;
 import com.spidertracks.datanucleus.collection.model.User;
 import com.spidertracks.datanucleus.collection.model.Vehicle;
+import com.spidertracks.datanucleus.collection.model.Beer;
+import com.spidertracks.datanucleus.collection.model.Case;
 
 /**
  * @author Todd Nine
@@ -74,6 +76,32 @@ public class CollectionTest extends CassandraTest {
 
         assertTrue(saved.getCards().contains(jackHearts));
 
+    }
+
+    @Test
+    public void testBasicPeristAndLoadOneToManyCollectionUnidirectional() throws Exception
+    {
+        final Case c = new Case();
+
+        final Beer farmerBrown = new Beer();
+        farmerBrown.setName("Farmer Brown");
+        c.addBeer(farmerBrown);
+
+        final Beer csw = new Beer();
+        csw.setName("Cabot Street Wheat");
+        c.addBeer(csw);
+
+        pmf.getPersistenceManager().makePersistent(c);
+
+        final Case saved = pmf.getPersistenceManager().getObjectById(Case.class, c.getId());
+
+        assertEquals(c, saved);
+
+        assertNotNull(saved.getBeers());
+
+        assertTrue(saved.getBeers().contains(farmerBrown));
+
+        assertTrue(saved.getBeers().contains(csw));
     }
 
     @Test
