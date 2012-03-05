@@ -35,6 +35,7 @@ import org.datanucleus.exceptions.NucleusObjectNotFoundException;
 import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.metadata.DiscriminatorMetaData;
+import org.datanucleus.metadata.DiscriminatorStrategy;
 import org.datanucleus.metadata.Relation;
 import org.datanucleus.store.AbstractPersistenceHandler;
 import org.datanucleus.store.ExecutionContext;
@@ -43,6 +44,8 @@ import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Mutator;
 import org.scale7.cassandra.pelops.Pelops;
 import org.scale7.cassandra.pelops.Selector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.spidertracks.datanucleus.client.Consistency;
 import com.spidertracks.datanucleus.convert.ByteConverterContext;
@@ -55,7 +58,9 @@ import com.spidertracks.datanucleus.mutate.ExecutionContextDelete;
  * @author Todd Nine
  * 
  */
-public class CassandraPersistenceHandler extends AbstractPersistenceHandler {
+public class CassandraPersistenceHandler extends AbstractPersistenceHandler
+{
+    private static final Logger LOGGER = LoggerFactory.getLogger(CassandraPersistenceHandler.class);
 
     private CassandraStoreManager manager;
     private BatchMutationManager batchManager;
@@ -282,16 +287,22 @@ public class CassandraPersistenceHandler extends AbstractPersistenceHandler {
 
         // if we have a discriminator, write the value
         if (metaData.hasDiscriminatorStrategy()) {
-
             final DiscriminatorMetaData discriminator = metaData.getDiscriminatorMetaData();
 
             Bytes colName = getDiscriminatorColumnName(discriminator);
 
-            String value = discriminator.getValue();
+            // DN doesn't provide discrminator value if the strategy is CLASS_NAME.
+            final String value = (discriminator.getStrategy() == DiscriminatorStrategy.CLASS_NAME)
+                ? metaData.getFullClassName()
+                : discriminator.getValue();
+
+            LOGGER.debug("Object [{}] has a discriminator, it is [{}].", key.toUTF8(), value);
             
             Bytes byteValue = byteContext.getBytes(value);
             
             mutator.writeColumn(columnFamily, key, mutator.newColumn(colName, byteValue));
+        } else {
+            LOGGER.debug("Object [{}] has no discriminator.", key.toUTF8());
         }
 
         try {
