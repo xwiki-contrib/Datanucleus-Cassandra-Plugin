@@ -32,6 +32,7 @@ import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.AbstractMemberMetaData;
 import org.datanucleus.metadata.ColumnMetaData;
 import org.datanucleus.metadata.DiscriminatorMetaData;
+import org.datanucleus.metadata.DiscriminatorStrategy;
 import org.datanucleus.metadata.IndexMetaData;
 import org.datanucleus.metadata.InheritanceMetaData;
 import org.datanucleus.metadata.InheritanceStrategy;
@@ -313,6 +314,18 @@ public class MetaDataUtils {
 
     }
 
+    private static Bytes getDiscriminatorValue(final AbstractClassMetaData metaData,
+                                               final ByteConverterContext converter)
+    {
+        final DiscriminatorMetaData discriminator = metaData.getDiscriminatorMetaData();
+
+        final String valStr = (discriminator.getStrategy() == DiscriminatorStrategy.CLASS_NAME)
+            ? metaData.getFullClassName()
+            : discriminator.getValue();
+
+        return converter.getBytes(valStr);
+    }
+
     /**
      * Get all discriminators as strings for this class and all possible
      * subclasses. Will return at a minimum the discriminator for the passed
@@ -336,27 +349,15 @@ public class MetaDataUtils {
 
         MetaDataManager mdm = ec.getMetaDataManager();
 
-        AbstractClassMetaData metaData = mdm
-                .getMetaDataForClass(className, clr);
-
-        DiscriminatorMetaData discriminator = metaData
-                .getDiscriminatorMetaData();
-
-        Bytes value = converter.getBytes(discriminator.getValue());
-        
-        descriminators.add(value);
+        descriminators.add(getDiscriminatorValue(mdm.getMetaDataForClass(className, clr),
+                                                 converter));
 
         String[] subClasses = mdm.getSubclassesForClass(className, true);
 
         if (subClasses != null) {
-
             for (String subclassName : subClasses) {
-                metaData = mdm.getMetaDataForClass(subclassName, clr);
-
-                
-                value = converter.getBytes(metaData.getDiscriminatorMetaData().getValue());
-
-                descriminators.add(value);
+                descriminators.add(getDiscriminatorValue(mdm.getMetaDataForClass(subclassName, clr),
+                                                         converter));
             }
         }
 
