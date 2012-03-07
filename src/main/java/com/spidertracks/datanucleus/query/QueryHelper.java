@@ -218,7 +218,7 @@ final class QueryHelper
             }
 
             final String idClassName = ((SingleFieldIdentity) identity).getTargetClassName();
-            if (!ClassUtils.typesAreCompatible(candidateClass, idClassName, resolver))
+            if (!ClassUtils.typesAreCompatible(targetClass, idClassName, resolver))
             {
                 throw new NucleusDataStoreException("The stored class's identity is for a class "
                                                     + "which is not the same nor a subclass of the "
