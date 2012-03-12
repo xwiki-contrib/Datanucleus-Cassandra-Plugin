@@ -296,6 +296,7 @@
 				</configuration>
 			</plugin>
 
+            <!-- Checkstyle plugin needs to be fixed to work in offline mode.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -366,7 +367,7 @@
 							**/com/spidertracks/datanucleus/ColumnFamilyCreator.java,
 							**/com/spidertracks/datanucleus/CassandraPersistenceHandler.java,
 
-                            <!-- Fanout Complexity violation and use of abstract class which the rest of the code demands as a perameter -->
+                            - Fanout Complexity violation and use of abstract class which the rest of the code demands as a perameter -
                             **/com/spidertracks/datanucleus/query/QueryHelper.java
 						</excludes>
 				</configuration>
@@ -377,7 +378,7 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin>-->
 
 		</plugins>
 	</build>
