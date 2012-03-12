@@ -202,8 +202,9 @@ public class MetaDataUtils {
 
         if (name == null) {
             StringBuffer nameBuffer = new StringBuffer();
-
-            nameBuffer.append(fieldMetaData.getName()).append("_index");
+            // Indexes need to be unique across the whole keyspace.
+            final String cfName = getColumnFamily(classMetaData);
+            nameBuffer.append(cfName + "_").append(fieldMetaData.getName()).append("_index");
             name = nameBuffer.toString();
         }
         
