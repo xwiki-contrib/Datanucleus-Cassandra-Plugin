@@ -88,7 +88,7 @@ public class ColumnFamilyCreator implements MetaDataListener
                 schemaChanged = createColumnFamily(migrationCluster, cfName);
             }
             
-            if(createColumns && schemaChanged){
+            if (createColumns){
                 List<ColumnDef> changed = getNewIndexes(migrationCluster, cmd, cfName);
                 
                 if(changed.size() > 0){
