@@ -176,15 +176,8 @@ public class JDOQLBasicTest extends CassandraTest {
         Transaction tx = setupPm.currentTransaction();
         tx.begin();
 
-        setupPm.deletePersistent(object1);
-        setupPm.deletePersistent(object2);
-        setupPm.deletePersistent(object3);
-
-        setupPm.deletePersistent(p1);
-        setupPm.deletePersistent(p2);
-        setupPm.deletePersistent(p3);
-        setupPm.deletePersistent(p4);
-        setupPm.deletePersistent(p5);
+        setupPm.newQuery(PrimitiveObject.class).deletePersistentAll();
+        setupPm.newQuery(Person.class).deletePersistentAll();
 
         tx.commit();
 
@@ -250,7 +243,7 @@ public class JDOQLBasicTest extends CassandraTest {
             Query q = pm.newQuery(PrimitiveObject.class);
             q.setOrdering("testString DESC, testDouble");
             Collection c = (Collection) q.execute();
-            assertTrue(c.size() >= 3);
+            assertEquals(3, c.size());
             Iterator it = c.iterator();
             assertEquals("two", ((PrimitiveObject) it.next()).getTestString());
             assertEquals("three", ((PrimitiveObject) it.next()).getTestString());
