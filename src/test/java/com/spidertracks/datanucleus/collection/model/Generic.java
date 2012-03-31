@@ -17,43 +17,26 @@ Contributors :
 package com.spidertracks.datanucleus.collection.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.jdo.annotations.Element;
+import com.spidertracks.datanucleus.model.BaseEntity;
+import javax.jdo.annotations.Discriminator;
+import javax.jdo.annotations.DiscriminatorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.Inheritance;
 import javax.jdo.annotations.InheritanceStrategy;
 import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.Persistent;
-
-import com.spidertracks.datanucleus.model.BaseEntity;
 
 /**
- * An object with a collection to many objects which don't know about it.
+ * Beer and Case extend this so they will be in the same table.
  */
-@PersistenceCapable
-@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
-public class Case extends Generic implements Serializable
+@PersistenceCapable(
+    table = "Generic",
+    identityType = IdentityType.APPLICATION,
+    detachable="true"
+)
+@Inheritance(strategy=InheritanceStrategy.NEW_TABLE)
+@Discriminator(strategy=DiscriminatorStrategy.CLASS_NAME)
+public class Generic extends BaseEntity implements Serializable
 {
-    private static final long serialVersionUID = 1L;
-
-    @Element(dependent="true")
-    private List<Beer> beers;
-
-    /**
-     * @return the manyToOne
-     */
-    public List<Beer> getBeers()
-    {
-        return beers;
-    }
-    
-    public void addBeer(Beer beer)
-    {
-        if(this.beers == null){
-            this.beers = new ArrayList<Beer>();
-        }
-        this.beers.add(beer);
-    }
+    private static final long serialVersionUID = 1L;   
 }

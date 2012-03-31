@@ -28,7 +28,9 @@ import org.datanucleus.ClassLoaderResolver;
 import org.datanucleus.exceptions.NucleusDataStoreException;
 import org.datanucleus.exceptions.NucleusException;
 import org.datanucleus.metadata.AbstractClassMetaData;
+import org.datanucleus.query.expression.DyadicExpression;
 import org.datanucleus.query.expression.Expression;
+import org.datanucleus.query.expression.Literal;
 import org.datanucleus.store.ExecutionContext;
 import org.datanucleus.store.query.Query;
 import org.datanucleus.util.ClassUtils;
@@ -53,6 +55,9 @@ final class QueryHelper
 {
     /** The default maximum number of entries to return in a query. */
     private static final int DEFAULT_MAX = 1000;
+
+    private static final Expression ONE_EQ_ONE =
+        new DyadicExpression(new Literal(1), Expression.OP_EQ, new Literal(1));
 
     /**
      * Private default constructor.
@@ -114,7 +119,8 @@ final class QueryHelper
                       + "order to page");
             }
 
-            range = (int) query.getRangeToExcl();
+            // TODO: Ordering in Cassandra.
+            //range = (int) query.getRangeToExcl();
         }
 
         final CassandraQueryExpressionEvaluator evaluator =
@@ -122,21 +128,27 @@ final class QueryHelper
 
         final Expression filter = query.getCompilation().getExprFilter();
 
+System.out.println("Running Query: [ " + filter + " ]");
+
         // If true, the query is not against any indexed columns
         // so we must select all rows and post filter.
-        boolean nonIndexedQuery = isQueryNonIndexed(filter, evaluator, candidateClass);
+        //boolean nonIndexedQuery = isQueryNonIndexed(filter, evaluator, candidateClass);
 
         // If a query was specified, and there are indexed fields in the query,
         // perform a filter with secondary cassandra indexes.
         final Set<Columns> candidateKeys;
-        if (filter != null && !nonIndexedQuery)
+        boolean needsPostProcess = true;
+        if (!isQueryNonIndexed(filter, evaluator, candidateClass))
         {
             candidateKeys = runQuery(filter, evaluator, acmd, context, selectColumns);
+            needsPostProcess = false;
+
         } else {
+System.out.println("Getting All entries.");
             // Otherwise just get every object of the given type and, if there was a query
             // which Cassandra simply couldn't handle, sort it out later.
             candidateKeys = getAll(storeManager.getPoolName(),
-                                   MetaDataUtils.getColumnFamily(acmd),
+                                   acmd,
                                    selectColumns,
                                    range);
         }
@@ -152,7 +164,7 @@ final class QueryHelper
         // If this has an order by clause, a group by clause, or if we had to select all
         // entries of the given type because there were no expressions which cassandra could handle
         // then we have to postprocess the query.
-        if (query.getOrdering() != null || query.getGrouping() != null || nonIndexedQuery)
+        if (query.getOrdering() != null || query.getGrouping() != null || needsPostProcess)
         {
             return postProcessor.run(results, parameters);
         }
@@ -254,11 +266,14 @@ final class QueryHelper
      *         from the maxSize, whichever is fewer.
      */
     private static Set<Columns> getAll(final String poolName,
-                                       final String cfName,
+                                       final AbstractClassMetaData acmd,
                                        final Bytes[] selectColumns,
                                        final int maxSize)
     {
+final String cfName = MetaDataUtils.getColumnFamily(acmd);
+if (acmd.hasDiscriminatorStrategy()) {
 
+}
         Set<Columns> candidateKeys = new HashSet<Columns>();
 
         KeyRange range = new KeyRange();
@@ -309,6 +324,10 @@ final class QueryHelper
                                              final CassandraQueryExpressionEvaluator evaluator,
                                              final Class<?> candidateClass)
     {
+        if (filter == null) {
+            return true;
+        }
+
         final AnnotationEvaluator ae = new AnnotationEvaluator(candidateClass);
         final List<String> annotationlist = ae.getAnnotatedFields("javax.jdo.annotations.Index");
         final List<String> expressionlist = evaluator.getPrimaryExpressions(filter);
@@ -349,7 +368,10 @@ final class QueryHelper
         final CassandraStoreManager storeManager =
             ((CassandraStoreManager) context.getStoreManager());
 
-        Operand opTree = (Operand) filter.evaluate(evaluator);
+        // No where clause means we need to just use run the discriminator check.
+        final Expression exp = (filter == null) ? ONE_EQ_ONE : filter;
+
+        Operand opTree = (Operand) exp.evaluate(evaluator);
 
         // there's a discriminator so be sure to include it
         if (acmd.hasDiscriminatorStrategy()) {
@@ -364,6 +386,7 @@ final class QueryHelper
 
             opTree = opTree.optimizeDescriminator(descriminiatorCol, descriminatorValues);
         }
+
         // perform a query rewrite to take into account descriminator values
         opTree.performQuery(storeManager.getPoolName(),
                             MetaDataUtils.getColumnFamily(acmd),

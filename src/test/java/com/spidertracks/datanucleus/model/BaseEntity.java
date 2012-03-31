@@ -32,8 +32,8 @@ import com.eaio.uuid.UUID;
  */
 @PersistenceCapable(identityType= IdentityType.APPLICATION)
 @Inheritance(strategy = InheritanceStrategy.SUBCLASS_TABLE)
-public abstract class BaseEntity {
-
+public abstract class BaseEntity
+{
     @PrimaryKey
     @Persistent(customValueStrategy = "uuid-cassandra")
     private UUID id;
@@ -72,7 +72,4 @@ public abstract class BaseEntity {
             return false;
         return true;
     }
-    
-    
-
 }

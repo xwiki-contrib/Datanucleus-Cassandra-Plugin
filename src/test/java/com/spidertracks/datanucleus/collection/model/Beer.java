@@ -28,19 +28,25 @@ import com.spidertracks.datanucleus.model.BaseEntity;
 
 /**
  * This object represents the "many" side of a one to many collection.
- * This is for testing one-to-many-unidirectional persistance.
+ * This is for testing one-to-many-unidirectional persistance and using SUPERCLASS_TABLE.
  */
-@PersistenceCapable(table = "Beer", identityType = IdentityType.APPLICATION, detachable="true")
-@Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
-public class Beer extends BaseEntity  implements Serializable{
-
-    
-    /**
-     * 
-     */
+@PersistenceCapable
+@Inheritance(strategy = InheritanceStrategy.SUPERCLASS_TABLE)
+public class Beer extends Generic implements Serializable
+{
     private static final long serialVersionUID = 1L;
     
     private String name;
+
+    public Beer(final String name)
+    {
+        this.name = name;
+    }
+
+    public Beer()
+    {
+        // name = null
+    }
 
     /**
      * @return the name

@@ -34,19 +34,24 @@ import com.spidertracks.datanucleus.model.BaseEntity;
  */
 @PersistenceCapable(table = "Card", identityType = IdentityType.APPLICATION, detachable="true")
 @Inheritance(strategy = InheritanceStrategy.NEW_TABLE)
-public class Card extends BaseEntity  implements Serializable{
-
-    
-    /**
-     * 
-     */
+public class Card extends BaseEntity implements Serializable
+{
     private static final long serialVersionUID = 1L;
 
     @Persistent
     private Pack pack;
-    
+
     private String name;
-    
+
+    public Card(final String name)
+    {
+        this.name = name;
+    }
+
+    public Card()
+    {
+        // leave name as null.
+    }
 
     /**
      * @return the pack
