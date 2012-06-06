@@ -86,4 +86,18 @@ public abstract class Operand {
         }
     }
 
+    /**
+     * Print some pseudocode explaining the operand.
+     *
+     * @param sb the string builder to print to.
+     */
+    public abstract void toString(final StringBuilder sb);
+
+    @Override
+    public String toString()
+    {
+        final StringBuilder sb = new StringBuilder();
+        this.toString(sb);
+        return sb.toString().trim();
+    }
 }

@@ -30,6 +30,7 @@ import org.apache.cassandra.thrift.IndexClause;
 import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.IndexOperator;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.StringUtils;
 import org.datanucleus.exceptions.NucleusException;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Pelops;
@@ -238,4 +239,48 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 
     }
 
+    @Override
+    public void toString(final StringBuilder sb)
+    {
+        final List<IndexExpression> expList = this.clause.getExpressions();
+        int i;
+        for (i = 0; i < expList.size(); i++) {
+            if (i > 0) {
+                sb.append(" AND ");
+            }
+            final IndexExpression exp = expList.get(i);
+            sb.append(new String(exp.column_name.array()));
+            switch (exp.op) {
+                case EQ:
+                    sb.append(" = ");
+                    break;
+                case GTE:
+                    sb.append(" >= ");
+                    break;
+                case GT:
+                    sb.append(" > ");
+                    break;
+                case LTE:
+                    sb.append(" <= ");
+                    break;
+                case LT:
+                    sb.append(" < ");
+                    break;
+                default:
+                    throw new RuntimeException("Unhandled operand [" + exp.op + "]");
+            };
+
+            final String val =
+                new String(exp.value.array()).replace("\\", "\\\\").replace("'", "\\'");
+
+            if (!StringUtils.isAsciiPrintable(val)) {
+                sb.append("hex('");
+                sb.append(new String(Hex.encodeHex(exp.value.array())));
+                sb.append("')");
+            } else {
+                sb.append('\'').append(val).append('\'');
+            }
+        }
+        sb.append(" ");
+    }
 }

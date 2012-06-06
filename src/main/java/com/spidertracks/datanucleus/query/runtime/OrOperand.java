@@ -67,4 +67,13 @@ public class OrOperand extends Operand {
         
     }
 
+    @Override
+    public void toString(final StringBuilder sb)
+    {
+        sb.append('(');
+        this.left.toString(sb);
+        sb.append("OR ");
+        this.right.toString(sb);
+        sb.append(") ");
+    }
 }

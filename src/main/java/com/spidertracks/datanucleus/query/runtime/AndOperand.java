@@ -68,6 +68,13 @@ public class AndOperand extends Operand {
         
     }
 
-
-
+    @Override
+    public void toString(final StringBuilder sb)
+    {
+        sb.append('(');
+        this.left.toString(sb);
+        sb.append(") AND (");
+        this.right.toString(sb);
+        sb.append(") ");
+    }
 }

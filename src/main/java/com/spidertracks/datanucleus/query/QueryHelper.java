@@ -244,7 +244,7 @@ System.out.println("Getting All entries.");
                 context.findObject(identity, true, subclasses, candidateClass.getName());
 
             if (returned == null) {
-                // TODO: Remove this, this should never happen.
+                // This should never happen.
                 throw new NucleusDataStoreException("findObject silently returned null!");
             }
 
@@ -386,6 +386,8 @@ if (acmd.hasDiscriminatorStrategy()) {
 
             opTree = opTree.optimizeDescriminator(descriminiatorCol, descriminatorValues);
         }
+
+System.out.println("Query: [" + opTree.toString() + "]");
 
         // perform a query rewrite to take into account descriminator values
         opTree.performQuery(storeManager.getPoolName(),
