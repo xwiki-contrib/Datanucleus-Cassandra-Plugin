@@ -24,11 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.Set;
 
+import javax.jdo.annotations.Index;
 import org.apache.cassandra.thrift.IndexExpression;
 import org.apache.cassandra.thrift.IndexOperator;
 import org.datanucleus.metadata.AbstractClassMetaData;
 import org.datanucleus.metadata.AbstractMemberMetaData;
+import org.datanucleus.metadata.IndexedValue;
 import org.datanucleus.query.QueryUtils;
 import org.datanucleus.query.evaluator.AbstractExpressionEvaluator;
 import org.datanucleus.query.expression.DyadicExpression;
@@ -77,31 +80,28 @@ public class CassandraQueryExpressionEvaluator extends
 
     private ByteConverterContext byteConverter;
 
+    /** Cassandra can't run queries against only non-indexed fields. */
+    private final Map<String, Set<Class>> annotationsByField;
 
     /**
-     * Constructor for an in-memory evaluator.
+     * Constructor for a cassandra query evaluator.
      * 
-     * @param ec
-     *            ExecutionContext
-     * @param params
-     *            Input parameters
-     * @param state
-     *            Map of state values keyed by their symbolic name
-     * @param imports
-     *            Any imports
-     * @param clr
-     *            ClassLoader resolver
-     * @param candidateAlias
-     *            Alias for the candidate class. With JDOQL this is "this".
+     * @param metaData the DataNucleus class/interface metadata.
+     * @prarm maxSize the maximum number of entries to return.
+     * @param byteConverter the converter for serializing fields.
+     * @param params parameters for parameterized query.
+     * @param candidateClass the class which we are searching for.
      */
-    public CassandraQueryExpressionEvaluator(AbstractClassMetaData metaData, int maxSize, ByteConverterContext byteConverter, Map<String, Object> params) {
+    public CassandraQueryExpressionEvaluator(final AbstractClassMetaData metaData,
+                                             final int maxSize,
+                                             final ByteConverterContext byteConverter,
+                                             final Map<String, Object> params,
+                                             final Class<?> candidateClass) {
         this.metaData = metaData;
-        this.parameterValues = (params != null ? params
-                : new HashMap<String, Object>());
-        
+        this.parameterValues = (params != null) ? params : new HashMap<String, Object>();
         this.maxSize = maxSize;
         this.byteConverter = byteConverter;
-
+        this.annotationsByField = AnnotationEvaluator.getFieldAnnotationMap(candidateClass);
     }
 
     /*
@@ -120,17 +120,12 @@ public class CassandraQueryExpressionEvaluator extends
 
         // compress the right and left on this && into a single statement for
         // efficiency
-        if (left instanceof CompressableOperand
-                && right instanceof CompressableOperand) {
-            
-            EqualityOperand op = new EqualityOperand(maxSize);
-
-            op.addAll(((CompressableOperand) left).getIndexClause()
-                    .getExpressions());
-
-            op.addAll(((CompressableOperand) right).getIndexClause()
-                    .getExpressions());
-
+        if (left instanceof CompressableOperand && right instanceof CompressableOperand) {
+            final CompressableOperand cLeft = (CompressableOperand) left;
+            final CompressableOperand cRight = (CompressableOperand) right;
+            final EqualityOperand op = new EqualityOperand(maxSize);
+            op.addAll(cLeft.getIndexClause().getExpressions(), left.isIndexed());
+            op.addAll(cRight.getIndexClause().getExpressions(), right.isIndexed());
             return operationStack.push(op);
         }
 
@@ -161,7 +156,7 @@ public class CassandraQueryExpressionEvaluator extends
                 indexKey.getIndexValue());
 
         EqualityOperand op = new EqualityOperand(maxSize);
-        op.addExpression(expression);
+        op.addExpression(expression, indexKey.isFieldIndexed());
 
         return this.operationStack.push(op);
 
@@ -183,7 +178,7 @@ public class CassandraQueryExpressionEvaluator extends
                 indexKey.getIndexValue());
 
         EqualityOperand op = new EqualityOperand(maxSize);
-        op.addExpression(expression);
+        op.addExpression(expression, indexKey.isFieldIndexed());
 
         return this.operationStack.push(op);
     }
@@ -204,7 +199,7 @@ public class CassandraQueryExpressionEvaluator extends
                 indexKey.getIndexValue());
 
         EqualityOperand op = new EqualityOperand(maxSize);
-        op.addExpression(expression);
+        op.addExpression(expression, indexKey.isFieldIndexed());
 
         return this.operationStack.push(op);
     }
@@ -225,7 +220,7 @@ public class CassandraQueryExpressionEvaluator extends
                 indexKey.getIndexValue());
 
         EqualityOperand op = new EqualityOperand(maxSize);
-        op.addExpression(expression);
+        op.addExpression(expression, indexKey.isFieldIndexed());
 
         return this.operationStack.push(op);
     }
@@ -246,13 +241,10 @@ public class CassandraQueryExpressionEvaluator extends
                 indexKey.getIndexValue());
 
         EqualityOperand op = new EqualityOperand(maxSize);
-        op.addExpression(expression);
+        op.addExpression(expression, indexKey.isFieldIndexed());
 
         return this.operationStack.push(op);
-
     }
-
-    
 
     /*
      * (non-Javadoc)
@@ -297,7 +289,6 @@ public class CassandraQueryExpressionEvaluator extends
         param.setIndexValue(byteVal);
 
         return param;
-
     }
 
     /*
@@ -313,13 +304,18 @@ public class CassandraQueryExpressionEvaluator extends
         // should be the root object return the value on the set
         logger.debug("Processing expression primary {}", expr);
 
-        AbstractMemberMetaData member = metaData.getMetaDataForMember(expr
-                .getSymbol().getQualifiedName());
+        // Need to strip out the name qualifications because jpql uses doc.fullName
+        final String qualifiedName = expr.getSymbol().getQualifiedName();
+        final String unQualifiedName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
+
+        final AbstractMemberMetaData member = metaData.getMetaDataForMember(unQualifiedName);
+
+        boolean isIndexed = this.annotationsByField.get(member.getName()).contains(Index.class);
 
         Bytes columnName = getColumnName(metaData,
                 member.getAbsoluteFieldNumber());
 
-        IndexParam param = new IndexParam(columnName, null);
+        IndexParam param = new IndexParam(columnName, null, isIndexed);
 
         return indexKeys.push(param);
 
@@ -397,14 +393,22 @@ public class CassandraQueryExpressionEvaluator extends
      * @author Todd Nine
      * 
      */
-    private class IndexParam {
+    private class IndexParam
+    {
         private Bytes indexName;
         private Bytes indexValue;
 
-        private IndexParam(Bytes indexName, Bytes indexValue) {
+        /**
+         * If false, this param has no secondary index in cassandra.
+         * cassandra cannot handle a query for which no fields are indexed.
+         */
+        private final boolean isIndexed;
+
+        private IndexParam(Bytes indexName, Bytes indexValue, boolean isIndexed) {
             super();
             this.indexName = indexName;
             this.indexValue = indexValue;
+            this.isIndexed = isIndexed;
         }
 
         /**
@@ -419,6 +423,12 @@ public class CassandraQueryExpressionEvaluator extends
          */
         public Bytes getIndexValue() {
             return indexValue;
+        }
+
+        /** @return true if the field is indexed. */
+        public boolean isFieldIndexed()
+        {
+            return this.isIndexed;
         }
 
         /**

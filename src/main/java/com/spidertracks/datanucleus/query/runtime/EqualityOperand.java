@@ -48,6 +48,9 @@ public class EqualityOperand extends Operand implements CompressableOperand {
     
     private IndexClause clause;
 
+    /** True if the equality expression is on a field which has a cassandra secondary index. */
+    private boolean isIndexed;
+
     public EqualityOperand(int count) {
         clause = new IndexClause();
         clause.setStart_key(new byte[] {});
@@ -65,20 +68,24 @@ public class EqualityOperand extends Operand implements CompressableOperand {
      */
     @Override
     public void complete(Operand child) {
-        throw new UnsupportedOperationException(
-                "Equality operands should have no children");
+        throw new UnsupportedOperationException("Equality operands should have no children");
     }
 
     /**
      * Add the index expression to the clause
      * 
-     * @param expression
+     * @param expression the expression to check.
+     * @param isIndexed true if there is a secondary index on the field to check equality for.
      */
-    public void addExpression(IndexExpression expression) {
-        clause.addToExpressions(expression);
-        
-        if(logger.isDebugEnabled()){
-            logger.debug("Adding clause for name: {} value: {}", new String(Hex.encodeHex(expression.getColumn_name())), new String(Hex.encodeHex(expression.getValue())));
+    public void addExpression(final IndexExpression expression, final boolean isIndexed)
+    {
+        this.isIndexed |= isIndexed;
+        this.clause.addToExpressions(expression);
+
+        if(logger.isDebugEnabled()) {
+            logger.debug("Adding clause for name: {} value: {}",
+                         new String(Hex.encodeHex(expression.getColumn_name())),
+                         new String(Hex.encodeHex(expression.getValue())));
         }
     }
 
@@ -86,13 +93,18 @@ public class EqualityOperand extends Operand implements CompressableOperand {
      * Add all expression to the index clause
      * 
      * @param expressions
+     * @param isIndexed true if there is a secondary index on one of the fields to check
+     *                  equality for.
      */
-    public void addAll(List<IndexExpression> expressions) {
+    public void addAll(List<IndexExpression> expressions, final boolean isIndexed) {
+        this.isIndexed |= isIndexed;
         for (IndexExpression expr : expressions) {
             clause.addToExpressions(expr);
             
             if(logger.isDebugEnabled()){
-                logger.debug("Adding clause for name: {} value: {}", new String(Hex.encodeHex(expr.getColumn_name())), new String(Hex.encodeHex(expr.getValue())));
+                logger.debug("Adding clause for name: {} value: {}",
+                             new String(Hex.encodeHex(expr.getColumn_name())),
+                             new String(Hex.encodeHex(expr.getValue())));
             }
         
         }
@@ -155,8 +167,9 @@ public class EqualityOperand extends Operand implements CompressableOperand {
             leaf.setValue(possibleValues.get(0).getBytes());
 
             leaf.setOp(IndexOperator.EQ);
-            
-            addExpression(leaf);
+
+            // discriminator fields are always indexed.
+            addExpression(leaf, true);
 
             return this;
         }
@@ -185,7 +198,7 @@ public class EqualityOperand extends Operand implements CompressableOperand {
             EqualityOperand subClass = new EqualityOperand(clause.getCount());
 
             // add the existing clause
-            subClass.addAll(this.getIndexClause().getExpressions());
+            subClass.addAll(this.getIndexClause().getExpressions(), this.isIndexed());
 
             IndexExpression expression = new IndexExpression();
 
@@ -195,8 +208,8 @@ public class EqualityOperand extends Operand implements CompressableOperand {
 
             expression.setOp(IndexOperator.EQ);
 
-            // now add the discriminator
-            subClass.addExpression(expression);
+            // now add the discriminator, discriminator is always indexed.
+            subClass.addExpression(expression, true);
 
             // push onto the stack
             eqOps.push(subClass);
@@ -270,17 +283,22 @@ public class EqualityOperand extends Operand implements CompressableOperand {
                     throw new RuntimeException("Unhandled operand [" + exp.op + "]");
             };
 
-            final String val =
-                new String(exp.value.array()).replace("\\", "\\\\").replace("'", "\\'");
+            final String val = new String(exp.value.array());
 
             if (!StringUtils.isAsciiPrintable(val)) {
                 sb.append("hex('");
                 sb.append(new String(Hex.encodeHex(exp.value.array())));
                 sb.append("')");
             } else {
-                sb.append('\'').append(val).append('\'');
+                sb.append('\'').append(val.replace("\\", "\\\\").replace("'", "\\'")).append('\'');
             }
         }
         sb.append(" ");
+    }
+
+    @Override
+    public boolean isIndexed()
+    {
+        return this.isIndexed;
     }
 }

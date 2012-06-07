@@ -100,4 +100,15 @@ public abstract class Operand {
         this.toString(sb);
         return sb.toString().trim();
     }
+
+    /**
+     * Is the op tree against all indexed fields.
+     * Queries against fields for which there is no secondary index fail in cassandra.
+     * WHERE indexed = 1 AND nonIndexed = 2 succeeds.
+     * WHERE indexed = 1 OR nonIndexed = 2 fails.
+     * WHERE nonIndexed = 2 fails.
+     *
+     * @return true if all parts of the query contain at least one indexed field.
+     */
+    public abstract boolean isIndexed();
 }

@@ -77,4 +77,10 @@ public class AndOperand extends Operand {
         this.right.toString(sb);
         sb.append(") ");
     }
+
+    @Override
+    public boolean isIndexed()
+    {
+        return this.left.isIndexed() || this.right.isIndexed();
+    }
 }

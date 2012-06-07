@@ -308,6 +308,56 @@ public class JDOQLBasicTest extends CassandraTest {
     }
 
     /**
+     * non index result test
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testFilterOrNonIndexed() {
+        PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        try {
+            tx.begin();
+            Query q = pm.newQuery("SELECT FROM com.spidertracks.datanucleus.basic.model.Primi" +
+            "tiveObject WHERE testString == \"one\" || nonIndexedString == \"none\"");
+            Collection c = (Collection) q.execute();
+            assertEquals(1, c.size());
+            Iterator it = c.iterator();
+            assertEquals("one", ((PrimitiveObject) it.next()).getTestString());
+            tx.commit();
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            pm.close();
+        }
+    }
+
+    /**
+     * non index result test
+     */
+    @SuppressWarnings("rawtypes")
+    @Test
+    public void testFilterAndNonIndexed() {
+        PersistenceManager pm = pmf.getPersistenceManager();
+        Transaction tx = pm.currentTransaction();
+        try {
+            tx.begin();
+            Query q = pm.newQuery("SELECT FROM com.spidertracks.datanucleus.basic.model.Primi" +
+            "tiveObject WHERE testString == \"one\" && nonIndexedString == \"none\"");
+            Collection c = (Collection) q.execute();
+            assertEquals(1, c.size());
+            Iterator it = c.iterator();
+            assertEquals("one", ((PrimitiveObject) it.next()).getTestString());
+            tx.commit();
+        } finally {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            pm.close();
+        }
+    }
+
+    /**
      * Test query with parameters (NUCCORE-205)
      */
     @SuppressWarnings("rawtypes")
