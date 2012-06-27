@@ -1,5 +1,6 @@
 package com.spidertracks.datanucleus;
 
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +36,9 @@ import com.spidertracks.datanucleus.utils.MetaDataUtils;
  */
 public class ColumnFamilyCreator implements MetaDataListener
 {
+    /** Number of times to attempt an update before failing. */
+    private static final int MAX_UPDATE_ATTEMPTS = 10;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ColumnFamilyCreator.class);
     private Cluster cluster = null;
     private String keyspace;
@@ -102,10 +106,21 @@ public class ColumnFamilyCreator implements MetaDataListener
 
                     LOGGER.info("Adding column family [{}] to keyspace [{}].",
                                 cfName, this.keyspace);
-                    try {
-                        manager.updateColumnFamily(columnFamily);
-                    } catch (Exception e) {
-                        throw new NucleusDataStoreException("Unable to migrate column families", e);
+
+                    for (int i = 0;; i++) {
+                        try {
+                            manager.updateColumnFamily(columnFamily);
+                            break;
+                        } catch (Exception e) {
+                            if (!(e.getCause() instanceof SocketTimeoutException)) {
+                                throw new NucleusDataStoreException("Unable to migrate column families", e);
+                            }
+                            if (i >= MAX_UPDATE_ATTEMPTS) {
+                                throw new NucleusDataStoreException(
+                                    "Unable to migrate column families, cassandra not responding after ["
+                                  + i + "] tries.", e);
+                            }
+                        }
                     }
                     
                     schemaChanged = true;
