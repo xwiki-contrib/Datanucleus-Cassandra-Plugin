@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 
+import com.spidertracks.datanucleus.client.Consistency;
 import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ConsistencyLevel;
 import org.apache.cassandra.thrift.IndexClause;
@@ -122,7 +123,7 @@ public class EqualityOperand extends Operand implements CompressableOperand {
             Map<Bytes, List<Column>> results = Pelops.createSelector(poolName)
                     .getIndexedColumns(cfName, clause,
                             Selector.newColumnsPredicate(columns),
-                            ConsistencyLevel.QUORUM);
+                            Consistency.get());
             Columns cols;
 
             for (Entry<Bytes, List<Column>> entry : results.entrySet()) {
