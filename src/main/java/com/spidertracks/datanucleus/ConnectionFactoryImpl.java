@@ -152,8 +152,10 @@ public class ConnectionFactoryImpl extends AbstractConnectionFactory
             LOGGER.info("Creating new keyspace [{}]", this.keyspace);
             final KsDef keyspaceDefinition =
                 new KsDef(keyspace, KeyspaceManager.KSDEF_STRATEGY_SIMPLE, new ArrayList<CfDef>(0));
+
+            final String replicationFactor = System.getProperty("cassandra-jdo.replication_factor");
             keyspaceDefinition.setStrategy_options(new HashMap<String,String>() {{
-                put("replication_factor", "1");
+                put("replication_factor", (replicationFactor != null) ? replicationFactor : "1");
             }});
 
             try {
