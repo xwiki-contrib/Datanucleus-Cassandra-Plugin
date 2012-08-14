@@ -174,7 +174,7 @@ public class MetaDataUtils {
     /**
      * Get the name of the index. Will return null if no index is defined. If
      * one is, it takes the name assigned by the user, otherwise it will create
-     * an index in the format of <TableName>_<FieldName>
+     * an index in the format of <ColumnFamilyName>_<TableName>_<FieldName>_index
      * 
      * @param metaData
      * @return
@@ -201,10 +201,10 @@ public class MetaDataUtils {
         name = metaData.getName();
 
         if (name == null) {
-            StringBuffer nameBuffer = new StringBuffer();
+            final StringBuilder nameBuffer = new StringBuilder();
             // Indexes need to be unique across the whole keyspace.
             final String cfName = getColumnFamily(classMetaData);
-            nameBuffer.append(cfName + "_").append(fieldMetaData.getName()).append("_index");
+            nameBuffer.append(cfName).append("_").append(fieldMetaData.getName()).append("_index");
             name = nameBuffer.toString();
         }
         
