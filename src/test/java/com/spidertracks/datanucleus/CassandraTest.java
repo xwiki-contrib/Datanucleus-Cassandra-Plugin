@@ -27,13 +27,15 @@ import org.apache.cassandra.thrift.Column;
 import org.apache.cassandra.thrift.ConsistencyLevel;
 import org.apache.cassandra.thrift.KeyRange;
 import org.apache.cassandra.thrift.SlicePredicate;
+import org.apache.cassandra.service.CassandraDaemon;
 import org.apache.commons.codec.binary.Hex;
 import org.junit.BeforeClass;
 import org.scale7.cassandra.pelops.Bytes;
 import org.scale7.cassandra.pelops.Pelops;
 import org.scale7.cassandra.pelops.RowDeletor;
 import org.scale7.cassandra.pelops.Selector;
-import org.scale7.cassandra.pelops.support.EmbeddedCassandraServer;
+import org.jboss.netty.logging.InternalLoggerFactory;
+import org.jboss.netty.logging.Slf4JLoggerFactory;
 
 /**
  * @author Todd Nine
@@ -42,6 +44,11 @@ import org.scale7.cassandra.pelops.support.EmbeddedCassandraServer;
 public abstract class CassandraTest
 {
     protected static PersistenceManagerFactory pmf;
+
+    static
+    {
+        InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
+    }
 
     /**
      * Set embedded cassandra up and spawn it in a new thread.
@@ -63,18 +70,18 @@ public abstract class CassandraTest
 
         INSTANCE;
 
-        protected EmbeddedCassandraServer cassandraServer;
+        protected CassandraDaemon cassandraServer;
         protected PersistenceManagerFactory pmf;
 
         public void start() throws Exception {
             if (cassandraServer == null) {
-                cassandraServer = new EmbeddedCassandraServer();
-                cassandraServer.start();
+                cassandraServer = new CassandraDaemon();
+                cassandraServer.activate();
 
                 // wait until cassandra server starts up. could wait less time,
                 // but
                 // 2 seconds to be sure.
-                Thread.sleep(2000);
+                //Thread.sleep(2000);
 
                 pmf = JDOHelper.getPersistenceManagerFactory("Test");
             }
