@@ -1,6 +1,8 @@
 Cassandra Datanucleus Plugin
 ============================
 
+[![XWiki labs logo](https://raw.githubusercontent.com/xwiki-labs/xwiki-labs-logo/master/projects/xwikilabs/xwikilabsprototype.png "XWiki labs")](https://labs.xwiki.com/xwiki/bin/view/Projects/XWikiLabsPrototype)
+
 NOTE:  This plugin has been abandoned by it's original author, who is now developing hector-jpa ( https://github.com/riptano/hector-jpa ), it is still the only available Cassandra plugin for DataNucleus and will thus continue to be developed and improved.
 
 Features
